@@ -2,7 +2,7 @@
 
 const program = require('commander')
 
-function command(cmd)
+function loadCommand(cmd)
 {
   if (cmd)
     return require("./commands/" + cmd + ".js")
@@ -16,7 +16,7 @@ program
   .usage("<command> args")
   .command("init [directory]")
     .description("Initialize ADR in the current or given directory")
-    .action(command('init'))
+    .action(loadCommand('init'))
 
 
 program.parse(process.argv)
