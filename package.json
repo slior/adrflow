@@ -13,7 +13,7 @@
   "version": "0.0.1",
   "description": "ADR Utilities for Windows",
   "scripts": {
-    "test": "test"
+    "test": "mocha"
   },
   "keywords": [
     "adr",
