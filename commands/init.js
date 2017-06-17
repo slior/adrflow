@@ -1,6 +1,7 @@
 
 let fs = require('fs-extra')
 let propUtil = require('properties')
+let common = require('./common.js')
 
 let defaultADRProps = {
   lastIndex : 0
@@ -15,7 +16,7 @@ let init = (directory) => {
       console.log("Created " + dir)
       //write .adr in the directory to mark it as ADR directory
       let props = propUtil.stringify(defaultADRProps)
-      fs.writeFileSync(dir +"/.adr",props)
+      fs.writeFileSync(dir +"/" + common.adrMarkerFilename,props)
       console.log("Created .adr")
     })
     .catch(err => { console.err("Error: " + err)})

@@ -5,7 +5,9 @@ const program = require('commander')
 function loadCommand(cmd)
 {
   if (cmd)
+  {
     return require("./commands/" + cmd + ".js")
+  }
   else throw new Error("Invalid command given" + cmd)
 }
 
@@ -17,7 +19,8 @@ program
   .command("init [directory]")
     .description("Initialize ADR in the current or given directory")
     .action(loadCommand('init'))
-  .command("new <title>")
+
+program.command("new <title>")
     .description("Create a new ADR with the given title")
     .action(loadCommand('new'))
 

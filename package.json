@@ -10,6 +10,7 @@
     "should": "~8.2.2"
     , "fs-extra" : "3.0.1"
     , "properties": "~1.2.1"
+    , "findit2": "~2.2.3"
   },
   "version": "0.0.1",
   "description": "ADR Utilities for Windows",
