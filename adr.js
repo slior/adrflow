@@ -17,11 +17,14 @@ program
   .command("init [directory]")
     .description("Initialize ADR in the current or given directory")
     .action(loadCommand('init'))
+  .command("new <title>")
+    .description("Create a new ADR with the given title")
+    .action(loadCommand('new'))
 
 
 program.parse(process.argv)
 
-if (typeof cmdValue === 'undefined') {
+if (!program.args.length) {
    console.error('No command provided');
    program.help()
 }
