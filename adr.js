@@ -12,7 +12,7 @@ function command(cmd)
 //Setting up program commands
 program
   .version('0.0.1')
-  .usage("ADR Tools: Architecture Decision Records Utility")
+  .usage("<command>")
   .command("init [directory]")
     .description("Initialize ADR in the current or given directory")
     .action(command('init'))
