@@ -7,8 +7,7 @@
     "mocha": "~2.4.5",
     "node.extend": "~1.1.5",
     "rewire": "~2.5.1",
-    "should": "~8.2.2",
-    "vorpal": "^1.10.10"
+    "should": "~8.2.2"
     , "fs-extra" : "3.0.1"
   },
   "version": "0.0.1",
