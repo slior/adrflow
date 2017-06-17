@@ -1,29 +1,21 @@
 "use strict"
 
 const program = require('commander')
-const fs = require('fs-extra')
 
-//commands
-
-let init = (directory) => {
-
-  let dir = directory || 'doc/adr'
-
-  fs.ensureDir(dir)
-    .then(() => { console.log("Created " + dir)})
-    .catch(err => { console.err("Error: " + err)})
-
+function command(cmd)
+{
+  if (cmd)
+    return require("./commands/" + cmd + ".js")
+  else throw new Error("Invalid command given" + cmd)
 }
 
-
-
-//Setting up program arguments
+//Setting up program commands
 program
   .version('0.0.1')
   .usage("ADR Tools: Architecture Decision Records Utility")
   .command("init [directory]")
     .description("Initialize ADR in the current or given directory")
-    .action(init)
+    .action(command('init'))
 
 
 program.parse(process.argv)
