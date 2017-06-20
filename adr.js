@@ -20,7 +20,7 @@ program
     .description("Initialize ADR in the current or given directory")
     .action(loadCommand('init'))
 
-program.command("new <title>")
+program.command("new <title...>")
     .description("Create a new ADR with the given title")
     .action(loadCommand('new'))
 
