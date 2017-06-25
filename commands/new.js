@@ -5,6 +5,8 @@ let common = require("./common.js")
 let path = require('path')
 let propUtil = require('properties')
 
+let adrFileRE = /^(\d+)-[\w_]+\.md$/
+
 function findADRDir(startFrom, callback,notFoundHandler)
 {
   let startDir = startFrom || "."
@@ -36,20 +38,30 @@ function getDate() {
     return year + "-" + month + "-" + day;
 }
 
-let newCmd = (titleParts) => {
+/*
+  Find all ADR file names in the given directory.
+  Return an array with all the ADR file names - to the callback
+*/
+function withAllADRFiles(adrDir, callback)
+{
+  let fsWalker = findit(adrDir)
+  let ret = []
+  fsWalker.on('file',(file,stats,linkPath) => {
+    let filename = path.basename(file)
+    if (adrFileRE.test(filename))
+      ret.push(filename)
+  })
 
-  findADRDir(".",
-            (adrDir) => {
-              let ADR_NUM = 0 //TODO: load last index from .adr, increment and save it. Use the incremented value as the number here.
-              let title = titleParts.join(' ')
-              console.info("Creating ADR " + title + " at " + adrDir + " ...")
-              // let ADR_TITLE = title
-              // let PROPOSED_DATE = getDate()
-              let newADR = `# ${ADR_NUM} ${title}
+  fsWalker.on('end',() => {callback(ret)})
+}
+
+function adrContent(number,title,date)
+{
+  return `# ${number} ${title}
 
 ## Status
 
-Proposed: ${getDate()}
+Proposed: ${date}
 
 ## Context
 
@@ -57,13 +69,44 @@ Proposed: ${getDate()}
 
 ## Consequences
 
-              `
+  `
+}
 
-              let adrFilename = `${adrDir}/${ADR_NUM}-${titleParts.join('_')}.md`
-              console.info(`Writing ${adrFilename} ...`)
-              fs.outputFile(adrFilename,newADR)
-                .then(() => { console.info("Done.")})
-                .catch((err) => { console.error(err)})
+/**
+  Given the ADR directory, search all ADRs and resolve the next available ADR number to use for a new ADR
+ */
+function withNextADRNumber(adrDir,callback)
+{
+  withAllADRFiles(adrDir,(adrFiles) => {
+    let currentNumbers = adrFiles.map(f => {
+                                        let match = adrFileRE.exec(f);
+                                        if (!match)
+                                          throw new Error(`ADR file name ${f} doesn't seem to match format`)
+                                        return match[1]
+                                      })
+                                  .map(s => s*1)
+    callback(Math.max(...currentNumbers)+1)
+  })
+}
+
+let newCmd = (titleParts) => {
+
+  findADRDir(".",
+            (adrDir) => {
+              withNextADRNumber(adrDir,(nextNum) => {
+                let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
+                if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
+
+                let title = titleParts.join(' ')
+                console.info("Creating ADR " + title + " at " + adrDir + " ...")
+                let newADR = adrContent(nextNum,title,getDate())
+                let adrFilename = `${adrDir}/${adrBasename}`
+
+                console.info(`Writing ${adrFilename} ...`)
+                fs.outputFile(adrFilename,newADR)
+                  .then(() => { console.info("Done.")})
+                  .catch((err) => { console.error(err)})
+              })
             },
             () => {
               console.error("ADR dir not found")
