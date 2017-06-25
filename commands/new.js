@@ -7,16 +7,15 @@ let propUtil = require('properties')
 
 let adrFileRE = /^(\d+)-[\w_]+\.md$/
 
-function findADRDir(startFrom, callback,notFoundHandler)
-{
+let findADRDir = (startFrom, callback,notFoundHandler) => {
   let startDir = startFrom || "."
   let fsWalker = findit(startDir)
   var adrDir = ''
-  fsWalker.on('file',(file,stats,linkPath) => {
 
+  fsWalker.on('file',(file,stats,linkPath) => {
     if (path.basename(file) == common.adrMarkerFilename)
     {
-      // console.log('Found: ' + file)
+      //  console.log('Found: ' + file)
       adrDir = path.dirname(file)
       fsWalker.stop()
     }
@@ -42,8 +41,7 @@ function getDate() {
   Find all ADR file names in the given directory.
   Return an array with all the ADR file names - to the callback
 */
-function withAllADRFiles(adrDir, callback)
-{
+let withAllADRFiles = (adrDir, callback) => {
   let fsWalker = findit(adrDir)
   let ret = []
   fsWalker.on('file',(file,stats,linkPath) => {
@@ -85,16 +83,16 @@ function withNextADRNumber(adrDir,callback)
                                         return match[1]
                                       })
                                   .map(s => s*1)
-    callback(Math.max(...currentNumbers)+1)
+    callback(currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1)
   })
 }
 
 let newCmd = (titleParts) => {
-
   findADRDir(".",
             (adrDir) => {
               withNextADRNumber(adrDir,(nextNum) => {
                 let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
+                // console.log(`basename: ${adrBasename}`)
                 if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
 
                 let title = titleParts.join(' ')
