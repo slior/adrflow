@@ -53,8 +53,7 @@ let withAllADRFiles = (adrDir, callback) => {
   fsWalker.on('end',() => {callback(ret)})
 }
 
-function adrContent(number,title,date)
-{
+let adrContent = (number,title,date) => {
   return `# ${number} ${title}
 
 ## Status
