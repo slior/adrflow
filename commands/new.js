@@ -4,6 +4,7 @@ let findit = require('findit2')
 let common = require("./common.js")
 let path = require('path')
 let propUtil = require('properties')
+let { exec } = require('child_process')
 
 let adrFileRE = /^(\d+)-[\w_]+\.md$/
 
@@ -94,6 +95,22 @@ function writeADR(adrFilename,newADR)
     .catch((err) => { console.error(err)})
 }
 
+let launchEditorFor = (file,editorCommand) => {
+  exec(`${editorCommand} ${file}`,(err,stdout,stderr) => {
+    if (err)
+      console.error(err)
+  })
+}
+
+let withEditorCommandFrom = (adrDir,callback) => {
+  propUtil.parse(`${adrDir}/${common.adrMarkerFilename}`,{ path : true}, (err,data) => {
+    if (err)
+      console.error(err)
+    else
+      callback(data.editor)
+  })
+}
+
 let newCmd = (titleParts) => {
   findADRDir(".",
             (adrDir) => {
@@ -104,7 +121,13 @@ let newCmd = (titleParts) => {
 
                 let title = titleParts.join(' ')
                 console.info("Creating ADR " + title + " at " + adrDir + " ...")
-                writeADR(`${adrDir}/${adrBasename}`,adrContent(nextNum,title,getDate()))
+                let adrFilename = `${adrDir}/${adrBasename}`
+                writeADR(adrFilename,adrContent(nextNum,title,getDate()))
+
+                withEditorCommandFrom(adrDir,(editor) => {
+                  console.info(`Launching editor for ${adrFilename}...`)
+                  launchEditorFor(adrFilename,editor)
+                })
               })
             },
             () => {

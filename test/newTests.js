@@ -15,6 +15,14 @@ describe('New command',() => {
   }
 
   let mockFindADRDir =  (startFrom, callback,notFoundHandler) => { callback('.') }
+  let mockEditorCommand = "mockEditor"
+  let mockPropUtil = {
+    parse : (file,opts,cb) => {
+      cb(undefined,{editor : mockEditorCommand})
+    }
+  }
+
+  let dummyLaunchEditor = (file,editorCmd) => {}
 
   it("Should fail if passed an invalid title - that can't be used as a filename", () => {
     let revert = IC.__set__({
@@ -28,6 +36,8 @@ describe('New command',() => {
     revert()
   })
 
+
+
   it ("Should assign the next number for the new ADR - one higher than the last available ADR", () => {
     let testTitle = "test"
 
@@ -38,6 +48,8 @@ describe('New command',() => {
         num.should.eql(3) //one higher than 2-adr2.md
       }
       , fs : mockFS
+      , propUtil : mockPropUtil
+      , launchEditorFor : dummyLaunchEditor
     })
 
     IC([testTitle])
@@ -49,6 +61,8 @@ describe('New command',() => {
         num.should.eql(6) //one higher than 5-adr2.md
       }
       , fs : mockFS
+      , propUtil : mockPropUtil
+      , launchEditorFor : dummyLaunchEditor
     })
 
     IC(["test"])
@@ -64,9 +78,12 @@ describe('New command',() => {
         title.should.eql(testTitle)
       }
       , fs : mockFS
+      , propUtil : mockPropUtil
+      , launchEditorFor : dummyLaunchEditor
     })
 
     IC([testTitle])
+    revert();
 
     let adrWithSeveralParts = ["adr","part","2"]
     revert = IC.__set__({
@@ -77,10 +94,29 @@ describe('New command',() => {
         title.should.eql(adrWithSeveralParts.join(' '))
       }
       , fs : mockFS
+      , propUtil : mockPropUtil
+      , launchEditorFor : dummyLaunchEditor
     })
 
     IC(adrWithSeveralParts)
 
     revert();
+  })
+
+  it("should launch the editor configured in the adr configuration", () => {
+
+    let revert = IC.__set__({
+      launchEditorFor : (file,editorCmd) => {
+        editorCmd.should.eql(mockEditorCommand)
+      }
+      , fs : mockFS
+      , propUtil : mockPropUtil
+    })
+
+    IC(["testadr"])
+
+    revert();
+
+
   })
 })
