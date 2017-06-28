@@ -86,6 +86,14 @@ function withNextADRNumber(adrDir,callback)
   })
 }
 
+function writeADR(adrFilename,newADR)
+{
+  console.info(`Writing ${adrFilename} ...`)
+  fs.outputFile(adrFilename,newADR)
+    .then(() => { console.info("Done.")})
+    .catch((err) => { console.error(err)})
+}
+
 let newCmd = (titleParts) => {
   findADRDir(".",
             (adrDir) => {
@@ -96,13 +104,7 @@ let newCmd = (titleParts) => {
 
                 let title = titleParts.join(' ')
                 console.info("Creating ADR " + title + " at " + adrDir + " ...")
-                let newADR = adrContent(nextNum,title,getDate())
-                let adrFilename = `${adrDir}/${adrBasename}`
-
-                console.info(`Writing ${adrFilename} ...`)
-                fs.outputFile(adrFilename,newADR)
-                  .then(() => { console.info("Done.")})
-                  .catch((err) => { console.error(err)})
+                writeADR(`${adrDir}/${adrBasename}`,adrContent(nextNum,title,getDate()))
               })
             },
             () => {
