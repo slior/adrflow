@@ -23,4 +23,7 @@
   ],
   "author": "Lior Schejter",
   "license": "ISC"
+  , "pkg" : {
+    "scripts": "./commands/*"
+  }
 }
