@@ -6,7 +6,7 @@ function loadCommand(cmd)
 {
   if (cmd)
   {
-    return require("./commands/" + cmd + ".js")
+    return require("./commands/" + cmd.toLowerCase() + ".js")
   }
   else throw new Error("Invalid command given" + cmd)
 }
