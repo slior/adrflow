@@ -6,7 +6,7 @@ function loadCommand(cmd)
 {
   if (cmd)
   {
-    return require("./commands/" + cmd.toLowerCase() + ".js")
+    return require("./commands/" + cmd + ".js")
   }
   else throw new Error("Invalid command given" + cmd)
 }
@@ -24,6 +24,9 @@ program.command("new <title...>")
     .description("Create a new ADR with the given title")
     .action(loadCommand('new'))
 
+program.command("accept <adrID>")
+    .description("Accept the ADR with the given ID")
+    .action(loadCommand('accept'))
 
 program.parse(process.argv)
 
