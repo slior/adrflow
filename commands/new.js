@@ -6,26 +6,7 @@ let path = require('path')
 let propUtil = require('properties')
 let { exec } = require('child_process')
 
-let adrFileRE = /^(\d+)-[\w_]+\.md$/
-
-let findADRDir = (startFrom, callback,notFoundHandler) => {
-  let startDir = startFrom || "."
-  let fsWalker = findit(startDir)
-  var adrDir = ''
-
-  fsWalker.on('file',(file,stats,linkPath) => {
-    if (path.basename(file) == common.adrMarkerFilename)
-    {
-      //  console.log('Found: ' + file)
-      adrDir = path.dirname(file)
-      fsWalker.stop()
-    }
-  })
-
-  fsWalker.on('stop',() => { callback(adrDir) })
-  fsWalker.on('end',() => { notFoundHandler() } )
-}
-
+let { findADRDir, withAllADRFiles, adrFileRE } = require('./adr_util.js')
 
 function getDate() {
 
@@ -38,21 +19,7 @@ function getDate() {
     return year + "-" + month + "-" + day;
 }
 
-/*
-  Find all ADR file names in the given directory.
-  Return an array with all the ADR file names - to the callback
-*/
-let withAllADRFiles = (adrDir, callback) => {
-  let fsWalker = findit(adrDir)
-  let ret = []
-  fsWalker.on('file',(file,stats,linkPath) => {
-    let filename = path.basename(file)
-    if (adrFileRE.test(filename))
-      ret.push(filename)
-  })
 
-  fsWalker.on('end',() => {callback(ret)})
-}
 
 let adrContent = (number,title,date) => {
   return `# ${number} ${title}
