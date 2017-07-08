@@ -5,37 +5,11 @@ let common = require("./common.js")
 let path = require('path')
 let propUtil = require('properties')
 let { exec } = require('child_process')
+let ADR = require('../core/adr_obj.js')
 
 let { findADRDir, withAllADRFiles, adrFileRE } = require('./adr_util.js')
 
-function getDate() {
-
-    let date = new Date();
-    let year = date.getFullYear();
-    var month = date.getMonth() + 1;
-    month = (month < 10 ? "0" : "") + month;
-    var day  = date.getDate();
-    day = (day < 10 ? "0" : "") + day;
-    return year + "-" + month + "-" + day;
-}
-
-
-
-let adrContent = (number,title,date) => {
-  return `# ${number} ${title}
-
-## Status
-
-Proposed: ${date}
-
-## Context
-
-## Decision
-
-## Consequences
-
-  `
-}
+let adrContent = (number,title) => ADR.create(number,title).toADRString()
 
 /**
   Given the ADR directory, search all ADRs and resolve the next available ADR number to use for a new ADR
@@ -89,7 +63,7 @@ let newCmd = (titleParts) => {
                 let title = titleParts.join(' ')
                 console.info("Creating ADR " + title + " at " + adrDir + " ...")
                 let adrFilename = `${adrDir}/${adrBasename}`
-                writeADR(adrFilename,adrContent(nextNum,title,getDate()))
+                writeADR(adrFilename,adrContent(nextNum,title))
 
                 withEditorCommandFrom(adrDir,(editor) => {
                   console.info(`Launching editor for ${adrFilename}...`)
