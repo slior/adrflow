@@ -63,7 +63,7 @@ let createADR = (_id,_title,_status, _context,_decision,_cons) => {
 
 let fromRawContent = (raw) => {
   let statusRE = /Status[\s]*$[\s]+([\w\- \n]+)/gm
-
+  //todo: parse raw content of ADR, and create a new ADR from that.
 }
 
 module.exports = {
