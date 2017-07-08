@@ -11,6 +11,8 @@ function ADR(id,title,status,context,decision,consequences)
   this.decision = decision
   this.consequences = consequences
 
+  this.accept = (dt) => this.states.push(STATUS_ACCEPTED(date))
+
   this.toADRString = () => {
     return `# ${this.id} ${this.title}
 
@@ -33,14 +35,20 @@ ${this.consequences}
   return this;
 }
 
-
+let STATUS_ACCEPTED = (d) => {
+  let date = dt || (new Date())
+  return `Accepted ${formatDate(date)}`
+}
 let STATUS_PROPOSED = (d) => {
   let dt = d || (new Date())
   return `Proposed ${formatDate(dt)}`
 }
 
 
+let acceptADR = (dt) => {
+  let date = dt || (new Date())
 
+}
 
 let createADR = (_id,_title,_status, _context,_decision,_cons) => {
   if (!_id) throw new Error("No ID given for new ADR")
@@ -53,6 +61,12 @@ let createADR = (_id,_title,_status, _context,_decision,_cons) => {
   return new ADR(_id,_title,st,ctx,dec,cons)
 }
 
+let fromRawContent = (raw) => {
+  let statusRE = /Status[\s]*$[\s]+([\w\- \n]+)/gm
+
+}
+
 module.exports = {
   create : createADR
+  // , parse : fromRawContent
 }
