@@ -26,9 +26,28 @@ describe("modifyADR",() => {
     })
 
     //input doesn't matter - the mock implementation will invoke the error handler anyway
-    let block = () => {  IC(5); } 
+    let block = () => {  IC.modifyADR(".","1"); } 
     block.should.throw()
 
+    revert()
+  })
+
+  it("should modify an ADR file as requested and call the post modification callback", () => {
+    let mockContent = "test"
+    let revert = IC.__set__({
+      adrFileByID : (adrDir,adrID, cb, errHandler) => { cb("adr" + adrID) }
+      , fs : {
+        writeFileSync : (file,content) => {
+          content.should.equal(mockContent)
+        }
+      }
+      , adrContent : (file) => "some file content"
+    })
+
+    IC.modifyADR(".","1",(content) => mockContent, (dir,id) => {
+      id.should.equal("1")
+      dir.should.equal(".")
+    })
     revert()
   })
 })

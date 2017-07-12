@@ -4,6 +4,7 @@ const should = require('should')
 const rewire = require('rewire')
 
 const IC = rewire('../commands/accept.js')
+let ADR = require('../core/adr_obj.js')
 
 describe('Accept command',() => {
 
@@ -17,4 +18,40 @@ describe('Accept command',() => {
     block.should.throw()
   })
 
+  it("should add an Accepted status to an existing ADR", () => {
+
+    let revert = IC.__set__({
+      modifyADR : (dir,id,modifier,postModification) => {
+        
+        let testContent = `
+        # Lorem Ipsum
+
+        ## Status
+
+        Proposed 2013-05-13
+
+        ## Some More Content
+        `
+
+        let expectdContent = `
+        # Lorem Ipsum
+
+        ## Status
+
+        Proposed 2013-05-13
+        Accepted ${ADR.Status.ACCEPTED()}
+
+        ## Some More Content
+        `
+
+        let newContent = modifier(testContent)
+        newContent.should.equal(expectdContent)
+      }
+    })
+
+
+
+    revert()
+
+  })
 })
