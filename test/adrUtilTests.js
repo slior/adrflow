@@ -16,3 +16,19 @@ describe("adrFileByID", () => {
 
   })
 })
+
+
+describe("modifyADR",() => {
+  it("should fail if the given ADR ID is not found",() => {
+    let revert = IC.__set__({
+       findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
+      , adrFileByID : (adrDir,adrID, cb, errHandler) => { errHandler() }
+    })
+
+    //input doesn't matter - the mock implementation will invoke the error handler anyway
+    let block = () => {  IC(5); } 
+    block.should.throw()
+
+    revert()
+  })
+})

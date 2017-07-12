@@ -3,6 +3,7 @@
 let findit = require('findit2')
 let common = require("./common.js")
 let path = require('path')
+let fs = require('fs-extra')
 
 let adrFileRE = /^(\d+)-[\w_]+\.md$/
 
@@ -42,15 +43,27 @@ let withAllADRFiles = (adrDir, callback) => {
 
 let adrFileByID = (adrDir,adrID, cb, notFoundHandler) => {
   withAllADRFiles(adrDir,(files) => {
-    // console.log(files)
-    // console.log(`searching for id ${adrID}`)
     let matchingFilenames = files.filter(f => f.indexOf(adrID + "-") == 0)
-    console.dir()
     if (matchingFilenames.length < 1)
       notFoundHandler()
     else
       cb(matchingFilenames[0])
   })
+}
+
+let adrContent = (adrFilename) => {
+  return fs.readFileSync(adrFilename).toString()
+}
+
+let modifyADR = (adrDir,adrID, cb, postModificationCB) => {
+  adrFileByID(adrDir,adrID,
+    (adrFilename) => {
+      let fullFilename = `${adrDir}/${adrFilename}`
+      let content = adrContent(fullFilename)
+      fs.writeFileSync(fullFilename,cb(content))
+      if (postModificationCB) postModificationCB(adrDir,adrID)
+    }
+  , () => { throw new Error(`ADR ${adrID} not found`)})
 }
 
 
@@ -59,4 +72,5 @@ module.exports = {
     , withAllADRFiles : withAllADRFiles
     , adrFileRE : adrFileRE
     , adrFileByID : adrFileByID
+    , modifyADR : modifyADR
 }

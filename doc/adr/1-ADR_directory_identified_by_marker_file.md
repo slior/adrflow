@@ -2,7 +2,8 @@
 
 ## Status
 
-Proposed: 2017-07-01
+Proposed 2017-07-01
+Accepted 2017-07-11
 
 ## Context
 

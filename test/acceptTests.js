@@ -17,17 +17,4 @@ describe('Accept command',() => {
     block.should.throw()
   })
 
-  it("should fail if the ADR id given is not found",() => {
-
-    let revert = IC.__set__({
-       findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
-      , adrFileByID : (adrDir,adrID, cb, errHandler) => { errHandler() }
-    })
-
-    let block = () => {  IC(5); } //5 as representative of some non-existing ADR ID.
-    block.should.throw()
-
-    revert()
-  })
-
 })

@@ -1,6 +1,8 @@
 
 
-let {findADRDir, adrFileByID} = require('./adr_util.js')
+let {findADRDir, adrFileByID, modifyADR} = require('./adr_util.js')
+let ADR = require('../core/adr_obj.js')
+const NL = "\n"
 
 let acceptCmd = (adrID) => {
 
@@ -8,12 +10,15 @@ let acceptCmd = (adrID) => {
   if (isNaN(adrID)) throw new Error(`Invalid ADR ID ${adrID}`)
   findADRDir(".",
     (adrDir) => {
-      adrFileByID(adrDir,adrID, (adrFilename) => {
-        console.log(adrFilename)
-        //TODO: implement the actual command logic
-      },
-      () => { throw new Error(`ADR ${adrID} not found`)}
-    )},
+      modifyADR(adrDir,adrID,
+        (content) => {
+          let statusRE = /Status[\s]*$[\s]+[\w\- \n]+/gm //a RE that will match all the status changes
+          return content.replace(statusRE,
+                                 (match,offset,s) => [match.trim(),ADR.Status.ACCEPTED(),NL].join(NL))
+        },
+        (adrDir,adrID) => { console.log(`ADR ${adrID} Accepted`)}
+      )
+  },
     () => { throw new Error(`ADR directory not found`)})
 
 }
