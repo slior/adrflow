@@ -32,6 +32,10 @@ program.command("list")
     .description("List all current ADRs in this project")
     .action(loadCommand('list'))
   
+program.command("status <adrID>")
+    .description("Return the status of the ADR designated by the given ID")
+    .action(loadCommand('status'))
+
 program.parse(process.argv)
 
 if (!program.args.length) {

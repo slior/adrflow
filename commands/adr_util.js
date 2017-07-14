@@ -57,6 +57,8 @@ let adrContent = (adrFilename) => {
   return fs.readFileSync(adrFilename).toString()
 }
 
+let adrFullPath = (adrDir,adrBasename) => `${adrDir}/${adrBasename}`
+
 let modifyADR = (adrDir,adrID, cb, postModificationCB) => {
   adrFileByID(adrDir,adrID,
     (adrFilename) => {
@@ -68,6 +70,23 @@ let modifyADR = (adrDir,adrID, cb, postModificationCB) => {
   , () => { throw new Error(`ADR ${adrID} not found`)})
 }
 
+let EOL = require('os').EOL
+
+let lastStatusOf = (adrDir,adrID, cb,notFoundHandler) => {
+  adrFileByID(adrDir,adrID, adrFilename => {
+    let statusRE = /Status[\s]*$[\s]+([\w\- \r\n]+)/gm
+    let fullFilename = adrFullPath(adrDir,adrFilename)
+    let matches = statusRE.exec(adrContent(fullFilename))
+    if (matches.length < 2)
+      notFoundHandler()
+    else
+    {
+      let statuses = matches[1]
+      let a = statuses.split(EOL).filter(l => l.trim() != "")
+      cb(a[a.length-1].trim())
+    }
+  })
+}
 
 module.exports = {
     findADRDir : findADRDir
@@ -75,4 +94,5 @@ module.exports = {
     , adrFileRE : adrFileRE
     , adrFileByID : adrFileByID
     , modifyADR : modifyADR
+    , lastStatusOf : lastStatusOf
 }

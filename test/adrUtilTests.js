@@ -66,3 +66,40 @@ describe("modifyADR",() => {
     revert()
   })
 })
+
+ describe("lastStatusOf", () => {
+
+  it("should return the correct status for an ADR with proper status",() => {
+    let revert = IC.__set__({
+      adrFileByID : (dir,id,cb) => (cb("mock file"))
+      , adrFullPath : (dir,file) => file
+      , adrContent : (file) => {
+        return `
+        # 22 Some ADR
+
+        ## Status
+
+        Proposed 1970-01-01
+
+        ## Context
+        Lorem Ipsum
+
+        ## Decision
+        Bla bla
+
+        ## Consequences
+        Seriously?
+        `
+      }
+    })
+
+    IC.lastStatusOf(".","1"
+                    , status => {
+                        status.should.equal("Proposed 1970-01-01")
+                    }
+                    , () => { should.fail("Should've found the status")})
+
+    revert()
+  })
+
+}) 
