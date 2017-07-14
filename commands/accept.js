@@ -8,7 +8,7 @@ let acceptCmd = (adrID) => {
 
   if (!adrID) throw new Error("No ADR ID given for accept command")
   if (isNaN(adrID)) throw new Error(`Invalid ADR ID ${adrID}`)
-  findADRDir(".",
+  findADRDir(
     (adrDir) => {
       modifyADR(adrDir,adrID,
         (content) => {
@@ -18,8 +18,7 @@ let acceptCmd = (adrID) => {
         },
         (adrDir,adrID) => { console.log(`ADR ${adrID} Accepted`)}
       )
-  },
-    () => { throw new Error(`ADR directory not found`)})
+  })
 
 }
 

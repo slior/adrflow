@@ -53,7 +53,7 @@ let withEditorCommandFrom = (adrDir,callback) => {
 }
 
 let newCmd = (titleParts) => {
-  findADRDir(".",
+  findADRDir(
             (adrDir) => {
               withNextADRNumber(adrDir,(nextNum) => {
                 let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
@@ -71,6 +71,7 @@ let newCmd = (titleParts) => {
                 })
               })
             },
+            ".",
             () => {
               console.error("ADR dir not found")
             })

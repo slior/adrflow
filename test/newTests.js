@@ -16,7 +16,7 @@ describe('New command',() => {
     }
   }
 
-  let mockFindADRDir =  (startFrom, callback,notFoundHandler) => { callback('.') }
+  let mockFindADRDir =  ( callback,startFrom,notFoundHandler) => { callback('.') }
   let mockEditorCommand = "mockEditor"
   let mockPropUtil = {
     parse : (file,opts,cb) => {

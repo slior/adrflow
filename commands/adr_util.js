@@ -7,10 +7,12 @@ let fs = require('fs-extra')
 
 let adrFileRE = /^(\d+)-[\w_]+\.md$/
 
-let findADRDir = (startFrom, callback,notFoundHandler) => {
+let findADRDir = ( callback,startFrom,notFoundHandler) => {
   let startDir = startFrom || "."
   let fsWalker = findit(startDir)
   var adrDir = ''
+  let defaultNotFoundHandler = () => { throw new Error(`ADR dir not found in ${startDir}`)}
+  let _notFoundHandler = notFoundHandler || defaultNotFoundHandler
 
   fsWalker.on('file',(file,stats,linkPath) => {
     if (path.basename(file) == common.adrMarkerFilename)
@@ -22,7 +24,7 @@ let findADRDir = (startFrom, callback,notFoundHandler) => {
   })
 
   fsWalker.on('stop',() => { callback(adrDir) })
-  fsWalker.on('end',() => { notFoundHandler() } )
+  fsWalker.on('end',() => { _notFoundHandler() } )
 }
 
 /*

@@ -28,6 +28,10 @@ program.command("accept <adrID>")
     .description("Accept the ADR with the given ID")
     .action(loadCommand('accept'))
 
+program.command("list")
+    .description("List all current ADRs in this project")
+    .action(loadCommand('list'))
+  
 program.parse(process.argv)
 
 if (!program.args.length) {
