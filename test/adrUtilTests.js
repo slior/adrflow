@@ -11,9 +11,24 @@ describe("adrFileByID", () => {
       findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
       , withAllADRFiles : (adrDir, callback) => { callback(['1-adr1.md','2-adr2.md'])}
     })
-
+    
     IC.adrFileByID('.',5, (file) => { should.fail("should not find adr 5") }, () => { /* ok */})
 
+    revert()
+  })
+
+  it("should return the filename of the ADR, if found",() => {
+
+    let revert = IC.__set__({
+      findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
+      , withAllADRFiles : (adrDir, callback) => { callback(['1-adr1.md','2-adr2.md'])}
+    })
+
+    IC.adrFileByID('.',2, 
+                   (file) => { file.should.equal('2-adr2.md') }, 
+                   () => {  should.fail("file should've been found")})
+
+    revert()
   })
 })
 
