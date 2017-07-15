@@ -31,16 +31,18 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
   Find all ADR file names in the given directory.
   Return an array with all the ADR file names - to the callback
 */
-let withAllADRFiles = (adrDir, callback) => {
-  let fsWalker = findit(adrDir)
-  let ret = []
-  fsWalker.on('file',(file,stats,linkPath) => {
-    let filename = path.basename(file)
-    if (adrFileRE.test(filename))
-      ret.push(filename)
-  })
+let withAllADRFiles = (callback) => {
+  findADRDir(adrDir => {
+    let fsWalker = findit(adrDir)
+    let ret = []
+    fsWalker.on('file',(file,stats,linkPath) => {
+      let filename = path.basename(file)
+      if (adrFileRE.test(filename))
+        ret.push(filename)
+    })
 
-  fsWalker.on('end',() => {callback(ret)})
+    fsWalker.on('end',() => {callback(ret)})
+  })
 }
 
 let adrFileByID = (adrDir,adrID, cb, notFoundHandler) => {

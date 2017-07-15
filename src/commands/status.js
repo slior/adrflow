@@ -1,6 +1,6 @@
 "use strict"
 
-let {findADRDir, lastStatusOf} = require('./adr_util.js')
+let {lastStatusOf} = require('./adr_util.js')
 
 let statusCmd = (adrID) => {
     if (!adrID) throw new Error("No ADR ID given for status command")

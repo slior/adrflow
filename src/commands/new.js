@@ -15,7 +15,7 @@ let adrContent = (number,title) => create(number,title)
  */
 function withNextADRNumber(adrDir,callback)
 {
-  withAllADRFiles(adrDir,(adrFiles) => {
+  withAllADRFiles(adrFiles => {
     let currentNumbers = adrFiles.map(f => {
                                         let match = adrFileRE.exec(f);
                                         if (!match)

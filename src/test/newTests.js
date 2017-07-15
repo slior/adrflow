@@ -42,7 +42,7 @@ describe('New command',() => {
   it("Should fail if passed an invalid title - that can't be used as a filename", () => {
     let revert = IC.__set__({
       findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
-      , withAllADRFiles : (adrDir, callback) => { callback(['1-adr1.md','2-adr2.md'])}
+      , withAllADRFiles : (callback) => { callback(['1-adr1.md','2-adr2.md'])}
     })
 
     let block = () => {IC(["bla","###"])}
@@ -58,7 +58,7 @@ describe('New command',() => {
 
     var revert = IC.__set__(modifiedCommonMocks({
       findADRDir : mockFindADRDir
-      , withAllADRFiles : (adrDir, callback) => { callback(['1-adr1.md','2-adr2.md'])}
+      , withAllADRFiles : (callback) => { callback(['1-adr1.md','2-adr2.md'])}
       , adrContent : (num,title,date) => {
         num.should.eql(3) //one higher than 2-adr2.md
       }
@@ -68,7 +68,7 @@ describe('New command',() => {
 
     revert = IC.__set__(modifiedCommonMocks({
       findADRDir : mockFindADRDir
-      , withAllADRFiles : (adrDir, callback) => { callback(['1-adr1.md','5-adr2.md'])}
+      , withAllADRFiles : (callback) => { callback(['1-adr1.md','5-adr2.md'])}
       , adrContent : (num,title,date) => {
         num.should.eql(6) //one higher than 5-adr2.md
       }}))
@@ -81,7 +81,7 @@ describe('New command',() => {
     let testTitle = "test"
     var revert = IC.__set__(modifiedCommonMocks({
       findADRDir : mockFindADRDir
-      , withAllADRFiles : (adrDir, callback) => { callback(['1-adr1.md'])}
+      , withAllADRFiles : (callback) => { callback(['1-adr1.md'])}
       , adrContent : (num,title,date) => {
         title.should.eql(testTitle)
       }
@@ -93,7 +93,7 @@ describe('New command',() => {
     let adrWithSeveralParts = ["adr","part","2"]
     revert = IC.__set__(modifiedCommonMocks({
       findADRDir : mockFindADRDir
-      , withAllADRFiles : (adrDir, callback) => { callback(['1-adr1.md'])}
+      , withAllADRFiles : (callback) => { callback(['1-adr1.md'])}
       , adrContent : (num,title,date) => {
         console.log(`Title mock got: ${title}`)
         title.should.eql(adrWithSeveralParts.join(' '))

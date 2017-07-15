@@ -1,15 +1,13 @@
 "use strict"
 
-let {findADRDir, withAllADRFiles} = require('./adr_util.js')
+let {withAllADRFiles} = require('./adr_util.js')
 
 let listCmd = () => {
-    findADRDir((adrDir) => {
-                    withAllADRFiles(adrDir,(files) => {
-                        files.forEach((file) => {
-                            console.info(file)
-                        });
-                    })
-                })
+    withAllADRFiles(files => {
+        files.forEach(file => {
+            console.info(file)
+        });
+    })
 }
 
 
