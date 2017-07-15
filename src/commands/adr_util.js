@@ -72,20 +72,23 @@ let modifyADR = (adrDir,adrID, cb, postModificationCB) => {
 
 let EOL = require('os').EOL
 
-let lastStatusOf = (adrDir,adrID, cb,notFoundHandler) => {
-  adrFileByID(adrDir,adrID, adrFilename => {
-    let statusRE = /Status[\s]*$[\s]+([\w\- \r\n]+)/gm
-    let fullFilename = adrFullPath(adrDir,adrFilename)
-    let matches = statusRE.exec(adrContent(fullFilename))
-    if (matches.length < 2)
-      notFoundHandler()
-    else
-    {
-      let statuses = matches[1]
-      let a = statuses.split(EOL).filter(l => l.trim() != "")
-      cb(a[a.length-1].trim())
-    }
+let lastStatusOf = (adrID, cb,notFoundHandler) => {
+  findADRDir(adrDir => {
+    adrFileByID(adrDir,adrID, adrFilename => {
+        let statusRE = /Status[\s]*$[\s]+([\w\- \r\n]+)/gm
+        let fullFilename = adrFullPath(adrDir,adrFilename)
+        let matches = statusRE.exec(adrContent(fullFilename))
+        if (matches.length < 2)
+          notFoundHandler()
+        else
+        {
+          let statuses = matches[1]
+          let a = statuses.split(EOL).filter(l => l.trim() != "")
+          cb(a[a.length-1].trim())
+        }
+      })
   })
+  
 }
 
 let STATUS_ACCEPTED = (d) => {
@@ -107,7 +110,6 @@ let createADR = (_id,_title,_status, _context,_decision,_cons) => {
   let dec = _decision || ""
   let cons = _cons || ""
 
-  // return new ADR(_id,_title,st,ctx,dec,cons)
   return newADRContent(_id,_title,st,ctx,dec,cons)
 }
 

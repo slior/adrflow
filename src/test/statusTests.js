@@ -10,8 +10,7 @@ describe('Status command',() => {
     it("should log the given status to console",() => {
         let mockStatus = "some status"
         let revert = underTest.__set__({
-            findADRDir : cb => { cb('.')}
-            , lastStatusOf : (dir,id, cb, notFound) => { cb( mockStatus)}
+            lastStatusOf : (id, cb, notFound) => { cb( mockStatus)}
             , console : {
                 info : msg => { msg.should.equal(mockStatus) }
             }
@@ -24,8 +23,7 @@ describe('Status command',() => {
 
     it ("should output an error if no status is found", () => {
         let revert = underTest.__set__({
-            findADRDir : cb => { cb('.')}
-            , lastStatusOf : (dir,id, cb, notFound) => { notFound() }
+            lastStatusOf : (id, cb, notFound) => { notFound() }
             , console : {
                 error : () => { /* ok */ console.log("Not found handler invoked") }
             }
