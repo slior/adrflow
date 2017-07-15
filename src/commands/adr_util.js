@@ -31,8 +31,9 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
   Find all ADR file names in the given directory.
   Return an array with all the ADR file names - to the callback
 */
-let withAllADRFiles = (callback) => {
-  findADRDir(adrDir => {
+let withAllADRFiles = (callback, _adrDir) => {
+
+  let body = (adrDir) => {
     let fsWalker = findit(adrDir)
     let ret = []
     fsWalker.on('file',(file,stats,linkPath) => {
@@ -42,11 +43,16 @@ let withAllADRFiles = (callback) => {
     })
 
     fsWalker.on('end',() => {callback(ret)})
-  })
+  }
+
+  if (!_adrDir)
+    findADRDir(dir => { body(dir) })
+  else
+    body(_adrDir)
 }
 
-let adrFileByID = (adrDir,adrID, cb, notFoundHandler) => {
-  withAllADRFiles(adrDir,(files) => {
+let adrFileByID = (adrID, cb, notFoundHandler) => {
+  withAllADRFiles(files => {
     let matchingFilenames = files.filter(f => f.indexOf(adrID + "-") == 0)
     if (matchingFilenames.length < 1)
       notFoundHandler()
@@ -63,7 +69,7 @@ let adrFullPath = (adrDir,adrBasename) => `${adrDir}/${adrBasename}`
 
 let modifyADR = (adrID, cb, postModificationCB) => {
   findADRDir(adrDir => {
-    adrFileByID(adrDir,adrID,
+    adrFileByID(adrID,
         (adrFilename) => {
           let fullFilename = `${adrDir}/${adrFilename}`
           let content = adrContent(fullFilename)
@@ -79,7 +85,7 @@ let EOL = require('os').EOL
 
 let lastStatusOf = (adrID, cb,notFoundHandler) => {
   findADRDir(adrDir => {
-    adrFileByID(adrDir,adrID, adrFilename => {
+    adrFileByID(adrID, adrFilename => {
         let statusRE = /Status[\s]*$[\s]+([\w\- \r\n]+)/gm
         let fullFilename = adrFullPath(adrDir,adrFilename)
         let matches = statusRE.exec(adrContent(fullFilename))

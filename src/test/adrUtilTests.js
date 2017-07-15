@@ -12,7 +12,7 @@ describe("adrFileByID", () => {
       , withAllADRFiles : (callback) => { callback(['1-adr1.md','2-adr2.md'])}
     })
     
-    IC.adrFileByID('.',5, (file) => { should.fail("should not find adr 5") }, () => { /* ok */})
+    IC.adrFileByID(5, (file) => { should.fail("should not find adr 5") }, () => { /* ok */})
 
     revert()
   })
@@ -24,7 +24,7 @@ describe("adrFileByID", () => {
       , withAllADRFiles : (callback) => { callback(['1-adr1.md','2-adr2.md'])}
     })
 
-    IC.adrFileByID('.',2, 
+    IC.adrFileByID(2, 
                    (file) => { file.should.equal('2-adr2.md') }, 
                    () => {  should.fail("file should've been found")})
 
@@ -37,7 +37,7 @@ describe("modifyADR",() => {
   it("should fail if the given ADR ID is not found",() => {
     let revert = IC.__set__({
        findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
-      , adrFileByID : (adrDir,adrID, cb, errHandler) => { errHandler() }
+      , adrFileByID : (id, cb, errHandler) => { errHandler() }
     })
 
     //input doesn't matter - the mock implementation will invoke the error handler anyway
@@ -50,7 +50,7 @@ describe("modifyADR",() => {
   it("should modify an ADR file as requested and call the post modification callback", () => {
     let mockContent = "test"
     let revert = IC.__set__({
-      adrFileByID : (adrDir,adrID, cb, errHandler) => { cb("adr" + adrID) }
+      adrFileByID : (id,cb, errHandler) => { cb("adr" + adrID) }
       , fs : {
         writeFileSync : (file,content) => {
           content.should.equal(mockContent)
@@ -71,7 +71,7 @@ describe("modifyADR",() => {
 
   it("should return the correct status for an ADR with proper status",() => {
     let revert = IC.__set__({
-      adrFileByID : (dir,id,cb) => (cb("mock file"))
+      adrFileByID : (id,cb) => (cb("mock file"))
       , adrFullPath : (dir,file) => file
       , adrContent : (file) => {
         return `

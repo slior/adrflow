@@ -13,7 +13,7 @@ let adrContent = (number,title) => create(number,title)
 /**
   Given the ADR directory, search all ADRs and resolve the next available ADR number to use for a new ADR
  */
-function withNextADRNumber(adrDir,callback)
+function withNextADRNumber(callback,_adrDir)
 {
   withAllADRFiles(adrFiles => {
     let currentNumbers = adrFiles.map(f => {
@@ -24,7 +24,7 @@ function withNextADRNumber(adrDir,callback)
                                       })
                                   .map(s => s*1)
     callback(currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1)
-  })
+  }, _adrDir)
 }
 
 function writeADR(adrFilename,newADR)
@@ -54,7 +54,7 @@ let withEditorCommandFrom = (adrDir,callback) => {
 let newCmd = (titleParts) => {
   findADRDir(
             (adrDir) => {
-              withNextADRNumber(adrDir,(nextNum) => {
+              withNextADRNumber(nextNum => {
                 let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
                 // console.log(`basename: ${adrBasename}`)
                 if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
@@ -68,7 +68,7 @@ let newCmd = (titleParts) => {
                   console.info(`Launching editor for ${adrFilename}...`)
                   launchEditorFor(adrFilename,editor)
                 })
-              })
+              }, adrDir)
             },
             ".",
             () => {
