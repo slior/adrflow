@@ -1,7 +1,7 @@
 
 
-let {findADRDir, adrFileByID, modifyADR} = require('./adr_util.js')
-let ADR = require('../core/adr_obj.js')
+let {findADRDir, adrFileByID, modifyADR, Status} = require('./adr_util.js')
+// let ADR = require('./adr_obj.js')
 const NL = "\n"
 
 let acceptCmd = (adrID) => {
@@ -14,7 +14,7 @@ let acceptCmd = (adrID) => {
         (content) => {
           let statusRE = /Status[\s]*$[\s]+[\w\- \n]+/gm //a RE that will match all the status changes
           return content.replace(statusRE,
-                                 (match,offset,s) => [match.trim(),ADR.Status.ACCEPTED(),NL].join(NL))
+                                 (match,offset,s) => [match.trim(),Status.ACCEPTED(),NL].join(NL))
         },
         (adrDir,adrID) => { console.log(`ADR ${adrID} Accepted`)}
       )

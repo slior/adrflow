@@ -35,10 +35,10 @@ ${this.consequences}
   return this;
 }
 
-let STATUS_ACCEPTED = (d) => {
-  let date = d || (new Date())
-  return `Accepted ${formatDate(date)}`
-}
+// let STATUS_ACCEPTED = (d) => {
+//   let date = d || (new Date())
+//   return `Accepted ${formatDate(date)}`
+// }
 let STATUS_PROPOSED = (d) => {
   let dt = d || (new Date())
   return `Proposed ${formatDate(dt)}`
@@ -58,7 +58,7 @@ let createADR = (_id,_title,_status, _context,_decision,_cons) => {
 
 module.exports = {
   create : createADR
-  , Status : {
-    ACCEPTED : STATUS_ACCEPTED
-  }
+  // , Status : {
+  //   ACCEPTED : STATUS_ACCEPTED
+  // }
 }

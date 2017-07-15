@@ -4,7 +4,7 @@ const should = require('should')
 const rewire = require('rewire')
 
 const IC = rewire('../commands/accept.js')
-let ADR = require('../core/adr_obj.js')
+let { Status } = require('../commands/adr_util.js')
 
 describe('Accept command',() => {
 
@@ -39,7 +39,7 @@ describe('Accept command',() => {
         ## Status
 
         Proposed 2013-05-13
-        Accepted ${ADR.Status.ACCEPTED()}
+        Accepted ${Status.ACCEPTED()}
 
         ## Some More Content
         `

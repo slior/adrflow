@@ -88,6 +88,11 @@ let lastStatusOf = (adrDir,adrID, cb,notFoundHandler) => {
   })
 }
 
+let STATUS_ACCEPTED = (d) => {
+  let date = d || (new Date())
+  return `Accepted ${formatDate(date)}`
+}
+
 module.exports = {
     findADRDir : findADRDir
     , withAllADRFiles : withAllADRFiles
@@ -95,4 +100,7 @@ module.exports = {
     , adrFileByID : adrFileByID
     , modifyADR : modifyADR
     , lastStatusOf : lastStatusOf
+    , Status : {
+      ACCEPTED : STATUS_ACCEPTED
+    }
 }
