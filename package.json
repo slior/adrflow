@@ -1,7 +1,7 @@
 {
   "name": "win-adr",
-  "main": "adr.js",
-  "bin" : { "adr" : "./adr.js" },
+  "main": "src/adr.js",
+  "bin" : { "adr" : "./src/adr.js" },
   "dependencies": {
     "commander": "~2.9.0",
     "mocha": "~2.4.5",
@@ -15,7 +15,7 @@
   "version": "0.0.1",
   "description": "ADR Utilities for Windows",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha ./src/test/*.js"
   },
   "keywords": [
     "adr",
@@ -24,6 +24,6 @@
   "author": "Lior Schejter",
   "license": "ISC"
   , "pkg" : {
-    "scripts": "./commands/*"
+    "scripts": "./src/commands/*"
   }
 }
