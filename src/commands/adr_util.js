@@ -59,15 +59,18 @@ let adrContent = (adrFilename) => {
 
 let adrFullPath = (adrDir,adrBasename) => `${adrDir}/${adrBasename}`
 
-let modifyADR = (adrDir,adrID, cb, postModificationCB) => {
-  adrFileByID(adrDir,adrID,
-    (adrFilename) => {
-      let fullFilename = `${adrDir}/${adrFilename}`
-      let content = adrContent(fullFilename)
-      fs.writeFileSync(fullFilename,cb(content))
-      if (postModificationCB) postModificationCB(adrDir,adrID)
-    }
-  , () => { throw new Error(`ADR ${adrID} not found`)})
+let modifyADR = (adrID, cb, postModificationCB) => {
+  findADRDir(adrDir => {
+    adrFileByID(adrDir,adrID,
+        (adrFilename) => {
+          let fullFilename = `${adrDir}/${adrFilename}`
+          let content = adrContent(fullFilename)
+          fs.writeFileSync(fullFilename,cb(content))
+          if (postModificationCB) postModificationCB(adrID)
+        }
+      , () => { throw new Error(`ADR ${adrID} not found`)})
+  })
+  
 }
 
 let EOL = require('os').EOL
