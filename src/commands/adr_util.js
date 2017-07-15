@@ -107,9 +107,28 @@ let createADR = (_id,_title,_status, _context,_decision,_cons) => {
   let dec = _decision || ""
   let cons = _cons || ""
 
-  return new ADR(_id,_title,st,ctx,dec,cons)
+  // return new ADR(_id,_title,st,ctx,dec,cons)
+  return newADRContent(_id,_title,st,ctx,dec,cons)
 }
 
+let newADRContent = (_id,_title,_status,_context,_decision,_cons) => {
+  return `# ${_id} ${_title}
+
+## Status
+
+${_status}
+
+## Context
+${_context}
+
+## Decision
+${_decision}
+
+## Consequences
+${_cons}
+
+    `
+}
 
 function formatDate(date) {
     if (!date) throw new Error("Invalid date to format")
@@ -120,40 +139,6 @@ function formatDate(date) {
     var day  = date.getDate();
     day = (day < 10 ? "0" : "") + day;
     return year + "-" + month + "-" + day;
-}
-
-function ADR(id,title,status,context,decision,consequences)
-{
-  this.id = id
-  this.title = title
-  this.states = []
-  this.states.push(status)
-  this.context = context
-  this.decision = decision
-  this.consequences = consequences
-
-  this.accept = (dt) => this.states.push(STATUS_ACCEPTED(date))
-
-  this.toADRString = () => {
-    return `# ${this.id} ${this.title}
-
-## Status
-
-${this.states.join("\n")}
-
-## Context
-${this.context}
-
-## Decision
-${this.decision}
-
-## Consequences
-${this.consequences}
-
-    `
-  }
-
-  return this;
 }
 
 module.exports = {

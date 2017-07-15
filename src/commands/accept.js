@@ -1,7 +1,6 @@
 
 
 let {findADRDir, adrFileByID, modifyADR, Status} = require('./adr_util.js')
-// let ADR = require('./adr_obj.js')
 const NL = "\n"
 
 let acceptCmd = (adrID) => {

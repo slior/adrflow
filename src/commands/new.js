@@ -5,11 +5,10 @@ let common = require("./common.js")
 let path = require('path')
 let propUtil = require('properties')
 let { exec } = require('child_process')
-// let ADR = require('../core/adr_obj.js')
 
 let { findADRDir, withAllADRFiles, adrFileRE, create } = require('./adr_util.js')
 
-let adrContent = (number,title) => create(number,title).toADRString()
+let adrContent = (number,title) => create(number,title)
 
 /**
   Given the ADR directory, search all ADRs and resolve the next available ADR number to use for a new ADR
