@@ -27,6 +27,12 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
   fsWalker.on('end',() => { _notFoundHandler() } )
 }
 
+
+let adrFilenameToIndexedFilename = filename => {
+  let a = adrFileRE.exec(filename)
+  if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
+  return { id : a[1]*1, filename : filename}
+}
 /*
   Find all ADR file names in the given directory.
   Return an array with all the ADR file names - to the callback
@@ -42,7 +48,14 @@ let withAllADRFiles = (callback, _adrDir) => {
         ret.push(filename)
     })
 
-    fsWalker.on('end',() => {callback(ret)})
+    
+
+    fsWalker.on('end',() => {
+      let sortedByID = ret.map(adrFilenameToIndexedFilename)
+                        .sort((x,y) => x.id - y.id)
+                        .map( x => x.filename)
+      callback(sortedByID)
+    })
   }
 
   if (!_adrDir)
