@@ -1,12 +1,20 @@
 "use strict"
 
-let {withAllADRFiles} = require('./adr_util.js')
+require('console.table')
+
+let {withAllADRFiles, indexedADRFile} = require('./adr_util.js')
+
+let adrTitleFromFilename = (id,f) => f.replace(`${id}-`,"")
+                                      .split('_').join(' ')
+                                      .replace(/\.md$/,"")
 
 let listCmd = () => {
     withAllADRFiles(files => {
-        files.forEach(file => {
-            console.info(file)
-        });
+        console.table(files.map(indexedADRFile)
+                            .map(x => { 
+                                x.title =  adrTitleFromFilename(x.id,x.filename)
+                                return x
+                            }))
     })
 }
 

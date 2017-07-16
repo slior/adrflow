@@ -178,4 +178,5 @@ module.exports = {
       ACCEPTED : STATUS_ACCEPTED
     }
     , create : createADR
+    , indexedADRFile : adrFilenameToIndexedFilename
 }

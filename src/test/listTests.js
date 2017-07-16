@@ -12,8 +12,11 @@ describe('List command',() => {
         let revert = underTest.__set__({
             withAllADRFiles : (cb) => { cb(mockADRList)}
             , console : {
-                info : (msg) => {
-                    mockADRList.find((f) => { return f == msg} ).should.equal(msg)
+                table : (data) => {
+                    data.map(r => r.filename)
+                        .forEach(f => {
+                            mockADRList.find(fname => fname == f).should.equal(f)
+                        })
                 }
             }
         })
