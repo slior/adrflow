@@ -8,9 +8,13 @@ let adrTitleFromFilename = (id,f) => f.replace(`${id}-`,"")
                                       .split('_').join(' ')
                                       .replace(/\.md$/,"")
 
-let listCmd = () => {
+let listCmd = (options) => {
+    let bare = options.bare || false
     withAllADRFiles(files => {
-        console.table(files.map(indexedADRFile)
+        if (bare)
+            files.forEach(f => console.info(f))
+        else 
+            console.table(files.map(indexedADRFile)
                             .map(x => { 
                                 x.title =  adrTitleFromFilename(x.id,x.filename)
                                 return x

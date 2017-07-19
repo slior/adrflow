@@ -12,6 +12,9 @@ function loadCommand(cmd)
 }
 
 //Setting up program commands
+
+program.version("0.1.0")
+
 program
   .description("ADR: Architecture Decision Records Utility")
   .version('0.0.1')
@@ -30,6 +33,7 @@ program.command("accept <adrID>")
 
 program.command("list")
     .description("List all current ADRs in this project")
+    .option("-b --bare","list only bare filenames")
     .action(loadCommand('list'))
   
 program.command("status <adrID>")
