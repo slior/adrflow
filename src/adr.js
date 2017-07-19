@@ -40,6 +40,10 @@ program.command("status <adrID>")
     .description("Return the status of the ADR designated by the given ID")
     .action(loadCommand('status'))
 
+program.command("link <source> <link> <target>")
+    .description("Link source ADR to target with the given text")
+    .action(loadCommand("link"))
+
 program.parse(process.argv)
 
 if (!program.args.length) {
