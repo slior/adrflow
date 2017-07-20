@@ -10,7 +10,7 @@ let linkCmd = (source,link,target) => {
     modifyADR(source
               , sourceContent =>  {
                     let contextLineRE = /^##\s*Context/gm
-                    let linkLine = `${source} ${linkText} ${target}`
+                    let linkLine = `${linkText} ${target}`
                     return sourceContent.replace(contextLineRE,`${linkLine}${EOL + EOL}${contextHeader}`)
               }
               , src => console.info(`ADR ${src} updated.`))
