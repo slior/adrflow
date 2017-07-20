@@ -179,4 +179,5 @@ module.exports = {
     }
     , create : createADR
     , indexedADRFile : adrFilenameToIndexedFilename
+    , EOL : EOL
 }

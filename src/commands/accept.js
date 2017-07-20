@@ -1,7 +1,6 @@
 
 
-let { modifyADR, Status} = require('./adr_util.js')
-const NL = "\n"
+let { modifyADR, Status, EOL : NL} = require('./adr_util.js')
 
 let acceptCmd = (adrID) => {
 
