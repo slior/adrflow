@@ -110,7 +110,7 @@ let lastStatusOf = (adrID, cb,notFoundHandler) => {
           let a = statuses.split(EOL).filter(l => l.trim() != "")
           cb(a[a.length-1].trim())
         }
-      })
+      },notFoundHandler)
   })
   
 }
