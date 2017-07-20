@@ -107,7 +107,8 @@ let lastStatusOf = (adrID, cb,notFoundHandler) => {
         else
         {
           let statuses = matches[1]
-          let a = statuses.split(EOL).filter(l => l.trim() != "")
+          let a = statuses.split(/\r?\n/) //split to lines
+                          .filter(l => isStatusLine(l.trim()))
           cb(a[a.length-1].trim())
         }
       },notFoundHandler)
@@ -115,14 +116,18 @@ let lastStatusOf = (adrID, cb,notFoundHandler) => {
   
 }
 
+let isStatusLine = line => line.search(/^(Accepted|Proposed)/g) >= 0 //note: this regexp should match the status texts given below
+
+let acceptedStatusText = "Accepted"
 let STATUS_ACCEPTED = (d) => {
   let date = d || (new Date())
-  return `Accepted ${formatDate(date)}`
+  return `${acceptedStatusText} ${formatDate(date)}`
 }
 
+let proposedStatusText = "Proposed"
 let STATUS_PROPOSED = (d) => {
   let dt = d || (new Date())
-  return `Proposed ${formatDate(dt)}`
+  return `${proposedStatusText} ${formatDate(dt)}`
 }
 
 

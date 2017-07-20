@@ -7,6 +7,20 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Status 3",
+            "program": "${workspaceRoot}\\src\\adr.js",
+            "args" : ["status","3"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Status 4",
+            "program": "${workspaceRoot}\\src\\adr.js",
+            "args" : ["status","4"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Status w/ invalid id",
             "program": "${workspaceRoot}\\src\\adr.js",
             "args" : ["status","5"]
