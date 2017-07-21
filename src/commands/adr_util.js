@@ -133,7 +133,20 @@ let STATUS_PROPOSED = (d) => {
   return `${proposedStatusText} ${formatDate(dt)}`
 }
 
-
+/**
+ * Create an ADR, with the given content.
+ * 
+ * @param {string} _id - The ID of the ADR
+ * @param {string} _title The title of the ADR
+ * @param {string} _status - What to include in the status section
+ * @param {string} _context - Content for the context section.
+ * @param {string} _decision - Content for the decision section.
+ * @param {string} _cons - Content for the consequences section.
+ * 
+ * @returns {string} The new ADR content, as a markdown string.
+ * 
+ * @see newADRContent
+ */
 let createADR = (_id,_title,_status, _context,_decision,_cons) => {
   if (!_id) throw new Error("No ID given for new ADR")
   if (!_title) throw new Error("No title given for new ADR")

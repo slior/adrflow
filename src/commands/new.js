@@ -35,6 +35,14 @@ function writeADR(adrFilename,newADR)
     .catch((err) => { console.error(err)})
 }
 
+/**
+ * Launch the editor using the given command, with the given file name as input
+ * @private @function
+ * 
+ * @param {string} file - The file name to open in the editor. Should be the full path.
+ * @param {string} editorCommand The editor command to use.
+ * @see withEditorCommandFrom
+ */
 let launchEditorFor = (file,editorCommand) => {
   exec(`${editorCommand} ${file}`,(err,stdout,stderr) => {
     if (err)
@@ -42,6 +50,13 @@ let launchEditorFor = (file,editorCommand) => {
   })
 }
 
+/**
+ * Invoke the given function with the configured editor command.
+ * @private @function
+ * 
+ * @param {string} adrDir - The ADR directory used to find ADR files.
+ * @param {function} callback - The callback that will be invoked wit the editor command.
+ */
 let withEditorCommandFrom = (adrDir,callback) => {
   propUtil.parse(`${adrDir}/${common.adrMarkerFilename}`,{ path : true}, (err,data) => {
     if (err)
@@ -51,6 +66,16 @@ let withEditorCommandFrom = (adrDir,callback) => {
   })
 }
 
+
+/**
+ * Create a new ADR in an already initialized ADR project.  
+ * This will also launch the configured editor with the new file opened in it.
+ * @public @function
+ * 
+ * @param {string[]} titleParts - The parts of the title of the new ADR
+ * 
+ * @throws {Error} if the ADR file name resulting from the title parts given is invalid.
+ */
 let newCmd = (titleParts) => {
   findADRDir(
             (adrDir) => {
