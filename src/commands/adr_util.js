@@ -80,18 +80,26 @@ let adrContent = (adrFilename) => {
 
 let adrFullPath = (adrDir,adrBasename) => `${adrDir}/${adrBasename}`
 
-let modifyADR = (adrID, cb, postModificationCB) => {
+let withFullADRFilename = (adrID,cb) => {
   findADRDir(adrDir => {
-    adrFileByID(adrID,
-        (adrFilename) => {
-          let fullFilename = `${adrDir}/${adrFilename}`
-          let content = adrContent(fullFilename)
-          fs.writeFileSync(fullFilename,cb(content))
-          if (postModificationCB) postModificationCB(adrID)
-        }
-      , () => { throw new Error(`ADR ${adrID} not found`)})
+    adrFileByID(adrID
+                , adrFilename => {
+                  let fullFilename = `${adrDir}/${adrFilename}`
+                  cb(adrID,fullFilename)
+                }
+                , () => { throw new Error(`ADR ${adrID} not found`)}
+    )
   })
-  
+}
+
+let modifyADR = (adrID, cb, postModificationCB) => {
+  withFullADRFilename(adrID
+                      , (id,fullFilename) => {
+                          let content = adrContent(fullFilename)
+                          fs.writeFileSync(fullFilename,cb(content))
+                          if (postModificationCB) postModificationCB(id)
+                      } 
+  )
 }
 
 let EOL = require('os').EOL
@@ -194,15 +202,11 @@ function formatDate(date) {
  * @param {string => *} cb - A callback function receiving the content of the given ADR
  */
 let withContentOf = (adrID,cb) => {
-  findADRDir(adrDir => {
-      adrFileByID(adrID,
-          (adrFilename) => {
-            let fullFilename = `${adrDir}/${adrFilename}`
-            let content = adrContent(fullFilename)
-            cb(content)
-          }
-        , () => { throw new Error(`ADR ${adrID} not found`)})
-  })
+  withFullADRFilename(adrID
+                      , (id,fullFilename) => {
+                          cb(adrContent(fullFilename))
+                      }
+  )
 }
 
 module.exports = {
