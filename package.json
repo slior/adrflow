@@ -14,7 +14,7 @@
     , "console.table" : "~0.8.0"
     , "marked" : "~0.3.6"
   },
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "ADR Utilities for Windows",
   "scripts": {
     "test": "mocha ./src/test/*.js"
@@ -24,7 +24,7 @@
     "windows"
   ],
   "author": "Lior Schejter",
-  "license": "ISC"
+  "license": "MIT"
   , "pkg" : {
     "scripts": "./src/commands/*"
   }
