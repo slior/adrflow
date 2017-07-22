@@ -78,4 +78,4 @@ Note that you can omit the output file argument, causing the output to spill out
 Copyright (c) 2017 Lior Schejter
 
 MIT License.  
-See the [LICENSE](License) file for more details.
+See the [LICENSE](./LICENSE) file for more details.
