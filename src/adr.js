@@ -44,6 +44,10 @@ program.command("link <source> <link> <target>")
     .description("Link source ADR to target with the given text")
     .action(loadCommand("link"))
 
+process.on('uncaughtException', (err) => {
+  console.error(`${err}`)
+});
+
 program.parse(process.argv)
 
 if (!program.args.length) {
