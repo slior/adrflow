@@ -36,13 +36,16 @@ describe("adrFileByID", () => {
 describe("modifyADR",() => {
   it("should fail if the given ADR ID is not found",() => {
     let revert = IC.__set__({
-       findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
+       findADRDir : ( callback,startFrom,notFoundHandler) => { callback('.') }
       , adrFileByID : (id, cb, errHandler) => { errHandler() }
     })
 
     //input doesn't matter - the mock implementation will invoke the error handler anyway
-    let block = () => {  IC.modifyADR(".","1"); } 
-    block.should.throw()
+    should.throws(() => {
+        IC.modifyADR("."
+            ,content => { should.fail(null,null,"Should not invoke callback") }
+            , () => { should.fail(null,null,"Should not invoke post modification callback")})
+      }, /not found/, "did not fail where expected")
 
     revert()
   })
@@ -119,4 +122,19 @@ describe("witnContentOf", () => {
 
     revert();
   })
+
+   it("should fail if the given ADR ID is not found",() => {
+     let revert = IC.__set__({
+       findADRDir : ( callback,startFrom,notFoundHandler) => { 
+         callback('./doc/adr') }
+      , adrFileByID : (id, cb, errHandler) => { errHandler() }
+      })
+
+      //input doesn't matter - the mock implementation will invoke the error handler anyway
+      should.throws(() => {
+        IC.withContentOf(100,content => { should.fail(null,null,"Should not invoke callback") })
+      }, /not found/, "did not fail where expected")
+
+      revert()
+   })
 })
