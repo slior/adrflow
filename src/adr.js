@@ -48,6 +48,10 @@ program.command("export <id> [destinationFile]")
     .description("Export the given ADR to HTML format or to standard output if no file is given")
     .action(loadCommand("export"))
 
+program.command("content <id>")
+    .description("Output the content of the ADR with the given id")
+    .action(loadCommand("content"))
+
 process.on('uncaughtException', (err) => {
   console.error(`${err}`)
 });
