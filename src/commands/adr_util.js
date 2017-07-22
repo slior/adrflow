@@ -188,6 +188,23 @@ function formatDate(date) {
     return year + "-" + month + "-" + day;
 }
 
+/**
+ * Given an ADR ID and a mapping function, return the invocation of the function on the content of that ADR
+ * @param {number} adrID - The ID of the ADR whose content we wish to map
+ * @param {string => *} cb - A callback function receiving the content of the given ADR
+ */
+let withContentOf = (adrID,cb) => {
+  findADRDir(adrDir => {
+      adrFileByID(adrID,
+          (adrFilename) => {
+            let fullFilename = `${adrDir}/${adrFilename}`
+            let content = adrContent(fullFilename)
+            cb(content)
+          }
+        , () => { throw new Error(`ADR ${adrID} not found`)})
+  })
+}
+
 module.exports = {
     findADRDir : findADRDir
     , withAllADRFiles : withAllADRFiles
@@ -201,4 +218,5 @@ module.exports = {
     , create : createADR
     , indexedADRFile : adrFilenameToIndexedFilename
     , EOL : EOL
+    , withContentOf : withContentOf
 }

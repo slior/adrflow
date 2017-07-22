@@ -12,6 +12,7 @@
     , "properties": "~1.2.1"
     , "findit2": "~2.2.3"
     , "console.table" : "~0.8.0"
+    , "marked" : "~0.3.6"
   },
   "version": "0.0.1",
   "description": "ADR Utilities for Windows",

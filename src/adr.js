@@ -44,6 +44,10 @@ program.command("link <source> <link> <target>")
     .description("Link source ADR to target with the given text")
     .action(loadCommand("link"))
 
+program.command("export <id> [destinationFile]")
+    .description("Export the given ADR to HTML format")
+    .action(loadCommand("export"))
+
 process.on('uncaughtException', (err) => {
   console.error(`${err}`)
 });
