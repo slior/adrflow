@@ -103,3 +103,20 @@ describe("modifyADR",() => {
   })
 
 }) 
+
+describe("witnContentOf", () => {
+  it("should invoke the given callback, with the content of the ADR", () => {
+    let mockContent = "some adr content"
+    let revert = IC.__set__({
+       adrFileByID : (id,cb) => (cb("mock file"))
+      , adrFullPath : (dir,file) => file
+      , adrContent : (file) => { return mockContent}
+    })
+
+    IC.withContentOf(100,content => {
+      content.should.equal(mockContent)
+    })
+
+    revert();
+  })
+})

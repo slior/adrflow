@@ -45,7 +45,7 @@ program.command("link <source> <link> <target>")
     .action(loadCommand("link"))
 
 program.command("export <id> [destinationFile]")
-    .description("Export the given ADR to HTML format")
+    .description("Export the given ADR to HTML format or to standard output if no file is given")
     .action(loadCommand("export"))
 
 process.on('uncaughtException', (err) => {
