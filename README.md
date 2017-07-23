@@ -6,7 +6,10 @@ This project aims to provide a command line tool to work with [Architecture Deci
 This grew out of my need to have this kind of tool when working in a Windows OS.  
 The only option I found was the [ADR tools](https://github.com/npryce/adr-tools) project, which didn't work as easily in Windows. Still, it inspired this project.
 
-This project is implemented as a series of Node.js scripts, with the relevant packages to support different functionality. It is packaged as a single binary using [pkg](https://github.com/zeit/pkg). Using `pkg` allows us also to package this as an executable for other platforms.  
+This project is implemented as a series of Node.js scripts, with the relevant packages to support different functionality. It is packaged as a single binary using [pkg](https://github.com/zeit/pkg). Using `pkg` allows us also to package this as an executable for other platforms.
+
+As a tool, the ADR flow is implemented with a simple command line interface (CLI). This is intended to offer both a simple operation, and thus flexibility.  
+It is also intended to be used in conjunction with other command lines. So where applicable, some command outputs can be pipelined for example.  
 
 
 ## Usage
@@ -72,6 +75,19 @@ adr export 3 adr3.html
 This will create a file called `adr3.html` with the content converted to HTML (using [marked](https://github.com/chjj/marked)).
 
 Note that you can omit the output file argument, causing the output to spill out to standard error. This can be useful if you want to integrate with other command line tools.
+
+## Contributions
+Contributions are more than welcome of course.  
+Please make sure to follow conventions where applicable, and that all tests pass of course.
+
+To execute tests, simply run `npm test`
+
+### Creating a Binary
+Use `pkg` to create the executable. This will require node v6 and above.  
+
+`pack.bat` runs `pkg` that is globally installed, building a windows executable.
+
+
 
 ## License
 
