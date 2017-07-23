@@ -52,6 +52,10 @@ program.command("content <id>")
     .description("Output the content of the ADR with the given id")
     .action(loadCommand("content"))
 
+program.command("edit <id>")
+    .description("Launch the configured editor for the given ADR")
+    .action(loadCommand("edit"))
+
 process.on('uncaughtException', (err) => {
   console.error(`${err}`)
 });

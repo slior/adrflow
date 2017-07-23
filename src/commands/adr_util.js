@@ -4,6 +4,8 @@ let findit = require('findit2')
 let common = require("./common.js")
 let path = require('path')
 let fs = require('fs-extra')
+let propUtil = require('properties')
+let { exec } = require('child_process')
 
 let adrFileRE = /^(\d+)-[\w_]+\.md$/
 
@@ -47,8 +49,6 @@ let withAllADRFiles = (callback, _adrDir) => {
       if (adrFileRE.test(filename))
         ret.push(filename)
     })
-
-    
 
     fsWalker.on('end',() => {
       let sortedByID = ret.map(adrFilenameToIndexedFilename)
@@ -209,6 +209,71 @@ let withContentOf = (adrID,cb) => {
   )
 }
 
+/**
+ * Launch the editor using the given command, with the given file name as input
+ * @private @function
+ * 
+ * @param {string} file - The file name to open in the editor. Should be the full path.
+ * @param {string} editorCommand The editor command to use.
+ * @see withEditorCommandFrom
+ */
+let launchEditorFor = (file,editorCommand) => {
+  exec(`${editorCommand} ${file}`,(err,stdout,stderr) => {
+    if (err)
+      console.error(err)
+  })
+}
+
+/**
+ * Invoke the given function with the configured editor command.
+ * @private @function
+ * 
+ * @param {string} adrDir - The ADR directory used to find ADR files.
+ * @param {function} callback - The callback that will be invoked wit the editor command.
+ */
+let withEditorCommandFrom = (adrDir,callback) => {
+  propUtil.parse(`${adrDir}/${common.adrMarkerFilename}`,{ path : true}, (err,data) => {
+    if (err)
+      console.error(err)
+    else
+      callback(data.editor)
+  })
+}
+
+/**
+ * Find the configured editor command, and invoke the given callback on it
+ * @private @function
+ * 
+ * @param {function} callback - the callback that will be invoked on the editor command (a string)
+ * @see withEditorCommandFrom
+ */
+let withEditorCommand = callback => {
+  findADRDir(adrDir => {
+              withEditorCommandFrom(adrDir, editor => { callback(editor) })
+            }
+            , '.'
+            , () => { throw new Error("ADR directory not found")}
+  )
+}
+
+/**
+ * Given an ADR ID, this will launch the configured editor for that ID
+ * 
+ * @param {number} adrID - The ID of the ADR to find and load into the editor
+ * @see launchEditorFor
+ * @see withEditorCommand
+ */
+let launchEditorForADR = adrID => {
+  withFullADRFilename(adrID
+                      , (id, fullFilename) => {
+                        withEditorCommand(cmd => {
+                          console.info(`Launching editor for ADR ${adrID}`)
+                          launchEditorFor(fullFilename,cmd)
+                        })
+                      }
+  )
+}
+
 module.exports = {
     findADRDir : findADRDir
     , withAllADRFiles : withAllADRFiles
@@ -223,4 +288,6 @@ module.exports = {
     , indexedADRFile : adrFilenameToIndexedFilename
     , EOL : EOL
     , withContentOf : withContentOf
+    , withFullADRFilename : withFullADRFilename
+    , launchEditorForADR : launchEditorForADR
 }

@@ -3,10 +3,8 @@ let fs = require('fs-extra')
 let findit = require('findit2')
 let common = require("./common.js")
 let path = require('path')
-let propUtil = require('properties')
-let { exec } = require('child_process')
 
-let { findADRDir, withAllADRFiles, adrFileRE, create } = require('./adr_util.js')
+let { findADRDir, withAllADRFiles, adrFileRE, create, launchEditorForADR } = require('./adr_util.js')
 
 let adrContent = (number,title) => create(number,title)
 
@@ -35,37 +33,6 @@ function writeADR(adrFilename,newADR)
     .catch((err) => { console.error(err)})
 }
 
-/**
- * Launch the editor using the given command, with the given file name as input
- * @private @function
- * 
- * @param {string} file - The file name to open in the editor. Should be the full path.
- * @param {string} editorCommand The editor command to use.
- * @see withEditorCommandFrom
- */
-let launchEditorFor = (file,editorCommand) => {
-  exec(`${editorCommand} ${file}`,(err,stdout,stderr) => {
-    if (err)
-      console.error(err)
-  })
-}
-
-/**
- * Invoke the given function with the configured editor command.
- * @private @function
- * 
- * @param {string} adrDir - The ADR directory used to find ADR files.
- * @param {function} callback - The callback that will be invoked wit the editor command.
- */
-let withEditorCommandFrom = (adrDir,callback) => {
-  propUtil.parse(`${adrDir}/${common.adrMarkerFilename}`,{ path : true}, (err,data) => {
-    if (err)
-      console.error(err)
-    else
-      callback(data.editor)
-  })
-}
-
 
 /**
  * Create a new ADR in an already initialized ADR project.  
@@ -81,7 +48,6 @@ let newCmd = (titleParts) => {
             (adrDir) => {
               withNextADRNumber(nextNum => {
                 let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
-                // console.log(`basename: ${adrBasename}`)
                 if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
 
                 let title = titleParts.join(' ')
@@ -89,10 +55,8 @@ let newCmd = (titleParts) => {
                 let adrFilename = `${adrDir}/${adrBasename}`
                 writeADR(adrFilename,adrContent(nextNum,title))
 
-                withEditorCommandFrom(adrDir,(editor) => {
-                  console.info(`Launching editor for ${adrFilename}...`)
-                  launchEditorFor(adrFilename,editor)
-                })
+                launchEditorForADR(nextNum)
+
               }, adrDir)
             },
             ".",
