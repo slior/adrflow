@@ -9,7 +9,7 @@ The only option I found was the [ADR tools](https://github.com/npryce/adr-tools)
 This project is implemented as a series of Node.js scripts, with the relevant packages to support different functionality. It is packaged as a single binary using [pkg](https://github.com/zeit/pkg). Using `pkg` allows us also to package this as an executable for other platforms.
 
 As a tool, the ADR flow is implemented with a simple command line interface (CLI). This is intended to offer both a simple operation, and thus flexibility.  
-It is also intended to be used in conjunction with other command lines. So where applicable, some command outputs can be pipelined for example.  
+It is also intended to be used in conjunction with other command lines. For example, some command outputs can be pipelined to other programs.  
 
 
 ## Usage
@@ -38,7 +38,7 @@ You can also specify a different directory as part of the command.
 
 ### Configuration
 The `init` command creates a `.adr` file in the ADR directory. _Don't move or rename this file_.  
-This file also contains configuration for the tool. At the momeny it includes only the path to the editor that will be launched when writing an ADR.  
+This file also contains configuration for the tool. At the moment it includes only the path to the editor that will be launched when writing an ADR.  
 It's a simple properties file with a single property: `editor` which should have the full path to the text editor of you liking.
 
 ### Creating a New ADR
@@ -46,7 +46,7 @@ Creating a new ADR is done simply with the `new` command, followed by the title:
 ```
 adr new Some Title
 ```
-This will create a new ADR with the given title in it. It will assign it with a new available ID.
+This will create a new ADR with the given title in it. It will assign a new available ID to the ADR.
 
 ### Accepting an ADR
 If an ADR is to be accepted, you can invoke the `accept` command:
@@ -74,11 +74,11 @@ adr export 3 adr3.html
 ```
 This will create a file called `adr3.html` with the content converted to HTML (using [marked](https://github.com/chjj/marked)).
 
-Note that you can omit the output file argument, causing the output to spill out to standard error. This can be useful if you want to integrate with other command line tools.
+Note that you can omit the output file argument, causing the output to spill out to standard output. This can be useful if you want to integrate with other command line tools.
 
 ## Contributions
 Contributions are more than welcome of course.  
-Please make sure to follow conventions where applicable, and that all tests pass of course.
+Please make sure to follow conventions where applicable, and that all tests pass before submitting a pull request.
 
 To execute tests, simply run `npm test`
 
