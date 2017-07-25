@@ -1,6 +1,8 @@
 
 # ADR Flow Tools
 
+[![Code Climate](https://codeclimate.com/github/slior/adrflow/badges/gpa.svg)](https://codeclimate.com/github/codeclimate/codeclimate)
+
 This project aims to provide a command line tool to work with [Architecture Decision Records](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions) (ADRs).
 
 This grew out of my need to have this kind of tool when working in a Windows OS.  
