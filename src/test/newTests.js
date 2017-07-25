@@ -55,23 +55,19 @@ describe('New command',() => {
 
   it ("Should assign the next number for the new ADR - one higher than the last available ADR", () => {
     let testTitle = "test"
-
-    var revert = IC.__set__(modifiedCommonMocks({
-      findADRDir : mockFindADRDir
-      , withAllADRFiles : (callback) => { callback(['1-adr1.md','2-adr2.md'])}
-      , adrContent : (num,title,date) => {
-        num.should.eql(3) //one higher than 2-adr2.md
+    let mocksWithHighestNumber = n => {
+      return {
+        findADRDir : mockFindADRDir
+        , withAllADRFiles : callback => {callback(['1-adr1.md', n + '-adr2.md'])}
+        , adrContent : (num,title,date) => { num.should.eql(n+1)}
       }
-    }))
+    }
+
+    var revert = IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(2)))
 
     IC([testTitle])
 
-    revert = IC.__set__(modifiedCommonMocks({
-      findADRDir : mockFindADRDir
-      , withAllADRFiles : (callback) => { callback(['1-adr1.md','5-adr2.md'])}
-      , adrContent : (num,title,date) => {
-        num.should.eql(6) //one higher than 5-adr2.md
-      }}))
+    revert(IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(5))))
 
     IC(["test"])
     revert();
