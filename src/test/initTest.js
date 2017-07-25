@@ -18,14 +18,19 @@ let mockFS = expectedDir => {
 }
 
 describe('Init command',function() {
+
+  let mocksForInit = expectedDir => {
+    return {
+      fs : mockFS(expectedDir)
+      , console : {
+        log : (msg) => { msg.should.eql("Created " + expectedDir)}
+      }
+    }
+  }
+
   it("should create the directory passed to it and issue a proper console log", () => {
     let testDir = "sample"
-    let revert = IC.__set__({
-      fs : mockFS(testDir)
-      , console : {
-        log : (msg) => { msg.should.eql("Created " + testDir)}
-      }
-    })
+    let revert = IC.__set__(mocksForInit(testDir))
 
     IC(testDir)
 
@@ -34,12 +39,7 @@ describe('Init command',function() {
 
   it ("should default to default directory if no argument is passed", () => {
     let defaultDir = 'doc/adr'
-    let revert = IC.__set__({
-      fs : mockFS(defaultDir)
-      , console : {
-        log : (msg) => { msg.should.eql("Created " + defaultDir)}
-      }
-    })
+    let revert = IC.__set__(mocksForInit(defaultDir))
 
     IC("")
 
