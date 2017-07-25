@@ -35,7 +35,7 @@ describe('New command',() => {
   function modifiedCommonMocks(specificMocks) {
     let copy = {}
     for (var k in commonMocks) copy[k] = commonMocks[k]
-    for (var k in specificMocks) copy[k] = specificMocks[k]
+    for (var j in specificMocks) copy[j] = specificMocks[j]
     return copy;
   }
 

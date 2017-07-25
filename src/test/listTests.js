@@ -32,7 +32,7 @@ describe('List command',() => {
             withAllADRFiles : (cb) => { cb(mockADRList)}
             , console : {
                 info : (msg) => {
-                    mockADRList.find(a => a == msg).should.eql(msg)
+                    mockADRList.find(a => a === msg).should.eql(msg)
                 }
             }
         })
