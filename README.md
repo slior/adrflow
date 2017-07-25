@@ -1,7 +1,8 @@
 
 # ADR Flow Tools
 
-[![Code Climate](https://codeclimate.com/github/slior/adrflow/badges/gpa.svg)](https://codeclimate.com/github/codeclimate/codeclimate)
+[![Code Climate](https://codeclimate.com/github/slior/adrflow/badges/gpa.svg)](https://codeclimate.com/github/slior/adrflow)
+![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
 
 This project aims to provide a command line tool to work with [Architecture Decision Records](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions) (ADRs).
 
@@ -78,7 +79,7 @@ This will create a file called `adr3.html` with the content converted to HTML (u
 
 Note that you can omit the output file argument, causing the output to spill out to standard output. This can be useful if you want to integrate with other command line tools.
 
-## Contributions
+## Contributions 
 Contributions are more than welcome of course.  
 Please make sure to follow conventions where applicable, and that all tests pass before submitting a pull request.
 
