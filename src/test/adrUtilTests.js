@@ -8,11 +8,14 @@ describe("ADR Utils", () => {
 
 
   describe("adrFileByID", () => {
-    it("should invoke the error handler if no matching ADR is found ", () => {
-      let revert = IC.__set__({
+
+    let fileByIDMocks = {
         findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
         , withAllADRFiles : (callback) => { callback(['1-adr1.md','2-adr2.md'])}
-      })
+    }
+
+    it("should invoke the error handler if no matching ADR is found ", () => {
+      let revert = IC.__set__(fileByIDMocks)
       
       IC.adrFileByID(5, (file) => { should.fail("should not find adr 5") }, () => { /* ok */})
 
@@ -21,10 +24,7 @@ describe("ADR Utils", () => {
 
     it("should return the filename of the ADR, if found",() => {
 
-      let revert = IC.__set__({
-        findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
-        , withAllADRFiles : (callback) => { callback(['1-adr1.md','2-adr2.md'])}
-      })
+      let revert = IC.__set__(fileByIDMocks)
 
       IC.adrFileByID(2, 
                     (file) => { file.should.equal('2-adr2.md') }, 
@@ -34,13 +34,14 @@ describe("ADR Utils", () => {
     })
   })
 
+  let mockFileByIDWithError = {
+        findADRDir : ( callback,startFrom,notFoundHandler) => { callback('.') }
+        , adrFileByID : (id, cb, errHandler) => { errHandler() }
+      }
 
   describe("modifyADR",() => {
     it("should fail if the given ADR ID is not found",() => {
-      let revert = IC.__set__({
-        findADRDir : ( callback,startFrom,notFoundHandler) => { callback('.') }
-        , adrFileByID : (id, cb, errHandler) => { errHandler() }
-      })
+      let revert = IC.__set__(mockFileByIDWithError)
 
       //input doesn't matter - the mock implementation will invoke the error handler anyway
       should.throws(() => {
@@ -126,11 +127,7 @@ describe("ADR Utils", () => {
     })
 
     it("should fail if the given ADR ID is not found",() => {
-      let revert = IC.__set__({
-        findADRDir : ( callback,startFrom,notFoundHandler) => { 
-          callback('./doc/adr') }
-        , adrFileByID : (id, cb, errHandler) => { errHandler() }
-        })
+      let revert = IC.__set__(mockFileByIDWithError)
 
         //input doesn't matter - the mock implementation will invoke the error handler anyway
         should.throws(() => {
