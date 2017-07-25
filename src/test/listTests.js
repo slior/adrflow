@@ -16,7 +16,7 @@ describe('List command',() => {
                 table : (data) => {
                     data.map(r => r.filename)
                         .forEach(f => {
-                            mockADRList.find(fname => fname == f).should.equal(f)
+                            mockADRList.find(fname => fname === f).should.equal(f)
                         })
                 }
             }

@@ -17,7 +17,7 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
   let _notFoundHandler = notFoundHandler || defaultNotFoundHandler
 
   fsWalker.on('file',(file,stats,linkPath) => {
-    if (path.basename(file) == common.adrMarkerFilename)
+    if (path.basename(file) === common.adrMarkerFilename)
     {
         // console.log('Found: ' + file)
       adrDir = path.dirname(file)
@@ -66,7 +66,7 @@ let withAllADRFiles = (callback, _adrDir) => {
 
 let adrFileByID = (adrID, cb, notFoundHandler) => {
   withAllADRFiles(files => {
-    let matchingFilenames = files.filter(f => f.indexOf(adrID + "-") == 0)
+    let matchingFilenames = files.filter(f => f.indexOf(adrID + "-") === 0)
     if (matchingFilenames.length < 1)
       notFoundHandler()
     else
@@ -129,17 +129,19 @@ let lastStatusOf = (adrID, cb,notFoundHandler) => {
 
 let isStatusLine = line => line.search(/^(Accepted|Proposed)/g) >= 0 //note: this regexp should match the status texts given below
 
-let acceptedStatusText = "Accepted"
-let STATUS_ACCEPTED = (d) => {
-  let date = d || (new Date())
-  return `${acceptedStatusText} ${formatDate(date)}`
+function statusMsgGenerator(text)
+{
+  return d => {
+    let date = d || (new Date())
+    return `${text} ${formatDate(date)}`  
+  }
 }
 
+let acceptedStatusText = "Accepted"
+let STATUS_ACCEPTED = statusMsgGenerator(acceptedStatusText)
+
 let proposedStatusText = "Proposed"
-let STATUS_PROPOSED = (d) => {
-  let dt = d || (new Date())
-  return `${proposedStatusText} ${formatDate(dt)}`
-}
+let STATUS_PROPOSED = statusMsgGenerator(proposedStatusText)
 
 /**
  * Create an ADR, with the given content.
