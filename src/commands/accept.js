@@ -10,7 +10,7 @@ let acceptCmd = (adrID) => {
     (content) => {
       let statusRE = /Status[\s]*$[\s]+[\w\- \n]+/gm //a RE that will match all the status changes
       return content.replace(statusRE,
-                              (match,offset,s) => [match.trim(),Status.ACCEPTED(),NL].join(NL))
+                              (match,offset,s) => [match.trim(),"  ",Status.ACCEPTED(),NL].join(NL))
     },
     adrID => { console.log(`ADR ${adrID} Accepted`)}
   )
