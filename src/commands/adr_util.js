@@ -7,7 +7,7 @@ let fs = require('fs-extra')
 let propUtil = require('properties')
 let { exec } = require('child_process')
 
-let adrFileRE = /^(\d+)-[\w_]+\.md$/
+let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
 
 let findADRDir = ( callback,startFrom,notFoundHandler) => {
   let startDir = startFrom || "."

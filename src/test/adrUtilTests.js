@@ -1,6 +1,7 @@
 "use strict"
 
 const should = require('should')
+const ee = require("event-emitter")
 const rewire = require('rewire')
 
 const IC = rewire('../commands/adr_util.js')
@@ -138,4 +139,27 @@ describe("ADR Utils", () => {
     })
   })
 
+  describe("withAllADRFiles", () => {
+    it ("should invoke the callback with all the ADR files found in the ADR dir", () => {
+      let emitter = ee(Object.prototype)
+      let mockFiles = ['1-some file.md', '2-some-other-file.md',".adr","3 some adr.md","non adr.txt"]
+      IC.__set__({
+        findit : dir => {
+          return emitter;
+        }
+        , findADRDir : cb => { cb('.')}
+      })
+
+      IC.withAllADRFiles(files => {
+        let result = files.includes(mockFiles[0]) 
+                      && files.includes(mockFiles[1])
+                      && files.includes(mockFiles[3])
+        result.should.equal(true)
+      })
+
+      for (var f in mockFiles)
+        emitter.emit('file',mockFiles[f],null,null)
+      emitter.emit('end')
+    })
+  })
 })
