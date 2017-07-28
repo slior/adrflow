@@ -12,18 +12,20 @@ let withHTMLContentFor = (id,cb) => {
     withContentOf(id, content => { cb(marked(content))} )
 }
 
+let writeToFileAndReport = (file,html,msg) => {
+    writeFileSync(file,html)
+    console.info(msg)
+}
+
+let dispatchOutput = (file,output,msg) => {
+    if (file)
+        writeToFileAndReport(file,output,msg)
+    else 
+        console.log(output)
+}
+
 let exportSingleADR = (id,destinationFile) => {
-    withHTMLContentFor(id
-                      , html => {
-                            if (destinationFile)
-                            {
-                                writeFileSync(destinationFile,html)
-                                console.info(`ADR ${id} has been exported to ${destinationFile}`)
-                            }
-                            else
-                                console.log(html)   
-                        }
-    )
+    withHTMLContentFor(id , html => dispatchOutput(destinationFile,wrappedHTML(html),`ADR ${id} has been exported to ${destinationFile}`))
 }
 
 let increaseHeadlineIndent = adrContent => adrContent.replace(/^#/gm,'##')
@@ -53,15 +55,13 @@ let exportAll = (destinationFile) => {
     withAllADRFiles(files => {
         let allADRContent = []
         let finishedExtraction = () => allADRContent.length === files.length
+
         files.map(indexedADRFile)
              .forEach(idFile => {
                 withContentOf(idFile.id, content => {
                                             allADRContent.push({id : idFile.id,content : content})
-                                            if (finishedExtraction())
-                                            { //TODO: there's gotta be a better way to catch this end of iteration
-                                                writeFileSync(destinationFile,allADRsToHTML(allADRContent))
-                                                console.info(`All ADRs exported to ${destinationFile}`)
-                                            }
+                                            if (finishedExtraction()) //TODO: there's gotta be a better way to catch this end of iteration
+                                                dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`)
                                          }
                 )
             })
