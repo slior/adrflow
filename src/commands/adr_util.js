@@ -29,7 +29,11 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
   fsWalker.on('end',() => { _notFoundHandler() } )
 }
 
-
+/**
+ * Given an ADR (base) file name - return an object with the same file name + the extracted ID
+ * @param {string} filename - The base file name of the ADR file.
+ * @returns an object with the file name (key = 'filename') and the numeric ID of the ADR (key = 'id').
+ */
 let adrFilenameToIndexedFilename = filename => {
   let a = adrFileRE.exec(filename)
   if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
@@ -276,6 +280,10 @@ let launchEditorForADR = adrID => {
   )
 }
 
+let adrTitleFromFilename = (id,f) => f.replace(`${id}-`,"")
+                                      .split('_').join(' ')
+                                      .replace(/\.md$/,"")
+
 module.exports = {
     findADRDir : findADRDir
     , withAllADRFiles : withAllADRFiles
@@ -292,4 +300,5 @@ module.exports = {
     , withContentOf : withContentOf
     , withFullADRFilename : withFullADRFilename
     , launchEditorForADR : launchEditorForADR
+    , adrTitleFromFilename : adrTitleFromFilename
 }

@@ -7,6 +7,13 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Export all",
+            "program": "${workspaceRoot}\\src\\adr.js",
+            "args" : ["export","*","all.html"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Status 3",
             "program": "${workspaceRoot}\\src\\adr.js",
             "args" : ["status","3"]

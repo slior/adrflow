@@ -2,11 +2,7 @@
 
 require('console.table')
 
-let {withAllADRFiles, indexedADRFile} = require('./adr_util.js')
-
-let adrTitleFromFilename = (id,f) => f.replace(`${id}-`,"")
-                                      .split('_').join(' ')
-                                      .replace(/\.md$/,"")
+let {withAllADRFiles, indexedADRFile, adrTitleFromFilename} = require('./adr_util.js')
 
 let listCmd = (options) => {
     let bare = options.bare || false
