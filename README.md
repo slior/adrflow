@@ -79,6 +79,12 @@ This will create a file called `adr3.html` with the content converted to HTML (u
 
 Note that you can omit the output file argument, causing the output to spill out to standard output. This can be useful if you want to integrate with other command line tools.
 
+Another option is to export all ADRs to a single file, with a table of contents.  
+To do that, simply specify `*` (asterisk) as the ID in the above command, e.g.:
+```
+adr export * all.html
+```
+
 ## Contributions 
 Contributions are more than welcome of course.  
 Please make sure to follow conventions where applicable, and that all tests pass before submitting a pull request.
