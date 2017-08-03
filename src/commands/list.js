@@ -2,7 +2,28 @@
 
 require('console.table')
 
-let {withAllADRFiles, indexedADRFile, adrTitleFromFilename} = require('./adr_util.js')
+let {withContentOf, withAllADRFiles, indexedADRFile, adrTitleFromFilename} = require('./adr_util.js')
+
+let withLinksFor = (adrID, cb) => {
+  withContentOf(adrID
+               , content => {
+                 let linksFindingRE = /([\w_]+[\s]+[\d]+)[\s]*##[\s]*Context/g
+                 let matches = linksFindingRE.exec(content)
+                 if (matches.length < 2)
+                    cb([])
+                 else 
+                 {
+                   let linksText = matches[1]
+                   let a = linksText.split(/\r?\n/).filter(l => l.trim() == "")
+                   cb(a)
+                 }
+               })
+}
+
+let enrichedADRListItem = adrData => {
+  adrData.title = adrTitleFromFilename(adrData.id,adrData.filename)
+  return adrData;
+}
 
 let listCmd = (options) => {
     let bare = options.bare || false

@@ -301,4 +301,5 @@ module.exports = {
     , withFullADRFilename : withFullADRFilename
     , launchEditorForADR : launchEditorForADR
     , adrTitleFromFilename : adrTitleFromFilename
+    , adrContent : adrContent
 }
