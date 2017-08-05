@@ -14,6 +14,7 @@
     , "console.table" : "~0.8.0"
     , "marked" : "~0.3.6"
     , "event-emitter" : "~0.3.5"
+    , "klaw-sync" : "~2.1.0"
   },
   "version": "0.1.0",
   "description": "ADR Utilities for Windows",
