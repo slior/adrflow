@@ -10,7 +10,7 @@ let linksFrom = adrID => {
     let linksFindingRE = /((([\w_]+[\s]+[\d]+)[\s]*)*)##[\s]*Context/g
     let matches = linksFindingRE.exec(content)
     return (matches && 
-            (matches.length < 2 ? [] : matches[1].split(/\r?\n/).filter(l => l.trim() != "")))
+            (matches.length < 2 ? [] : matches[1].split(/\r?\n/).filter(l => l.trim() !== "")))
             || []
 }
 
