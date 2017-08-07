@@ -10,7 +10,7 @@ describe("Synchronous ADR Utils", () => {
     describe("contentOf", () => {
         it ("should throw an exception when an invalid ADR ID is given",() => {
             should.throws(() => {
-                utils.contentOf("-1")
+                utils.createUtilContext().contentOf("-1")
             }, /could not find ADR file for ADR/i,"should throw a not found exception")
         })
 
@@ -20,7 +20,7 @@ describe("Synchronous ADR Utils", () => {
             })
 
             should.throws(() => {
-                utils.contentOf("1")
+                utils.createUtilContext().contentOf("1")
             },/no adr directory found/i,"should fail with 'no adr directory found'")
 
             revert()
@@ -39,7 +39,7 @@ describe("Synchronous ADR Utils", () => {
                 }
             })
 
-            utils.contentOf("1").should.equal("some string")
+            utils.createUtilContext().contentOf("1").should.equal("some string")
 
             revert()
         })

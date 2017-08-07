@@ -15,15 +15,15 @@ let resolveADRDir = startFrom => {
         return path.dirname(markerFilesFound[0].path)
 }
 
-let allADRFiles = () => {
-    let adrDir = resolveADRDir()
+let allADRFiles = (_adrDir) => {
+    let adrDir = _adrDir || resolveADRDir()
     let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
     let adrFilter = file => adrFileRE.test(path.basename(file.path))
     return walker(adrDir, {filter : adrFilter}).map(f => f.path)
 }
 
-let fullPathTo = adrID => {
-    let adrFiles = allADRFiles() //TODO: this enumerates all files every time, can probably use caching/memoization.
+let fullPathTo = (adrID,_adrFiles) => {
+    let adrFiles = _adrFiles || allADRFiles()
     let matchingFilenames = adrFiles.filter(f => path.basename(f).indexOf(adrID + "-") === 0)
     if (matchingFilenames.length < 1) //not found
         throw new Error(`Could not find ADR file for ADR ${adrID}`)
@@ -31,12 +31,21 @@ let fullPathTo = adrID => {
         return matchingFilenames[0]
 }
 
-let contentOf = adrID => {
-    let adrFilename = fullPathTo(adrID)
+let contentOf = (adrID,fromFiles) => {
+    let adrFilename = fullPathTo(adrID,fromFiles)
     return fs.readFileSync(adrFilename).toString()
 }
 
-module.exports = {
-    contentOf : contentOf
+function Context()
+{
+    this.adrID = resolveADRDir()
+    this.adrFiles = allADRFiles(this.adrID)
+    this.contentOf = adrID => {
+        return contentOf(adrID,this.adrFiles)
+    }
+    return this;
+}
 
+module.exports = {
+    createUtilContext : () => { return new Context() }
 }

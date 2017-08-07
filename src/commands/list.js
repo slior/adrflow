@@ -1,12 +1,12 @@
 "use strict"
 
 require('console.table')
-let {contentOf} = require('../adr_util_sync.js')
+let utils = require('../adr_util_sync.js').createUtilContext()
 
 let {withAllADRFiles, indexedADRFile, adrTitleFromFilename} = require('./adr_util.js')
 
 let linksFrom = adrID => {
-    let content = contentOf(adrID)
+    let content = utils.contentOf(adrID)
     let linksFindingRE = /((([\w_]+[\s]+[\d]+)[\s]*)*)##[\s]*Context/g
     let matches = linksFindingRE.exec(content)
     return (matches && 
