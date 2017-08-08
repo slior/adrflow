@@ -9,9 +9,9 @@ let {promisedContentOf} = require('../adr_util_async.js')
 const ALL = '*'
 const TwoNLs = EOL + EOL
 
-let withHTMLContentFor = (id,cb) => {
+let withHTMLContentFor = (id,cb) => 
     withContentOf(id, content => { cb(marked(content))} )
-}
+
 
 let writeToFileAndReport = (file,html,msg) => {
     writeFileSync(file,html)
@@ -25,9 +25,8 @@ let dispatchOutput = (file,output,msg) => {
         console.log(output)
 }
 
-let exportSingleADR = (id,destinationFile) => {
+let exportSingleADR = (id,destinationFile) => 
     withHTMLContentFor(id , html => dispatchOutput(destinationFile,wrappedHTML(html),`ADR ${id} has been exported to ${destinationFile}`))
-}
 
 let increaseHeadlineIndent = adrContent => adrContent.replace(/^#/gm,'##')
 
@@ -52,17 +51,17 @@ let allADRsToHTML = allIndexedADRContent => {
     return wrappedHTML(marked(allMD.join(TwoNLs))) //concatenate everything, and transform to HTML
 }
 
-let exportAll = (destinationFile) => {
+let exportAll = (destinationFile) => 
     withAllADRFiles(files => {
         let promisedFileContentWithIDs = files.map(indexedADRFile)
                                               .map(idFile => promisedContentOf(idFile.id)
                                               .then(cntnt => { return { id : idFile.id, content : cntnt}}))
-                                              
+
         Promise.all(promisedFileContentWithIDs)
                .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`))
                .catch(err => console.error(err))
     })
-}
+
 /**
  * Command to export a given ADR to an HTML format
  * @param {number} id - The ID of the ADR to export
