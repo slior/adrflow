@@ -12,7 +12,7 @@ The only option I found was the [ADR tools](https://github.com/npryce/adr-tools)
 This project is implemented as a series of Node.js scripts, with the relevant packages to support different functionality. It is packaged as a single binary using [pkg](https://github.com/zeit/pkg). Using `pkg` allows us also to package this as an executable for other platforms.
 
 As a tool, the ADR flow is implemented with a simple command line interface (CLI). This is intended to offer both a simple operation, and thus flexibility.  
-It is also intended to be used in conjunction with other command lines. For example, some command outputs can be pipelined to other programs.  
+It is also intended to be used in conjunction with other command line tools. For example, some command outputs can be pipelined to other programs.  
 
 
 ## Usage
@@ -43,6 +43,9 @@ You can also specify a different directory as part of the command.
 The `init` command creates a `.adr` file in the ADR directory. _Don't move or rename this file_.  
 This file also contains configuration for the tool. At the moment it includes only the path to the editor that will be launched when writing an ADR.  
 It's a simple properties file with a single property: `editor` which should have the full path to the text editor of you liking.
+
+Starting from version 0.3.0, you can also specify a file called `local.adr` right next to `.adr` which will be used to override the properties in `.adr`. This enables team to share configuration (through the source control system) in the `.adr`, while still allowing every developer to specify his own properties, e.g. different editor.  
+Note that it's advisable you don't commit the `local.adr` file, so it will not interefere with other team members' overriden properties. Add it to `.gitignore`/`.svnignore` or whatever other method your VCS uses.
 
 ### Creating a New ADR
 Creating a new ADR is done simply with the `new` command, followed by the title:
