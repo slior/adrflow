@@ -239,10 +239,18 @@ let launchEditorFor = (file,editorCommand) => {
  */
 let withEditorCommandFrom = (adrDir,callback) => {
   propUtil.parse(`${adrDir}/${common.adrMarkerFilename}`,{ path : true}, (err,data) => {
-    if (err)
-      console.error(err)
-    else
-      callback(data.editor)
+    propUtil.parse(`${adrDir}/${common.localADRConfigFilename}`, {path : true}, (err2,localConfig) => {
+      if (err)
+        console.error(err)
+      else if (err2)
+        console.error(err2)
+      else
+      {
+        let config = Object.assign({},data,localConfig)
+        callback(config.editor)
+      }
+    })
+    
   })
 }
 
