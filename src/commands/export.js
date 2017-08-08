@@ -3,6 +3,7 @@
 let marked = require("marked")
 let {withContentOf, withAllADRFiles, indexedADRFile, EOL, adrTitleFromFilename} = require('./adr_util.js')
 let {writeFileSync} = require('fs-extra')
+let {promisedContentOf} = require('../adr_util_async.js')
 
 
 const ALL = '*'
@@ -53,18 +54,13 @@ let allADRsToHTML = allIndexedADRContent => {
 
 let exportAll = (destinationFile) => {
     withAllADRFiles(files => {
-        let allADRContent = []
-        let finishedExtraction = () => allADRContent.length === files.length
-
-        files.map(indexedADRFile)
-             .forEach(idFile => {
-                withContentOf(idFile.id, content => {
-                                            allADRContent.push({id : idFile.id,content : content})
-                                            if (finishedExtraction()) //TODO: there's gotta be a better way to catch this end of iteration
-                                                dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`)
-                                         }
-                )
-            })
+        let promisedFileContentWithIDs = files.map(indexedADRFile)
+                                              .map(idFile => promisedContentOf(idFile.id)
+                                              .then(cntnt => { return { id : idFile.id, content : cntnt}}))
+                                              
+        Promise.all(promisedFileContentWithIDs)
+               .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`))
+               .catch(err => console.error(err))
     })
 }
 /**
