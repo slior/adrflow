@@ -36,12 +36,16 @@ describe("Link Command", () => {
         let src = 1
         let target = 2
         let link = "testLink"
+        let mockADRFile = "2.md"
 
         let reverse = underTest.__set__({
             modifyADR : (srcID,contentCB,doneCB) => {
                 let newContent = contentCB(mockContent)
-                let expectedText = `${link} ${target}${EOL+EOL}## Context`
+                let expectedText = `${link} [${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
+            }
+            , adrs : {
+                filenameFor : id => mockADRFile
             }
         })
 
@@ -67,14 +71,18 @@ describe("Link Command", () => {
     })
 
     it("should default to a default link text when no link text is given",() => {
-         let src = 1
+        let src = 1
         let target = 2
+        let mockADRFile = "2.md"
 
         let reverse = underTest.__set__({
             modifyADR : (srcID,contentCB,doneCB) => {
                 let newContent = contentCB(mockContent)
-                let expectedText = `links to ${target}${EOL+EOL}## Context`
+                let expectedText = `links to [${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
+            }
+            , adrs : {
+                filenameFor : id => mockADRFile
             }
         })
 

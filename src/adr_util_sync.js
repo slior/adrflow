@@ -38,11 +38,14 @@ let contentOf = (adrID,fromFiles) => {
 
 function Context()
 {
-    this.adrID = resolveADRDir()
-    this.adrFiles = allADRFiles(this.adrID)
+    this.adrDir = resolveADRDir()
+    this.adrFiles = allADRFiles(this.adrDir)
     this.contentOf = adrID => {
         return contentOf(adrID,this.adrFiles)
     }
+
+    this.filenameFor = adrID => path.basename(fullPathTo(adrID,this.adrFiles))
+
     return this;
 }
 
