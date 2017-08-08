@@ -6,16 +6,15 @@ let utils = require('../adr_util_sync.js').createUtilContext()
 let {withAllADRFiles, indexedADRFile, adrTitleFromFilename} = require('./adr_util.js')
 
 let stripMDLink = textWithMDLink => {
+    const LINK_TEXT = 1 //match group #1: the text of the link
+    const TARGET_ID = 2 //match group #2: the ID of the target ADR
     let re = /([\w_]+)[\s]+\[?([\d])+\]?(\(.+\.md\))?/ //note: this roughly matches the RE in 'linksFrom'
     let matches = re.exec(textWithMDLink)
-    if (!matches || matches.length < 3) 
-        return textWithMDLink
-    else 
-    {
-        let targetID = matches[2]
-        let linkText = matches[1]
-        return `${linkText} ${targetID}`
-    }
+
+    return  (!matches || matches.length < 3) ?
+             textWithMDLink
+             :
+             `${matches[LINK_TEXT]} ${matches[TARGET_ID]}`
 }
 
 let linksFrom = adrID => {
