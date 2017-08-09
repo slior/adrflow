@@ -32,7 +32,7 @@ let fullPathTo = (adrID,_adrFiles) => {
         return matchingFilenames[0]
 }
 
-let contentOf = (adrID,fromFiles) => {
+let _contentOf = (adrID,fromFiles) => {
     let adrFilename = fullPathTo(adrID,fromFiles)
     return fs.readFileSync(adrFilename).toString()
 }
@@ -57,20 +57,31 @@ let loadConfigurationFrom = fromDir => {
     }
 }
 
-function Context()
+class ADRContext
 {
-    this.adrDir = resolveADRDir()
-    this.adrFiles = allADRFiles(this.adrDir)
-    this.contentOf = adrID => contentOf(adrID,this.adrFiles)
+    constructor() 
+    {
+        this.adrDir = resolveADRDir()
+        this.adrFiles = allADRFiles(this.adrDir)
+        this.config = loadConfigurationFrom(this.adrDir)
+    }
+    
+    contentOf(adrID)
+    {
+        return _contentOf(adrID,this.adrFiles)
+    } 
 
-    this.filenameFor = adrID => path.basename(fullPathTo(adrID,this.adrFiles))
-    this.baseFilename = fullFilename => path.basename(fullFilename)
+    filenameFor(adrID) 
+    {
+        return path.basename(fullPathTo(adrID,this.adrFiles))
+    }
 
-    this.config = loadConfigurationFrom(this.adrDir)
-
-    return this;
+    baseFilename(fullFilename) 
+    {
+        return path.basename(fullFilename)
+    } 
 }
 
 module.exports = {
-    createUtilContext : () => { return new Context() }
+    createUtilContext : () => { return new ADRContext() }
 }
