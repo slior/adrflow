@@ -79,7 +79,16 @@ class ADRContext
     baseFilename(fullFilename) 
     {
         return path.basename(fullFilename)
-    } 
+    }
+
+    modifyADR(adrID, contentModifier, postModificationCB)
+    {
+        let fullFilename = fullPathTo(adrID,this.adrFiles)
+        fs.writeFileSync(fullFilename
+                         ,contentModifier(this.contentOf(adrID)))
+        if (postModificationCB)
+            postModificationCB(adrID)
+    }
 }
 
 function formatDate(date) {
@@ -114,4 +123,5 @@ module.exports = {
         Proposed : STATUS_PROPOSED
         , Accepted : STATUS_ACCEPTED
     }
+    , EOL : require('os').EOL
 }
