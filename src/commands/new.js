@@ -3,27 +3,13 @@ let fs = require('fs-extra')
 let findit = require('findit2')
 let common = require("./common.js")
 let path = require('path')
+let { exec } = require('child_process')
 
 let { findADRDir, withAllADRFiles, adrFileRE, create, launchEditorForADR } = require('./adr_util.js')
 
-let adrContent = (number,title) => create(number,title)
+let utils = require('../adr_util_sync.js').createUtilContext()
 
-/**
-  Given the ADR directory, search all ADRs and resolve the next available ADR number to use for a new ADR
- */
-function withNextADRNumber(callback,_adrDir)
-{
-  withAllADRFiles(adrFiles => {
-    let currentNumbers = adrFiles.map(f => {
-                                        let match = adrFileRE.exec(f);
-                                        if (!match)
-                                          throw new Error(`ADR file name ${f} doesn't seem to match format`)
-                                        return match[1]
-                                      })
-                                  .map(s => s*1)
-    callback(currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1)
-  }, _adrDir)
-}
+let adrContent = (number,title) => create(number,title)
 
 function writeADR(adrFilename,newADR)
 {
@@ -33,6 +19,26 @@ function writeADR(adrFilename,newADR)
     .catch((err) => { console.error(err)})
 }
 
+
+let nextADRNumber = () =>
+{
+  let currentNumbers = utils.adrFiles.map(utils.baseFilename)
+                                     .map(f => {
+                                        let match = adrFileRE.exec(f);
+                                        if (!match)
+                                          throw new Error(`ADR file name ${f} doesn't seem to match format`)
+                                        return match[1]
+                                      })
+                                  .map(s => s*1)
+  return currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1
+}
+
+let launchEditorFor = (fullFilename) =>
+{
+  let editorCommand = utils.config.editor
+  exec(`${editorCommand} ${fullFilename}`
+       ,(err,stdout,stderr) => { if (err) console.error(err) })
+}
 
 /**
  * Create a new ADR in an already initialized ADR project.  
@@ -44,25 +50,15 @@ function writeADR(adrFilename,newADR)
  * @throws {Error} if the ADR file name resulting from the title parts given is invalid.
  */
 let newCmd = (titleParts) => {
-  findADRDir(
-            (adrDir) => {
-              withNextADRNumber(nextNum => {
-                let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
-                if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
-
-                let title = titleParts.join(' ')
-                console.info("Creating ADR " + title + " at " + adrDir + " ...")
-                let adrFilename = `${adrDir}/${adrBasename}`
-                writeADR(adrFilename,adrContent(nextNum,title))
-
-                launchEditorForADR(nextNum)
-
-              }, adrDir)
-            },
-            ".",
-            () => {
-              console.error("ADR dir not found")
-            })
+  let nextNum = nextADRNumber()
+  let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
+  if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
+  
+  let title = titleParts.join(' ')
+  console.info("Creating ADR " + title + " at " + utils.adrDir + " ...")
+  let adrFilename = `${utils.adrDir}/${adrBasename}`
+  writeADR(adrFilename,adrContent(nextNum,title))
+  launchEditorFor(adrFilename)
 }
 
 module.exports = newCmd

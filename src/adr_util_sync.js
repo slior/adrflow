@@ -4,6 +4,7 @@ let fs = require('fs-extra')
 let walker = require('klaw-sync')
 let path = require('path')
 let common = require("./commands/common.js")
+let propUtil = require('properties')
 
 let resolveADRDir = startFrom => {
     let start = startFrom || '.'
@@ -36,15 +37,32 @@ let contentOf = (adrID,fromFiles) => {
     return fs.readFileSync(adrFilename).toString()
 }
 
+let loadConfigurationFrom = fromDir => {
+    try
+    {
+        let sharedConfigText = fs.readFileSync(`${fromDir}/${common.adrMarkerFilename}`).toString()
+        let localConfigText = fs.readFileSync(`${fromDir}/${common.localADRConfigFilename}`).toString()
+        let sharedConfig = propUtil.parse(sharedConfigText)
+        let localConfig = propUtil.parse(localConfigText)
+        return Object.assign({},sharedConfig,localConfig)
+    }
+    catch (err)
+    {
+        console.error(err)
+        return {}
+    }
+}
+
 function Context()
 {
     this.adrDir = resolveADRDir()
     this.adrFiles = allADRFiles(this.adrDir)
-    this.contentOf = adrID => {
-        return contentOf(adrID,this.adrFiles)
-    }
+    this.contentOf = adrID => contentOf(adrID,this.adrFiles)
 
     this.filenameFor = adrID => path.basename(fullPathTo(adrID,this.adrFiles))
+    this.baseFilename = fullFilename => path.basename(fullFilename)
+
+    this.config = loadConfigurationFrom(this.adrDir)
 
     return this;
 }

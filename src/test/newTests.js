@@ -2,6 +2,7 @@
 
 const should = require('should')
 const rewire = require('rewire')
+const utils = require('../adr_util_sync.js').createUtilContext()
 
 const IC = rewire('../commands/new.js')
 
@@ -57,19 +58,26 @@ describe('New command',() => {
     let testTitle = "test"
     let mocksWithHighestNumber = n => {
       return {
-        findADRDir : mockFindADRDir
-        , withAllADRFiles : callback => {callback(['1-adr1.md', n + '-adr2.md'])}
-        , adrContent : (num,title,date) => { num.should.eql(n+1)}
+        utils : Object.assign(utils,{
+          adrFiles : ['1-adr1.md', n + '-adr2.md']
+          , adrContent : (num,title) => { num.should.eql(n+1)}
+        })
+        , writeADR : (file,content) => {}
+        , launchEditorFor : filename => {}
       }
+      // return {
+      //   findADRDir : mockFindADRDir
+      //   , withAllADRFiles : callback => {callback(['1-adr1.md', n + '-adr2.md'])}
+      //   , adrContent : (num,title,date) => { num.should.eql(n+1)}
+      // }
     }
 
     var revert = IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(2)))
-
     IC([testTitle])
-
-    revert(IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(5))))
-
-    IC(["test"])
+    revert()
+    //testing also for non-consecutive numbers
+    revert = IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(5)))
+    IC([testTitle])
     revert();
   })
 
@@ -103,13 +111,18 @@ describe('New command',() => {
 
   it("should launch the editor configured in the adr configuration", () => {
 
+    let testTitle = "testadr"
     let revert = IC.__set__(modifiedCommonMocks({
-      launchEditorFor : (file,editorCmd) => {
-        editorCmd.should.eql(mockEditorCommand)
+      utils : {
+        config : { editor : mockEditorCommand }
+        , adrDir : '.'
       }
+      , writeADR : () => {}
+      , nextADRNumber : () => 1
+      , exec : (cmd) => { cmd.should.eql(`${mockEditorCommand} ./1-${testTitle}.md`)}
     }))
 
-    IC(["testadr"])
+    IC([testTitle])
 
     revert();
 
