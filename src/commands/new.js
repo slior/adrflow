@@ -5,11 +5,52 @@ let common = require("./common.js")
 let path = require('path')
 let { exec } = require('child_process')
 
-let { create } = require('./adr_util.js')
+let { ADRContext, Status } = require('../adr_util_sync.js')
+let utils = new ADRContext()
 
-let utils = require('../adr_util_sync.js').createUtilContext()
+/**
+ * Create an ADR, with the given content.
+ * 
+ * @param {string} _id - The ID of the ADR
+ * @param {string} _title The title of the ADR
+ * @param {string} _status - What to include in the status section
+ * @param {string} _context - Content for the context section.
+ * @param {string} _decision - Content for the decision section.
+ * @param {string} _cons - Content for the consequences section.
+ * 
+ * @returns {string} The new ADR content, as a markdown string.
+ * 
+ * @see newADRContent
+ */
+let createADR = (_id,_title,_status, _context,_decision,_cons) => {
+  if (!_id) throw new Error("No ID given for new ADR")
+  if (!_title) throw new Error("No title given for new ADR")
+  let st = _status || Status.Proposed()
+  let ctx = _context || ""
+  let dec = _decision || ""
+  let cons = _cons || ""
 
-let adrContent = (number,title) => create(number,title)
+  return newADRContent(_id,_title,st,ctx,dec,cons)
+}
+
+let newADRContent = (_id,_title,_status,_context,_decision,_cons) => {
+  return `# ${_id} ${_title}
+
+## Status
+
+${_status}
+
+## Context
+${_context}
+
+## Decision
+${_decision}
+
+## Consequences
+${_cons}
+
+    `
+}
 
 function writeADR(adrFilename,newADR)
 {
@@ -57,7 +98,7 @@ let newCmd = (titleParts) => {
   let title = titleParts.join(' ')
   console.info("Creating ADR " + title + " at " + utils.adrDir + " ...")
   let adrFilename = `${utils.adrDir}/${adrBasename}`
-  writeADR(adrFilename,adrContent(nextNum,title))
+  writeADR(adrFilename,createADR(nextNum,title))
   launchEditorFor(adrFilename)
 }
 

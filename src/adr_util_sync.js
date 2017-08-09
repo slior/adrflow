@@ -82,6 +82,36 @@ class ADRContext
     } 
 }
 
+function formatDate(date) {
+    if (!date) throw new Error("Invalid date to format")
+
+    let year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    month = (month < 10 ? "0" : "") + month;
+    var day  = date.getDate();
+    day = (day < 10 ? "0" : "") + day;
+    return year + "-" + month + "-" + day;
+}
+
+function statusMsgGenerator(text)
+{
+  return d => {
+    let date = d || (new Date())
+    return `${text} ${formatDate(date)}`  
+  }
+}
+
+let acceptedStatusText = "Accepted"
+let STATUS_ACCEPTED = statusMsgGenerator(acceptedStatusText)
+
+let proposedStatusText = "Proposed"
+let STATUS_PROPOSED = statusMsgGenerator(proposedStatusText)
+
 module.exports = {
     createUtilContext : () => { return new ADRContext() }
+    , ADRContext : ADRContext
+    , Status : {
+        Proposed : STATUS_PROPOSED
+        , Accepted : STATUS_ACCEPTED
+    }
 }
