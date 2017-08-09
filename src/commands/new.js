@@ -5,7 +5,7 @@ let common = require("./common.js")
 let path = require('path')
 let { exec } = require('child_process')
 
-let { findADRDir, withAllADRFiles, adrFileRE, create, launchEditorForADR } = require('./adr_util.js')
+let { create } = require('./adr_util.js')
 
 let utils = require('../adr_util_sync.js').createUtilContext()
 
@@ -24,7 +24,7 @@ let nextADRNumber = () =>
 {
   let currentNumbers = utils.adrFiles.map(utils.baseFilename)
                                      .map(f => {
-                                        let match = adrFileRE.exec(f);
+                                        let match = common.adrFileRE.exec(f);
                                         if (!match)
                                           throw new Error(`ADR file name ${f} doesn't seem to match format`)
                                         return match[1]
@@ -52,7 +52,7 @@ let launchEditorFor = (fullFilename) =>
 let newCmd = (titleParts) => {
   let nextNum = nextADRNumber()
   let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
-  if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
+  if (!common.adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
   
   let title = titleParts.join(' ')
   console.info("Creating ADR " + title + " at " + utils.adrDir + " ...")
