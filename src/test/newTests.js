@@ -4,7 +4,7 @@ const should = require('should')
 const rewire = require('rewire')
 const utils = require('../adr_util_sync.js').createUtilContext()
 
-const IC = rewire('../commands/new.js')
+const underTest = rewire('../commands/new.js')
 
 describe('New command',() => {
 
@@ -41,12 +41,12 @@ describe('New command',() => {
   }
 
   it("Should fail if passed an invalid title - that can't be used as a filename", () => {
-    let revert = IC.__set__({
+    let revert = underTest.__set__({
       findADRDir : (startFrom, callback,notFoundHandler) => { callback('.') }
       , withAllADRFiles : (callback) => { callback(['1-adr1.md','2-adr2.md'])}
     })
 
-    let block = () => {IC(["bla","###"])}
+    let block = () => {underTest(["bla","###"])}
     block.should.throw()
 
     revert()
@@ -65,25 +65,20 @@ describe('New command',() => {
         , writeADR : (file,content) => {}
         , launchEditorFor : filename => {}
       }
-      // return {
-      //   findADRDir : mockFindADRDir
-      //   , withAllADRFiles : callback => {callback(['1-adr1.md', n + '-adr2.md'])}
-      //   , adrContent : (num,title,date) => { num.should.eql(n+1)}
-      // }
     }
 
-    var revert = IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(2)))
-    IC([testTitle])
+    var revert = underTest.__set__(modifiedCommonMocks(mocksWithHighestNumber(2)))
+    underTest([testTitle])
     revert()
     //testing also for non-consecutive numbers
-    revert = IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(5)))
-    IC([testTitle])
+    revert = underTest.__set__(modifiedCommonMocks(mocksWithHighestNumber(5)))
+    underTest([testTitle])
     revert();
   })
 
   it("Should use the title given as title parts when creating the new ADR content", () => {
     let testTitle = "test"
-    var revert = IC.__set__(modifiedCommonMocks({
+    var revert = underTest.__set__(modifiedCommonMocks({
       findADRDir : mockFindADRDir
       , withAllADRFiles : (callback) => { callback(['1-adr1.md'])}
       , adrContent : (num,title,date) => {
@@ -91,11 +86,11 @@ describe('New command',() => {
       }
     }))
 
-    IC([testTitle])
+    underTest([testTitle])
     revert();
 
     let adrWithSeveralParts = ["adr","part","2"]
-    revert = IC.__set__(modifiedCommonMocks({
+    revert = underTest.__set__(modifiedCommonMocks({
       findADRDir : mockFindADRDir
       , withAllADRFiles : (callback) => { callback(['1-adr1.md'])}
       , adrContent : (num,title,date) => {
@@ -104,7 +99,7 @@ describe('New command',() => {
       }
     }))
 
-    IC(adrWithSeveralParts)
+    underTest(adrWithSeveralParts)
 
     revert();
   })
@@ -112,7 +107,7 @@ describe('New command',() => {
   it("should launch the editor configured in the adr configuration", () => {
 
     let testTitle = "testadr"
-    let revert = IC.__set__(modifiedCommonMocks({
+    let revert = underTest.__set__(modifiedCommonMocks({
       utils : {
         config : { editor : mockEditorCommand }
         , adrDir : '.'
@@ -122,7 +117,7 @@ describe('New command',() => {
       , exec : (cmd) => { cmd.should.eql(`${mockEditorCommand} ./1-${testTitle}.md`)}
     }))
 
-    IC([testTitle])
+    underTest([testTitle])
 
     revert();
 

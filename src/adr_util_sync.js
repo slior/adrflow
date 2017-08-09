@@ -41,9 +41,13 @@ let loadConfigurationFrom = fromDir => {
     try
     {
         let sharedConfigText = fs.readFileSync(`${fromDir}/${common.adrMarkerFilename}`).toString()
-        let localConfigText = fs.readFileSync(`${fromDir}/${common.localADRConfigFilename}`).toString()
         let sharedConfig = propUtil.parse(sharedConfigText)
-        let localConfig = propUtil.parse(localConfigText)
+
+        let localConfigFilename = `${fromDir}/${common.localADRConfigFilename}`
+        let hasLocalConfiguration = fs.existsSync(localConfigFilename)
+        let localConfig = hasLocalConfiguration ? 
+                            propUtil.parse(fs.readFileSync(localConfigFilename).toString())
+                            : {}
         return Object.assign({},sharedConfig,localConfig)
     }
     catch (err)
