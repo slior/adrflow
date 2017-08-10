@@ -44,8 +44,11 @@ describe("Link Command", () => {
                 let expectedText = `${link} [${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
             }
-            , adrs : {
-                filenameFor : id => mockADRFile
+            , withADRContext : block => {
+                let mockContext = {
+                    filenameFor : id => mockADRFile
+                }
+                return block(mockContext)
             }
         })
 
@@ -54,18 +57,22 @@ describe("Link Command", () => {
         reverse()
     })
 
-    it("should throw an error when no source is given", () => {
+    it("should throw an error when source is null", () => {
         let block = () => {underTest(null,"test",2)}
         block.should.throw()
+    })
 
+    it("should throw an error when source is empty", () => {
         let block2 = () => {underTest("","test",2)}
         block2.should.throw()
     })
 
-    it("should throw an error when no target is given", () => {
+    it("should throw an error when target null", () => {
         let block = () => {underTest(1,"test",null)}
         block.should.throw()
+    })
 
+    it("should throw an error when target is undefined",() =>{
         let block2 = () => {underTest(1,"test",undefined)}
         block2.should.throw()
     })
@@ -81,8 +88,11 @@ describe("Link Command", () => {
                 let expectedText = `links to [${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
             }
-            , adrs : {
-                filenameFor : id => mockADRFile
+            , withADRContext : block => {
+                let mockContext = {
+                    filenameFor : id => mockADRFile
+                }
+                return block(mockContext)
             }
         })
 

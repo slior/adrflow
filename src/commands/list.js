@@ -1,7 +1,8 @@
 "use strict"
 
 require('console.table')
-let utils = require('../adr_util_sync.js').createUtilContext()
+
+let {withADRContext} = require('../adr_util_sync.js')
 
 let {withAllADRFiles, indexedADRFile, adrTitleFromFilename} = require('./adr_util.js')
 
@@ -17,9 +18,10 @@ let stripMDLink = textWithMDLink => {
              `${matches[LINK_TEXT]} ${matches[TARGET_ID]}`
 }
 
-let linksFrom = adrID => {
-    let content = utils.contentOf(adrID)
-    let linksFindingRE = /((([\w_]+[\s]+\[?[\d]+\]?(\(.+\.md\))?)[\s]*)*)##[\s]*Context/g
+let linksFindingRE = /((([\w_]+[\s]+\[?[\d]+\]?(\(.+\.md\))?)[\s]*)*)##[\s]*Context/g
+
+let linksFrom = (adrID,context) => {
+    let content = context.contentOf(adrID)
     let matches = linksFindingRE.exec(content)
     return (matches && 
             (matches.length < 2 ? [] : matches[1].split(/\r?\n/)
@@ -28,23 +30,23 @@ let linksFrom = adrID => {
             || []
 }
 
-let enrichedADRListItem = adrData => {
+let enrichedADRListItem = (adrData,context) => {
   adrData.title = adrTitleFromFilename(adrData.id,adrData.filename)
-  adrData.links = linksFrom(adrData.id)
+  adrData.links = linksFrom(adrData.id,context)
   return adrData;
 }
 
-let listCmd = (options) => {
+let listCmd = (options) => withADRContext(context => {
     let bare = options.bare || false
     withAllADRFiles(files => {
         if (bare)
             files.forEach(f => console.info(f))
         else 
             console.table(files.map(indexedADRFile)
-                               .map(enrichedADRListItem)
+                               .map(adrData => enrichedADRListItem(adrData,context))
                         )
     })
-}
+})
 
 
 module.exports = listCmd

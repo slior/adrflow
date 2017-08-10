@@ -31,6 +31,13 @@ describe('New command',() => {
     fs : mockFS
     , propUtil : mockPropUtil
     , launchEditorFor : dummyLaunchEditor
+    , withADRContext : block => {
+        let mockContext = {
+            filenameFor : id => mockADRFile
+            , launchEditorForFile : file => {}
+        }
+        return block(mockContext)
+    }
   }
 
   function modifiedCommonMocks(specificMocks) {
@@ -52,51 +59,80 @@ describe('New command',() => {
     revert()
   })
 
-
+  let mocksWithHighestNumber = n => {
+    return {
+      utils : Object.assign(utils,{
+        adrFiles : ['1-adr1.md', n + '-adr2.md']
+        , adrContent : (num,title) => { num.should.eql(n+1)}
+      })
+      , writeADR : (file,content) => {}
+      , withADRContext : block => {
+          let mockContext = {
+              filenameFor : id => mockADRFile
+              , launchEditorForFile : file => {}
+              , adrFiles : ['1-adr1.md', n + '-adr2.md']
+              , baseFilename : f => f
+          }
+          return block(mockContext)
+        }
+    }
+  }
+  let testTitle = "test"
 
   it ("Should assign the next number for the new ADR - one higher than the last available ADR", () => {
-    let testTitle = "test"
-    let mocksWithHighestNumber = n => {
-      return {
-        utils : Object.assign(utils,{
-          adrFiles : ['1-adr1.md', n + '-adr2.md']
-          , adrContent : (num,title) => { num.should.eql(n+1)}
-        })
-        , writeADR : (file,content) => {}
-        , launchEditorFor : filename => {}
-      }
-    }
-
-    var revert = underTest.__set__(modifiedCommonMocks(mocksWithHighestNumber(2)))
+    let revert = underTest.__set__(modifiedCommonMocks(mocksWithHighestNumber(2)))
     underTest([testTitle])
     revert()
-    //testing also for non-consecutive numbers
-    revert = underTest.__set__(modifiedCommonMocks(mocksWithHighestNumber(5)))
+  })
+
+  it("should assign the next number for the new ADR - one higher than the last available ADR (non-consecutive)",() => {
+    let revert = underTest.__set__(modifiedCommonMocks(mocksWithHighestNumber(5)))
     underTest([testTitle])
     revert();
   })
 
-  it("Should use the title given as title parts when creating the new ADR content", () => {
-    let testTitle = "test"
-    var revert = underTest.__set__(modifiedCommonMocks({
+  it("should use the title given as title parts when creating the new ADR content", () => {
+    // let testTitle = "test"
+    let revert = underTest.__set__(modifiedCommonMocks({
       findADRDir : mockFindADRDir
       , withAllADRFiles : (callback) => { callback(['1-adr1.md'])}
       , adrContent : (num,title,date) => {
         title.should.eql(testTitle)
       }
+      , withADRContext : block => {
+          let mockContext = {
+              filenameFor : id => mockADRFile
+              , launchEditorForFile : file => {}
+              , adrFiles : ['1-adr1.md']
+              , baseFilename : f => f
+          }
+          return block(mockContext)
+        }
     }))
-
     underTest([testTitle])
     revert();
+  })
+
+  it("should use the title given as title parts when creating the new ADR content (multiple parts)", () => {
+    
 
     let adrWithSeveralParts = ["adr","part","2"]
-    revert = underTest.__set__(modifiedCommonMocks({
+    let revert = underTest.__set__(modifiedCommonMocks({
       findADRDir : mockFindADRDir
       , withAllADRFiles : (callback) => { callback(['1-adr1.md'])}
       , adrContent : (num,title,date) => {
         console.log(`Title mock got: ${title}`)
         title.should.eql(adrWithSeveralParts.join(' '))
       }
+      , withADRContext : block => {
+          let mockContext = {
+              filenameFor : id => mockADRFile
+              , launchEditorForFile : file => {}
+              , adrFiles : ['1-adr1.md']
+              , baseFilename : f => f
+          }
+          return block(mockContext)
+        }
     }))
 
     underTest(adrWithSeveralParts)

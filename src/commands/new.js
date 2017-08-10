@@ -5,8 +5,7 @@ let common = require("./common.js")
 let path = require('path')
 let { exec } = require('child_process')
 
-let { ADRContext, Status } = require('../adr_util_sync.js')
-let utils = new ADRContext()
+let { withADRContext, Status } = require('../adr_util_sync.js')
 
 /**
  * Create an ADR, with the given content.
@@ -61,9 +60,9 @@ function writeADR(adrFilename,newADR)
 }
 
 
-let nextADRNumber = () =>
+let nextADRNumber = (adrContext) =>
 {
-  let currentNumbers = utils.adrFiles.map(utils.baseFilename)
+  let currentNumbers = adrContext.adrFiles.map(adrContext.baseFilename)
                                      .map(f => {
                                         let match = common.adrFileRE.exec(f);
                                         if (!match)
@@ -72,13 +71,6 @@ let nextADRNumber = () =>
                                       })
                                   .map(s => s*1)
   return currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1
-}
-
-let launchEditorFor = (fullFilename) =>
-{
-  let editorCommand = utils.config.editor
-  exec(`${editorCommand} ${fullFilename}`
-       ,(err,stdout,stderr) => { if (err) console.error(err) })
 }
 
 /**
@@ -91,15 +83,18 @@ let launchEditorFor = (fullFilename) =>
  * @throws {Error} if the ADR file name resulting from the title parts given is invalid.
  */
 let newCmd = (titleParts) => {
-  let nextNum = nextADRNumber()
-  let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
-  if (!common.adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
-  
-  let title = titleParts.join(' ')
-  console.info("Creating ADR " + title + " at " + utils.adrDir + " ...")
-  let adrFilename = `${utils.adrDir}/${adrBasename}`
-  writeADR(adrFilename,createADR(nextNum,title))
-  launchEditorFor(adrFilename)
+  withADRContext(utils => {
+
+    let nextNum = nextADRNumber(utils)
+    let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
+    if (!common.adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
+    
+    let title = titleParts.join(' ')
+    console.info("Creating ADR " + title + " at " + utils.adrDir + " ...")
+    let adrFilename = `${utils.adrDir}/${adrBasename}`
+    writeADR(adrFilename,createADR(nextNum,title))
+    utils.launchEditorForFile(adrFilename)
+  })
 }
 
 module.exports = newCmd

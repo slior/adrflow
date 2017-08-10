@@ -7,22 +7,34 @@ let common = require("./commands/common.js")
 let propUtil = require('properties')
 let { exec } = require('child_process')
 
+function time(title,block)
+{
+    console.time(title)
+    let ret = block()
+    console.timeEnd(title)
+    return ret
+}
+
 let resolveADRDir = startFrom => {
-    let start = startFrom || '.'
-    let adrMarkerFilter = file => path.basename(file.path) === common.adrMarkerFilename
-    let markerFilesFound = walker(start,{filter : adrMarkerFilter, nodir : true})
-    if (markerFilesFound.length < 1)
-        throw new Error(`No ADR directory found from ${start}`)
-    else
-        return path.dirname(markerFilesFound[0].path)
+    // return time("ADR DIR", () => {
+        let start = startFrom || '.'
+        let adrMarkerFilter = file => path.basename(file.path) === common.adrMarkerFilename
+        let markerFilesFound = walker(start,{filter : adrMarkerFilter, nodir : true})
+        if (markerFilesFound.length < 1)
+            throw new Error(`No ADR directory found from ${start}`)
+        else
+            return path.dirname(markerFilesFound[0].path)
+    // })
 }
 
 let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
 
 let allADRFiles = (_adrDir) => {
-    let adrDir = _adrDir || resolveADRDir()
-    let adrFilter = file => adrFileRE.test(path.basename(file.path))
-    return walker(adrDir, {filter : adrFilter}).map(f => f.path)
+    // return time("ALL FILES", () => {
+        let adrDir = _adrDir || resolveADRDir()
+        let adrFilter = file => adrFileRE.test(path.basename(file.path))
+        return walker(adrDir, {filter : adrFilter}).map(f => f.path)
+    // })
 }
 
 let fullPathTo = (adrID,_adrFiles) => {
@@ -42,15 +54,18 @@ let _contentOf = (adrID,fromFiles) => {
 let loadConfigurationFrom = fromDir => {
     try
     {
-        let sharedConfigText = fs.readFileSync(`${fromDir}/${common.adrMarkerFilename}`).toString()
-        let sharedConfig = propUtil.parse(sharedConfigText)
+        // return time("LOAD CONFIG",() => {
 
-        let localConfigFilename = `${fromDir}/${common.localADRConfigFilename}`
-        let hasLocalConfiguration = fs.existsSync(localConfigFilename)
-        let localConfig = hasLocalConfiguration ? 
-                            propUtil.parse(fs.readFileSync(localConfigFilename).toString())
-                            : {}
-        return Object.assign({},sharedConfig,localConfig)
+            let sharedConfigText = fs.readFileSync(`${fromDir}/${common.adrMarkerFilename}`).toString()
+            let sharedConfig = propUtil.parse(sharedConfigText)
+
+            let localConfigFilename = `${fromDir}/${common.localADRConfigFilename}`
+            let hasLocalConfiguration = fs.existsSync(localConfigFilename)
+            let localConfig = hasLocalConfiguration ? 
+                                propUtil.parse(fs.readFileSync(localConfigFilename).toString())
+                                : {}
+            return Object.assign({},sharedConfig,localConfig)
+        // })
     }
     catch (err)
     {
@@ -94,7 +109,11 @@ class ADRContext
 
     launchEditorFor(adrID)
     {
-        let fullFilename = fullPathTo(adrID,this.adrFiles)
+        this.launchEditorForFile(fullPathTo(adrID,this.adrFiles))
+    }
+
+    launchEditorForFile(fullFilename)
+    {
         exec(`${this.config.editor} ${fullFilename}`
              , (err,stdout,stderr) => { if (err) console.error(err) })
     }
@@ -125,6 +144,11 @@ let STATUS_ACCEPTED = statusMsgGenerator(acceptedStatusText)
 let proposedStatusText = "Proposed"
 let STATUS_PROPOSED = statusMsgGenerator(proposedStatusText)
 
+let withADRContext = block => {
+    let ctxt = new ADRContext()
+    return block(ctxt)
+}
+
 module.exports = {
     createUtilContext : () => { return new ADRContext() }
     , ADRContext : ADRContext
@@ -133,4 +157,5 @@ module.exports = {
         , Accepted : STATUS_ACCEPTED
     }
     , EOL : require('os').EOL
+    , withADRContext : withADRContext
 }
