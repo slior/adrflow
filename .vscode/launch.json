@@ -7,6 +7,13 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Content 1",
+            "program": "${workspaceRoot}\\src\\adr.js",
+            "args" : ["content","1"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Simple new",
             "program": "${workspaceRoot}\\src\\adr.js",
             "args" : ["new","bla","bla"]
