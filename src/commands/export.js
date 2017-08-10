@@ -1,17 +1,16 @@
 "use strict"
 
 let marked = require("marked")
-let {withContentOf, withAllADRFiles, indexedADRFile, EOL, adrTitleFromFilename} = require('./adr_util.js')
+let {indexedADRFile, EOL, adrTitleFromFilename} = require('./adr_util.js')
 let {writeFileSync} = require('fs-extra')
 let {promisedContentOf} = require('../adr_util_async.js')
-
+let {withADRContext} = require("../adr_util_sync.js")
 
 const ALL = '*'
 const TwoNLs = EOL + EOL
 
-let withHTMLContentFor = (id,cb) => 
-    withContentOf(id, content => { cb(marked(content))} )
-
+let withHTMLContentFor = (id,cb) => promisedContentOf(id)
+                                        .then(content => cb(marked(content)))
 
 let writeToFileAndReport = (file,html,msg) => {
     writeFileSync(file,html)
@@ -51,27 +50,26 @@ let allADRsToHTML = allIndexedADRContent => {
     return wrappedHTML(marked(allMD.join(TwoNLs))) //concatenate everything, and transform to HTML
 }
 
-let exportAll = (destinationFile) => 
-    withAllADRFiles(files => {
-        let promisedFileContentWithIDs = files.map(indexedADRFile)
-                                              .map(idFile => promisedContentOf(idFile.id)
-                                              .then(cntnt => { return { id : idFile.id, content : cntnt}}))
-
-        Promise.all(promisedFileContentWithIDs)
-               .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`))
-               .catch(err => console.error(err))
-    })
+let exportAll = (destinationFile,context) => {
+    let promisedFileContentWithIDs = context.adrFiles.map(context.baseFilename)
+                                                     .map(indexedADRFile)
+                                                     .map(idFile => promisedContentOf(idFile.id)
+                                                     .then(cntnt => { return { id : idFile.id, content : cntnt}}))
+    Promise.all(promisedFileContentWithIDs)
+           .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`))
+           .catch(err => console.error(err))
+}
 
 /**
  * Command to export a given ADR to an HTML format
  * @param {number} id - The ID of the ADR to export
  */
-let exportCmd = (id,destinationFile) => {
+let exportCmd = (id,destinationFile) => withADRContext(context => {
     if (id === ALL)
-        exportAll(destinationFile)
+        exportAll(destinationFile,context)
     else
         exportSingleADR(id,destinationFile)
     
-}
+})
 
 module.exports = exportCmd
