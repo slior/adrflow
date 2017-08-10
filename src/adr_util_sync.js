@@ -5,6 +5,7 @@ let walker = require('klaw-sync')
 let path = require('path')
 let common = require("./commands/common.js")
 let propUtil = require('properties')
+let { exec } = require('child_process')
 
 let resolveADRDir = startFrom => {
     let start = startFrom || '.'
@@ -16,9 +17,10 @@ let resolveADRDir = startFrom => {
         return path.dirname(markerFilesFound[0].path)
 }
 
+let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
+
 let allADRFiles = (_adrDir) => {
     let adrDir = _adrDir || resolveADRDir()
-    let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
     let adrFilter = file => adrFileRE.test(path.basename(file.path))
     return walker(adrDir, {filter : adrFilter}).map(f => f.path)
 }
@@ -88,6 +90,13 @@ class ADRContext
                          ,contentModifier(this.contentOf(adrID)))
         if (postModificationCB)
             postModificationCB(adrID)
+    }
+
+    launchEditorFor(adrID)
+    {
+        let fullFilename = fullPathTo(adrID,this.adrFiles)
+        exec(`${this.config.editor} ${fullFilename}`
+             , (err,stdout,stderr) => { if (err) console.error(err) })
     }
 }
 

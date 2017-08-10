@@ -1,9 +1,9 @@
 "use strict"
 
-let {launchEditorForADR} = require('./adr_util.js')
+let adrContext = require('../adr_util_sync.js').createUtilContext()
 
-let editCmd = id => {
-    launchEditorForADR(id)
+let editCmd = adrID => {
+    adrContext.launchEditorFor(adrID)
 }
 
 module.exports = editCmd
