@@ -238,28 +238,36 @@ let launchEditorFor = (file,editorCommand) => {
  * @param {function} callback - The callback that will be invoked wit the editor command.
  */
 let withEditorCommandFrom = (adrDir,callback) => {
-  propUtil.parse(`${adrDir}/${common.adrMarkerFilename}`,{ path : true}, (err,data) => {
-    let localConfigFilename = `${adrDir}/${common.localADRConfigFilename}`
-    if (fs.existsSync(localConfigFilename))
+
+  let callbackWithEditorIfPresent = config => {
+    if (!config.editor)
+       throw new Error("no configured editor command")
+    else
+      callback(config.editor)
+  }
+
+  let exists = file => fs.existsSync(file)
+
+  let tryToOverrideWithLocalConfigAndCallback = (localFilename, sharedConfig) => 
+        propUtil.parse(localConfigFilename, {path : true}, (err2,localConfig) => {
+          if (err2) //some error while parsing the local configuration - don't continue
+            console.error(err2)
+          else
+            callbackWithEditorIfPresent(Object.assign({},sharedConfig,localConfig)) //local overrides shared data
+        })
+
+        
+  propUtil.parse(`${adrDir}/${common.adrMarkerFilename}`,{ path : true}, (err,sharedConfig) => {
+    if (err)
+      console.error(err)
+    else
     {
-      propUtil.parse(localConfigFilename, {path : true}, (err2,localConfig) => {
-        if (err)
-          console.error(err)
-        else if (err2)
-          console.error(err2)
-        else
-        {
-          let config = Object.assign({},data,localConfig)
-          if (!config.editor) 
-            throw new Error("no configured editor command")
-          else 
-            callback(config.editor)
-        }
-      })
+      let localConfigFilename = `${adrDir}/${common.localADRConfigFilename}`
+      if (exists(localConfigFilename))
+        tryToOverrideWithLocalConfigAndCallback(localConfigFilename,sharedConfig)
+      else 
+        callbackWithEditorIfPresent(sharedConfig) //no local override of configuration => fallback to shared configuration
     }
-    else if (!data.editor) 
-          throw new Error("no configured editor command")
-    else callback(data.editor || '')
   })
 }
 
