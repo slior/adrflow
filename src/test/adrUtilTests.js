@@ -3,8 +3,11 @@
 const should = require('should')
 const ee = require("event-emitter")
 const rewire = require('rewire')
+const path = require('path')
+const common = require('../commands/common.js')
 
 const IC = rewire('../commands/adr_util.js')
+
 describe("ADR Utils", () => {
 
 
@@ -161,5 +164,36 @@ describe("ADR Utils", () => {
         emitter.emit('file',mockFiles[f],null,null)
       emitter.emit('end')
     })
+  })
+
+  describe("withEditorCommandFrom", () => {
+    it ("should resolve to shared values when local overrides are not present", () => {
+      let revert = IC.__set__({
+        propUtil : {
+          parse : (filename,props,cb) => {
+            let basename = path.basename(filename)
+            if (basename === common.localADRConfigFilename)
+            {
+              throw new Error("local properties not found")
+            }
+            else //=> the shared properties were asked
+              cb(null, {editor : "some editor"}) //calling back with null error and dummy data
+          }
+        }
+        , withFullADRFilename : (id,cb) => {
+            cb(id,"1-dummy_adr.md")
+        }
+        , findADRDir : cb => cb(".")
+        , launchEditorFor : (filename,cmd) => { cmd.should.equal("some editor")}
+        , fs : {
+          existsSync : filename => false //local.adr does not exist in this test
+        }
+      })
+
+      IC.launchEditorForADR(5)
+
+      revert()
+    })
+    
   })
 })

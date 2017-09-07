@@ -239,18 +239,27 @@ let launchEditorFor = (file,editorCommand) => {
  */
 let withEditorCommandFrom = (adrDir,callback) => {
   propUtil.parse(`${adrDir}/${common.adrMarkerFilename}`,{ path : true}, (err,data) => {
-    propUtil.parse(`${adrDir}/${common.localADRConfigFilename}`, {path : true}, (err2,localConfig) => {
-      if (err)
-        console.error(err)
-      else if (err2)
-        console.error(err2)
-      else
-      {
-        let config = Object.assign({},data,localConfig)
-        callback(config.editor)
-      }
-    })
-    
+    let localConfigFilename = `${adrDir}/${common.localADRConfigFilename}`
+    if (fs.existsSync(localConfigFilename))
+    {
+      propUtil.parse(localConfigFilename, {path : true}, (err2,localConfig) => {
+        if (err)
+          console.error(err)
+        else if (err2)
+          console.error(err2)
+        else
+        {
+          let config = Object.assign({},data,localConfig)
+          if (!config.editor) 
+            throw new Error("no configured editor command")
+          else 
+            callback(config.editor)
+        }
+      })
+    }
+    else if (!data.editor) 
+          throw new Error("no configured editor command")
+    else callback(data.editor || '')
   })
 }
 
