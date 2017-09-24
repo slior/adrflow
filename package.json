@@ -17,7 +17,7 @@
     , "klaw-sync" : "~2.1.0"
     , "find-in-files" : "~0.4.0"
   },
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "ADR Utilities for Windows",
   "scripts": {
     "test": "mocha ./src/test/*.js"
@@ -26,9 +26,16 @@
     "adr",
     "windows"
   ],
+  "bugs" : {
+    "url" : "https://github.com/slior/adrflow/issues"
+  },
   "author": "Lior Schejter",
   "license": "MIT"
   , "pkg" : {
     "scripts": "./src/commands/*"
+  },
+  "repository": {
+    "type": "git"
+    , "url": "https://github.com/slior/adrflow.git"
   }
 }
