@@ -7,6 +7,13 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Search Simple 'adr'",
+            "program": "${workspaceRoot}\\src\\adr.js",
+            "args" : ["search","adr"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "List",
             "program": "${workspaceRoot}\\src\\adr.js",
             "args" : ["list"]
