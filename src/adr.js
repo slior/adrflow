@@ -56,6 +56,10 @@ program.command("edit <id>")
     .description("Launch the configured editor for the given ADR")
     .action(loadCommand("edit"))
 
+program.command("search <term>")
+    .description("Search the ADRs for the given term")
+    .action(loadCommand("search"))
+
 process.on('uncaughtException', (err) => {
   console.error(`${err}`)
 });
