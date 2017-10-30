@@ -3,7 +3,7 @@
 let fs = require('fs-extra')
 let utils = require('../adr_util_sync.js').createUtilContext()
 
-let nodeJSCode = (id,title) => `{id : ${id}, label : "${title}", shape : 'box'}`
+let nodeJSCode = (id,title) => `{id : ${id}, label : "${id}: ${title}", shape : 'box'}`
 
 let diagramHTMLFor = (title,nodes,edges) => `
 <!doctype html>
@@ -31,7 +31,7 @@ let diagramHTMLFor = (title,nodes,edges) => `
           nodes: nodes,
           edges: edges
         };
-        var options = {physics:{barnesHut:{gravitationalConstant:-4000}}};
+        var options = {physics:{barnesHut:{gravitationalConstant:-4000}}, layout:{ hierarchical: true }};
         network = new vis.Network(container, data, options);
     }
   </script>
