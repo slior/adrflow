@@ -25,7 +25,7 @@ let diagramHTMLFor = (title,nodes,edges) => `
     function draw()
     {
         var nodes = [${nodes}]
-        var edges = []
+        var edges = [${edges}]
         var container = document.getElementById('adrnetwork');
         var data = {
           nodes: nodes,
@@ -56,12 +56,19 @@ function outputDiagram(filename,html)
     .catch((err) => { console.error(err)})
 }
 
+let edgeJSCode = (source,target,label) => `{from : ${source}, to: ${target}, label: "${label}", arrows : { to : {enabled : true}}}`
+
 let diagramCmd = (outputFile) => {
     console.info("Extracting metadata...")
     let allADRsMetadata = utils.adrFiles.map(utils.metadataFor)
     console.info("Generating HTML...")
     let diagramNodesJSCode = allADRsMetadata.map(adrMD => nodeJSCode(adrMD.id,adrMD.title)).join(",")
-    let diagramEdgesJSCode = {}
+    let allEdges = []
+    allADRsMetadata.forEach(adrMD => {
+        let linksFromThisADR = adrMD.links.map( linkMD => edgeJSCode(adrMD.id, linkMD.target, linkMD.text)).join(",")
+        allEdges.push(linksFromThisADR)
+    })
+    let diagramEdgesJSCode = allEdges.filter(edgesJS => edgesJS != "").join(",")
     let html = diagramHTMLFor("ADRs",diagramNodesJSCode,diagramEdgesJSCode)
     outputDiagram(outputFile || "diagram.html",html)
 }

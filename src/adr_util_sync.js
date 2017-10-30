@@ -60,11 +60,51 @@ let linksFor = (adrID,fromFiles) => {
             || []
 }
 
+let parseSimpleLinkText = (linkText) => {
+    const LINK_TEXT = 1 //match group #1: the text of the link
+    const TARGET_ID = 2 //match group #2: the ID of the target ADR
+    let noMDLinkRE = /(.*)\s+([\d]+).*/ //a RE catching simple text and number, deconstructing it
+    let matches = linkText.exec(noMDLinkRE)
+    if (!matches || matches.length < 3)
+    {
+        console.warn(`Failed to parse target link for ${linkText}`)
+        return {}
+    }
+    else return { text : matches[LINK_TEXT], target : matches[TARGET_ID]}
+        
+}
+
+let toTargetIDAndText = (linkText) => {
+    const LINK_TEXT = 1 //match group #1: the text of the link
+    const TARGET_ID = 2 //match group #2: the ID of the target ADR
+    let textWithLinkRE = /([\w_]+)[\s]+\[?([\d])+\]?(\(.+\.md\))?/ //note: this roughly matches the RE in 'linksFor'
+    
+    let matches = textWithLinkRE.exec(linkText)
+
+    return  (!matches || matches.length < 3) ?
+             parseSimpleLinkText(linkText)
+             :
+             { text : matches[LINK_TEXT], target : matches[TARGET_ID]} //TODO: remove duplication with parseSimpleLinkText
+}
+
+let linksMetadata = (adrID,fromFiles) => { //TODO: remove duplication with 'linksFor'
+    let content = contentOf(adrID,fromFiles)
+    let linksFindingRE = /((([\w_]+[\s]+\[?[\d]+\]?(\(.+\.md\))?)[\s]*)*)##[\s]*Context/g
+    let matches = linksFindingRE.exec(content)
+
+    return (matches && 
+                (matches.length < 2 ? [] : matches[1].split(/\r?\n/)
+                                                     .filter(l => l.trim() !== "")
+                                                     .map(toTargetIDAndText)))
+                || []
+            
+}
+
 let adrMetadata = (adrPath,adrFiles) => {
     let adrBaseFilename = path.basename(adrPath)
     let indexedFile = indexedADRFile(adrBaseFilename)
     let title = adrTitleFromFilename(indexedFile.id,indexedFile.filename)
-    let  links = linksFor(indexedFile.id,adrFiles)
+    let  links = linksMetadata(indexedFile.id,adrFiles)
     return {
         id: indexedFile.id
         , filename : indexedFile.filename
