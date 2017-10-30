@@ -60,6 +60,10 @@ program.command("search <term>")
     .description("Search the ADRs for the given term")
     .action(loadCommand("search"))
 
+program.command("diagram [destinationFile]")
+    .description("Create and output a network diagram (HTML-based) of the current ADRs")
+    .action(loadCommand("diagram"))
+
 process.on('uncaughtException', (err) => {
   console.error(`${err}`)
 });
