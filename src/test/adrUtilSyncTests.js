@@ -5,13 +5,14 @@ const rewire = require('rewire')
 
 const utils = rewire('../adr_util_sync.js')
 
+const testInvalidIDThrowsException = block => {
+    should.throws(block, /could not find ADR file for ADR/i,"should throw a 'not found exception'")
+}
 
 describe("Synchronous ADR Utils", () => {
     describe("contentOf", () => {
         it ("should throw an exception when an invalid ADR ID is given",() => {
-            should.throws(() => {
-                utils.createUtilContext().contentOf("-1")
-            }, /could not find ADR file for ADR/i,"should throw a not found exception")
+            testInvalidIDThrowsException(() => utils.createUtilContext().contentOf("-1"))
         })
 
         it("should throw an exception if no ADR directory is found",() => {
@@ -59,11 +60,7 @@ describe("Synchronous ADR Utils", () => {
         }
 
         it("should throw an exception when an invalid ADR id is given",() => {
-            
-
-            should.throws(() => {
-                utils.createUtilContext().linksFor("-1")
-            }, /could not find ADR file for ADR/i,"should throw a not found exception")
+            testInvalidIDThrowsException(() => utils.createUtilContext().linksFor("-1"))
         })
 
         it("should find links in the status section, with no markdown link",() => {
