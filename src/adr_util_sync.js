@@ -62,31 +62,20 @@ let linksFor = (adrID,fromFiles) => {
             .filter(linkText => linkText !== "")
 }
 
-let parseSimpleLinkText = (linkText) => {
+let parseSimpleLinkText = linkText =>  genericLinkParsing(linkText,/(.*)\s+([\d]+).*/,lt => {
+                                                console.warn(`Failed to parse target link for ${lt}`)
+                                                return {}
+                                            })
+
+let toTargetIDAndText = (linkText) => genericLinkParsing(linkText,/([\w_]+)[\s]+\[?([\d])+\]?(\(.+\.md\))?/, lt => parseSimpleLinkText(lt))
+
+let genericLinkParsing = (linkText,re,errHandler) => {
     const LINK_TEXT = 1 //match group #1: the text of the link
     const TARGET_ID = 2 //match group #2: the ID of the target ADR
-    let noMDLinkRE = /(.*)\s+([\d]+).*/ //a RE catching simple text and number, deconstructing it
-    let matches = linkText.exec(noMDLinkRE)
+    let matches = re.exec(linkText)
     if (!matches || matches.length < 3)
-    {
-        console.warn(`Failed to parse target link for ${linkText}`)
-        return {}
-    }
+        return errHandler(linkText)
     else return { text : matches[LINK_TEXT], target : matches[TARGET_ID]}
-        
-}
-
-let toTargetIDAndText = (linkText) => {
-    const LINK_TEXT = 1 //match group #1: the text of the link
-    const TARGET_ID = 2 //match group #2: the ID of the target ADR
-    let textWithLinkRE = /([\w_]+)[\s]+\[?([\d])+\]?(\(.+\.md\))?/ //note: this roughly matches the RE in 'linksFor'
-    
-    let matches = textWithLinkRE.exec(linkText)
-
-    return  (!matches || matches.length < 3) ?
-             parseSimpleLinkText(linkText)
-             :
-             { text : matches[LINK_TEXT], target : matches[TARGET_ID]} //TODO: remove duplication with parseSimpleLinkText
 }
 
 let linksMetadata = (adrID,fromFiles) => { //TODO: remove duplication with 'linksFor'
