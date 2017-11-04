@@ -2,6 +2,7 @@
 
 let fs = require('fs-extra')
 let utils = require('../adr_util_sync.js').createUtilContext()
+let {writeTextFileAndNotifyUser} = require('./common.js')
 
 let nodeJSCode = (id,title) => `{id : ${id}, label : "${id}: ${title}", shape : 'box'}`
 
@@ -50,10 +51,7 @@ let diagramHTMLFor = (title,nodes,edges) => `
 
 function outputDiagram(filename,html)
 {
-  console.info(`Outputting diagram to ${filename} ...`)
-  fs.outputFile(filename,html)
-    .then(() => { console.info("Done.")})
-    .catch((err) => { console.error(err)})
+  writeTextFileAndNotifyUser(filename,html,`Outputting diagram to ${filename} ...`)
 }
 
 let edgeJSCode = (source,target,label) => `{from : ${source}, to: ${target}, label: "${label}", arrows : { to : {enabled : true}}}`

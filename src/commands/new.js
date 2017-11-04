@@ -27,10 +27,7 @@ function withNextADRNumber(callback,_adrDir)
 
 function writeADR(adrFilename,newADR)
 {
-  console.info(`Writing ${adrFilename} ...`)
-  fs.outputFile(adrFilename,newADR)
-    .then(() => { console.info("Done.")})
-    .catch((err) => { console.error(err)})
+  common.writeTextFileAndNotifyUser(adrFilename,newADR,`Writing ${adrFilename} ...`)
 }
 
 
