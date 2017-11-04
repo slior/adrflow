@@ -37,27 +37,29 @@ let contentOf = (adrID,fromFiles) => {
     return fs.readFileSync(adrFilename).toString()
 }
 
-let stripMDLink = textWithMDLink => {
-    const LINK_TEXT = 1 //match group #1: the text of the link
-    const TARGET_ID = 2 //match group #2: the ID of the target ADR
-    let re = /([\w_]+)[\s]+\[?([\d])+\]?(\(.+\.md\))?/ //note: this roughly matches the RE in 'linksFor'
-    let matches = re.exec(textWithMDLink)
-
-    return  (!matches || matches.length < 3) ?
-             textWithMDLink
-             :
-             `${matches[LINK_TEXT]} ${matches[TARGET_ID]}`
+let statusSectionFrom = adrContent => {
+    let lines = adrContent.split(/\r?\n/).map(l => l.trim())
+    let statusTitleRE = /^##\s*[Ss]tatus/
+    let contentTitleRE = /^##\s*[Cc]ontext/
+    let statusStartInd = lines.findIndex(line => statusTitleRE.test(line))
+    let statusEndInd = lines.findIndex(line => contentTitleRE.test(line))
+    //TODO: handle error conditions - negative indices
+    return lines.slice(statusStartInd+1,statusEndInd)
 }
 
+let linkTextFrom = adrLink => {
+    let labelFindingRE = /\[?(\w+\s+\d+)\]?(\(.+\.md\))?/
+    let matches = labelFindingRE.exec(adrLink)
+    return matches && matches.length >= 2 ? matches[1] : ""
+} 
+
 let linksFor = (adrID,fromFiles) => {
-    let content = contentOf(adrID,fromFiles)
-    let linksFindingRE = /((([\w_]+[\s]+\[?[\d]+\]?(\(.+\.md\))?)[\s]*)*)##[\s]*Context/g
-    let matches = linksFindingRE.exec(content)
-    return (matches && 
-            (matches.length < 2 ? [] : matches[1].split(/\r?\n/)
-                                                 .filter(l => l.trim() !== "")
-                                                 .map(stripMDLink)))
-            || []
+    let statusUpdateRE = /\w+\s+\d{4}-\d{1,2}-\d{1,2}/ //Essentially: "word 2017-11-3" or similar
+    return statusSectionFrom(contentOf(adrID,fromFiles))
+            .filter(line => line !== "")
+            .filter(line => !statusUpdateRE.test(line))
+            .map(link => linkTextFrom(link))
+            .filter(linkText => linkText !== "")
 }
 
 let parseSimpleLinkText = (linkText) => {

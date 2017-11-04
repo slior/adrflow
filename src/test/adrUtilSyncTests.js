@@ -28,19 +28,159 @@ describe("Synchronous ADR Utils", () => {
 
         it("should find the file with the correct ADR id, and return whatever is read from it", () => {
             let expectedFilename = "1-blabla.md"
+            let expectedFileContent = "some string"
             let revert = utils.__set__({
                 resolveADRDir : (start) => "."
                 , allADRFiles : () => ["2-test.md",expectedFilename,"1 wrong.md","1_stillwrong.md"]
                 , fs : {
                     readFileSync : (filename) => {
                         filename.should.equal(expectedFilename)
-                        return "some string"
+                        return expectedFileContent
                     }
                 }
             })
 
-            utils.createUtilContext().contentOf("1").should.equal("some string")
+            utils.createUtilContext().contentOf("1").should.equal(expectedFileContent)
 
+            revert()
+        })
+    })
+
+    describe("linksFor",() => {
+        it("should throw an exception when an invalid ADR id is given",() => {
+            
+
+            should.throws(() => {
+                utils.createUtilContext().linksFor("-1")
+            }, /could not find ADR file for ADR/i,"should throw a not found exception")
+        })
+
+        it("should find links in the status section, with no markdown link",() => {
+            let revert = utils.__set__({
+                resolveADRDir : (start) => "."
+                , allADRFiles : () => ["1-test.md"]
+                , fs : {
+                    readFileSync : (filename) => {
+                        return `
+
+                        points_to 2
+                        follows 3
+
+                        ## Context
+                        bla bla
+                        `
+                    }
+                }
+            })
+
+            utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
+            revert()
+        })
+
+        it("should find links in the status section, with markdown links, and strip them", () => {
+            let revert = utils.__set__({
+                resolveADRDir : (start) => "."
+                , allADRFiles : () => ["1-test.md"]
+                , fs : {
+                    readFileSync : (filename) => {
+                        return `
+                        ## Status
+
+                        some status ...
+
+                        [points_to 2](2-adr.md)
+                        [follows 3](3-adr.md)
+
+                        ## Context
+                        bla bla
+                        `
+                    }
+                }
+            })
+
+            utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
+            revert()
+        })
+
+        it("should NOT find link that appear in other places in the ADR",() => {
+            let revert = utils.__set__({
+                resolveADRDir : (start) => "."
+                , allADRFiles : () => ["1-test.md"]
+                , fs : {
+                    readFileSync : (filename) => {
+                        return `
+                        ## Status
+
+                        some status ...
+
+                        [points_to 2](2-adr.md)
+                        [follows 3](3-adr.md)
+
+                        ## Context
+                        bla bla
+                        and here [some_link 3](3-adr.md)
+                        some more text
+
+                        `
+                    }
+                }
+            })
+
+            utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
+            revert()
+        })
+
+        it("should return an empty list if no links are present",() => {
+            let revert = utils.__set__({
+                resolveADRDir : (start) => "."
+                , allADRFiles : () => ["1-test.md"]
+                , fs : {
+                    readFileSync : (filename) => {
+                        return `
+                        ## Status
+
+                        some status ...
+
+                        ## Context
+                        bla bla
+                        and here [some_link 3](3-adr.md)
+                        some more text
+
+                        `
+                    }
+                }
+            })
+
+            utils.createUtilContext().linksFor("1").should.deepEqual([])
+            revert()
+        })
+
+        it("should return links whether they're with or without markdown links",() => {
+            let revert = utils.__set__({
+                resolveADRDir : (start) => "."
+                , allADRFiles : () => ["1-test.md"]
+                , fs : {
+                    readFileSync : (filename) => {
+                        return `
+                        ## Status
+
+                        some status ...
+                        
+                        [overrides_partially 2](2-adr.md)
+                        mentions 5
+                        [follows 4](4-adr.md)
+
+                        ## Context
+                        bla bla
+                        and here [some_link 3](3-adr.md)
+                        some more text
+
+                        `
+                    }
+                }
+            })
+
+            utils.createUtilContext().linksFor("1").should.deepEqual(["overrides_partially 2","mentions 5","follows 4"])
             revert()
         })
     })
