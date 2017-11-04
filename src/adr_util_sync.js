@@ -54,12 +54,9 @@ let linkTextFrom = adrLink => {
 } 
 
 let linksFor = (adrID,fromFiles) => {
-    let statusUpdateRE = /\w+\s+\d{4}-\d{1,2}-\d{1,2}/ //Essentially: "word 2017-11-3" or similar
-    return statusSectionFrom(contentOf(adrID,fromFiles))
-            .filter(line => line !== "")
-            .filter(line => !statusUpdateRE.test(line))
-            .map(link => linkTextFrom(link))
-            .filter(linkText => linkText !== "")
+    return linksMetadata(adrID,fromFiles)
+            .map(linkMD => `${linkMD.text} ${linkMD.target}`)
+            .filter(t => t !== "")
 }
 
 let parseSimpleLinkText = linkText =>  genericLinkParsing(linkText,/(.*)\s+([\d]+).*/,lt => {
@@ -67,7 +64,9 @@ let parseSimpleLinkText = linkText =>  genericLinkParsing(linkText,/(.*)\s+([\d]
                                                 return {}
                                             })
 
-let toTargetIDAndText = (linkText) => genericLinkParsing(linkText,/([\w_]+)[\s]+\[?([\d])+\]?(\(.+\.md\))?/, lt => parseSimpleLinkText(lt))
+
+const linkRE = /([\w_]+)[\s]+\[?([\d])+\]?(\(.+\.md\))?/
+let toTargetIDAndText = (linkText) => genericLinkParsing(linkText,linkRE, lt => parseSimpleLinkText(lt))
 
 let genericLinkParsing = (linkText,re,errHandler) => {
     const LINK_TEXT = 1 //match group #1: the text of the link
@@ -78,17 +77,14 @@ let genericLinkParsing = (linkText,re,errHandler) => {
     else return { text : matches[LINK_TEXT], target : matches[TARGET_ID]}
 }
 
-let linksMetadata = (adrID,fromFiles) => { //TODO: remove duplication with 'linksFor'
-    let content = contentOf(adrID,fromFiles)
-    let linksFindingRE = /((([\w_]+[\s]+\[?[\d]+\]?(\(.+\.md\))?)[\s]*)*)##[\s]*Context/g
-    let matches = linksFindingRE.exec(content)
-
-    return (matches && 
-                (matches.length < 2 ? [] : matches[1].split(/\r?\n/)
-                                                     .filter(l => l.trim() !== "")
-                                                     .map(toTargetIDAndText)))
-                || []
-            
+let linksMetadata = (adrID,fromFiles) => {
+    let statusUpdateRE = /\w+\s+\d{4}-\d{1,2}-\d{1,2}/ //Essentially: "word 2017-11-3" or similar
+    //get all the status section content, filter out everything that's not a link, then parse and return it
+    return statusSectionFrom(contentOf(adrID,fromFiles))
+            .filter(line => line !== "")
+            .filter(line => !statusUpdateRE.test(line)) //need to filter this separately, as the beginning of a status update looks like a link text with no markdown link, which is legal.
+            .filter(line => linkRE.test(line))
+            .map(toTargetIDAndText)
 }
 
 let adrMetadata = (adrPath,adrFiles) => {
