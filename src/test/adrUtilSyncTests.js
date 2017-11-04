@@ -47,6 +47,17 @@ describe("Synchronous ADR Utils", () => {
     })
 
     describe("linksFor",() => {
+
+        const mockData = adrContent => {
+            return {
+                resolveADRDir : (start) => "."
+                , allADRFiles : () => ["1-test.md"]
+                , fs : {
+                    readFileSync : filename => adrContent
+                }
+            }
+        }
+
         it("should throw an exception when an invalid ADR id is given",() => {
             
 
@@ -56,129 +67,91 @@ describe("Synchronous ADR Utils", () => {
         })
 
         it("should find links in the status section, with no markdown link",() => {
-            let revert = utils.__set__({
-                resolveADRDir : (start) => "."
-                , allADRFiles : () => ["1-test.md"]
-                , fs : {
-                    readFileSync : (filename) => {
-                        return `
-
-                        points_to 2
-                        follows 3
-
-                        ## Context
-                        bla bla
-                        `
-                    }
-                }
-            })
+            let revert = utils.__set__(mockData(`
+            
+                                     points_to 2
+                                     follows 3
+            
+                                     ## Context
+                                     bla bla
+                                     `))
 
             utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
             revert()
         })
 
         it("should find links in the status section, with markdown links, and strip them", () => {
-            let revert = utils.__set__({
-                resolveADRDir : (start) => "."
-                , allADRFiles : () => ["1-test.md"]
-                , fs : {
-                    readFileSync : (filename) => {
-                        return `
-                        ## Status
+            let revert = utils.__set__(mockData(
+                `
+                ## Status
 
-                        some status ...
+                some status ...
 
-                        [points_to 2](2-adr.md)
-                        [follows 3](3-adr.md)
+                [points_to 2](2-adr.md)
+                [follows 3](3-adr.md)
 
-                        ## Context
-                        bla bla
-                        `
-                    }
-                }
-            })
+                ## Context
+                bla bla
+                `
+            ))
 
             utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
             revert()
         })
 
         it("should NOT find link that appear in other places in the ADR",() => {
-            let revert = utils.__set__({
-                resolveADRDir : (start) => "."
-                , allADRFiles : () => ["1-test.md"]
-                , fs : {
-                    readFileSync : (filename) => {
-                        return `
-                        ## Status
+            let revert = utils.__set__(mockData(`
+            ## Status
 
-                        some status ...
+            some status ...
 
-                        [points_to 2](2-adr.md)
-                        [follows 3](3-adr.md)
+            [points_to 2](2-adr.md)
+            [follows 3](3-adr.md)
 
-                        ## Context
-                        bla bla
-                        and here [some_link 3](3-adr.md)
-                        some more text
+            ## Context
+            bla bla
+            and here [some_link 3](3-adr.md)
+            some more text
 
-                        `
-                    }
-                }
-            })
+            `))
 
             utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
             revert()
         })
 
         it("should return an empty list if no links are present",() => {
-            let revert = utils.__set__({
-                resolveADRDir : (start) => "."
-                , allADRFiles : () => ["1-test.md"]
-                , fs : {
-                    readFileSync : (filename) => {
-                        return `
-                        ## Status
+            let revert = utils.__set__(mockData(`
+            ## Status
 
-                        some status ...
+            some status ...
 
-                        ## Context
-                        bla bla
-                        and here [some_link 3](3-adr.md)
-                        some more text
+            ## Context
+            bla bla
+            and here [some_link 3](3-adr.md)
+            some more text
 
-                        `
-                    }
-                }
-            })
+            `))
 
             utils.createUtilContext().linksFor("1").should.deepEqual([])
             revert()
         })
 
         it("should return links whether they're with or without markdown links",() => {
-            let revert = utils.__set__({
-                resolveADRDir : (start) => "."
-                , allADRFiles : () => ["1-test.md"]
-                , fs : {
-                    readFileSync : (filename) => {
-                        return `
-                        ## Status
+            let revert = utils.__set__(mockData(`
+            ## Status
 
-                        some status ...
-                        
-                        [overrides_partially 2](2-adr.md)
-                        mentions 5
-                        [follows 4](4-adr.md)
+            some status ...
+            
+            [overrides_partially 2](2-adr.md)
+            mentions 5
+            [follows 4](4-adr.md)
 
-                        ## Context
-                        bla bla
-                        and here [some_link 3](3-adr.md)
-                        some more text
+            ## Context
+            bla bla
+            and here [some_link 3](3-adr.md)
+            some more text
 
-                        `
-                    }
-                }
-            })
+            `))
 
             utils.createUtilContext().linksFor("1").should.deepEqual(["overrides_partially 2","mentions 5","follows 4"])
             revert()
