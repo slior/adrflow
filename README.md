@@ -88,6 +88,18 @@ To do that, simply specify `*` (asterisk) as the ID in the above command, e.g.:
 adr export * all.html
 ```
 
+#### Exporting Diagram
+In addition to exporting the ADR content, one can also export a network figure (a graph) of all the ADRs and their connections, where applicable.  
+This allows the user to easily see relationships between ADRs.
+
+Use the command:
+```
+adr diagram
+```
+to output such a diagram. The default output file name is `diagram.html`, but you have the option to specify another file name.
+
+The output is an HTML, using [vis.js](http://visjs.org/) do display the network graphic.
+
 ## Contributions 
 Contributions are more than welcome of course.  
 Please make sure to follow conventions where applicable, and that all tests pass before submitting a pull request.
