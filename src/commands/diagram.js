@@ -68,7 +68,7 @@ let diagramCmd = (outputFile) => {
         let linksFromThisADR = adrMD.links.map( linkMD => edgeJSCode(adrMD.id, linkMD.target, linkMD.text)).join(",")
         allEdges.push(linksFromThisADR)
     })
-    let diagramEdgesJSCode = allEdges.filter(edgesJS => edgesJS != "").join(",")
+    let diagramEdgesJSCode = allEdges.filter(edgesJS => edgesJS !== "").join(",")
     let html = diagramHTMLFor("ADRs",diagramNodesJSCode,diagramEdgesJSCode)
     outputDiagram(outputFile || "diagram.html",html)
 }
