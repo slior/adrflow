@@ -102,18 +102,31 @@ let adrMetadata = (adrPath,adrFiles) => {
 
 function Context()
 {
-    this.adrDir = resolveADRDir()
-    this.adrFiles = allADRFiles(this.adrDir)
+    this._adrDir = null
+    this.adrDir = () => {
+        if (this._adrDir == null)
+            this._adrDir = resolveADRDir()
+        return this._adrDir
+    }
+    
+    this._adrFiles = null
+    this.adrFiles = () => {
+        if (this._adrFiles == null)
+            this._adrFiles = allADRFiles(this.adrDir())
+        return this._adrFiles
+    }
+
+    // this.adrFiles = allADRFiles(this.adrDir())
     this.contentOf = adrID => {
-        return contentOf(adrID,this.adrFiles)
+        return contentOf(adrID,this.adrFiles())
     }
     this.linksFor = adrID => {
-        return linksFor(adrID,this.adrFiles)
+        return linksFor(adrID,this.adrFiles())
     }
 
-    this.metadataFor = adrPath => adrMetadata(adrPath,this.adrFiles)
+    this.metadataFor = adrPath => adrMetadata(adrPath,this.adrFiles())
 
-    this.filenameFor = adrID => path.basename(fullPathTo(adrID,this.adrFiles))
+    this.filenameFor = adrID => path.basename(fullPathTo(adrID,this.adrFiles()))
 
     return this;
 }
