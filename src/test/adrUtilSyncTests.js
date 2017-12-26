@@ -154,4 +154,13 @@ describe("Synchronous ADR Utils", () => {
             revert()
         })
     })
+
+    describe("adrFilename", () => {
+        it("should define the necessary members", () => {
+            utils.adrFilename.should.have.keys('templateRE', 'fromIDAndName', 'titleFromFilename', 'idFromName')
+            utils.adrFilename.fromIDAndName.should.be.Function()
+            utils.adrFilename.titleFromFilename.should.be.Function()
+            utils.adrFilename.idFromName.should.be.Function()
+        })
+    })
 })

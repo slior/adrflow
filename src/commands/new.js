@@ -5,6 +5,7 @@ let common = require("./common.js")
 let path = require('path')
 
 let { findADRDir, withAllADRFiles, adrFileRE, create, launchEditorForADR } = require('./adr_util.js')
+let {adrFilename : adrFileGen} = require('../adr_util_sync.js')
 
 let adrContent = (number,title) => create(number,title)
 
@@ -44,7 +45,7 @@ let newCmd = (titleParts) => {
   findADRDir(
             (adrDir) => {
               withNextADRNumber(nextNum => {
-                let adrBasename = `${nextNum}-${titleParts.join('_')}.md`
+                let adrBasename = adrFileGen.fromIDAndName(nextNum,titleParts.join('_'))
                 if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
 
                 let title = titleParts.join(' ')

@@ -7,7 +7,7 @@ let fs = require('fs-extra')
 let propUtil = require('properties')
 let { exec } = require('child_process')
 
-let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
+let {templateRE : adrFileRE, titleFromFilename, idFromName} = require('../adr_util_sync.js').adrFilename
 
 let findADRDir = ( callback,startFrom,notFoundHandler) => {
   let startDir = startFrom || "."
@@ -35,9 +35,7 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
  * @returns an object with the file name (key = 'filename') and the numeric ID of the ADR (key = 'id').
  */
 let adrFilenameToIndexedFilename = filename => {
-  let a = adrFileRE.exec(filename)
-  if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
-  return { id : a[1]*1, filename : filename}
+  return { id : idFromName(filename), filename : filename}
 }
 /*
   Find all ADR file names in the given directory.
@@ -70,7 +68,7 @@ let withAllADRFiles = (callback, _adrDir) => {
 
 let adrFileByID = (adrID, cb, notFoundHandler) => {
   withAllADRFiles(files => {
-    let matchingFilenames = files.filter(f => f.indexOf(adrID + "-") === 0)
+    let matchingFilenames = files.filter(f => idFromName(f) === adrID*1)
     if (matchingFilenames.length < 1)
       notFoundHandler()
     else
@@ -305,9 +303,7 @@ let launchEditorForADR = adrID => {
   )
 }
 
-let adrTitleFromFilename = (id,f) => f.replace(`${id}-`,"")
-                                      .split('_').join(' ')
-                                      .replace(/\.md$/,"")
+let adrTitleFromFilename = (id,f) => titleFromFilename(f)
 
 module.exports = {
     findADRDir : findADRDir

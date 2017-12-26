@@ -6,6 +6,14 @@ let path = require('path')
 let common = require("./commands/common.js")
 let {indexedADRFile,adrTitleFromFilename} = require("./commands/adr_util.js")
 
+let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
+
+let adrIDFromFilename = filename => {
+    let a = adrFileRE.exec(filename)
+    if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
+    return a[1]*1
+}
+
 let resolveADRDir = startFrom => {
     let start = startFrom || '.'
     let adrMarkerFilter = file => path.basename(file.path) === common.adrMarkerFilename
@@ -18,7 +26,6 @@ let resolveADRDir = startFrom => {
 
 let allADRFiles = (_adrDir) => {
     let adrDir = _adrDir || resolveADRDir()
-    let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
     let adrFilter = file => adrFileRE.test(path.basename(file.path))
     return walker(adrDir, {filter : adrFilter}).map(f => f.path)
 }
@@ -133,4 +140,12 @@ function Context()
 
 module.exports = {
     createUtilContext : () => { return new Context() }
+    , adrFilename : {
+        templateRE : adrFileRE
+        , fromIDAndName : (id,name) => `${id}-${name}.md`
+        , titleFromFilename : filename => filename.replace(/^.+-/,"")
+                                                  .split('_').join(' ')
+                                                  .replace(/\.md$/,"")
+        , idFromName : adrIDFromFilename
+    }
 }
