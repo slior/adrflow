@@ -7,7 +7,7 @@ let fs = require('fs-extra')
 let propUtil = require('properties')
 let { exec } = require('child_process')
 
-let {templateRE : adrFileRE, titleFromFilename, idFromName} = require('../adr_util_sync.js').adrFilename
+let {matchesDefinedTemplate, titleFromFilename, idFromName} = require('../adr_util_sync.js').adrFilename
 
 let findADRDir = ( callback,startFrom,notFoundHandler) => {
   let startDir = startFrom || "."
@@ -48,7 +48,7 @@ let withAllADRFiles = (callback, _adrDir) => {
     let ret = []
     fsWalker.on('file',(file,stats,linkPath) => {
       let filename = path.basename(file)
-      if (adrFileRE.test(filename))
+      if (matchesDefinedTemplate(filename))
         ret.push(filename)
     })
 
@@ -308,7 +308,6 @@ let adrTitleFromFilename = (id,f) => titleFromFilename(f)
 module.exports = {
     findADRDir : findADRDir
     , withAllADRFiles : withAllADRFiles
-    , adrFileRE : adrFileRE
     , adrFileByID : adrFileByID
     , modifyADR : modifyADR
     , lastStatusOf : lastStatusOf

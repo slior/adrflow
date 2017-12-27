@@ -4,7 +4,7 @@ let findit = require('findit2')
 let common = require("./common.js")
 let path = require('path')
 
-let { findADRDir, withAllADRFiles, adrFileRE, create, launchEditorForADR } = require('./adr_util.js')
+let { findADRDir, withAllADRFiles, create, launchEditorForADR } = require('./adr_util.js')
 let {adrFilename : adrFileGen} = require('../adr_util_sync.js')
 
 let adrContent = (number,title) => create(number,title)
@@ -15,13 +15,7 @@ let adrContent = (number,title) => create(number,title)
 function withNextADRNumber(callback,_adrDir)
 {
   withAllADRFiles(adrFiles => {
-    let currentNumbers = adrFiles.map(f => {
-                                        let match = adrFileRE.exec(f);
-                                        if (!match)
-                                          throw new Error(`ADR file name ${f} doesn't seem to match format`)
-                                        return match[1]
-                                      })
-                                  .map(s => s*1)
+    let currentNumbers = adrFiles.map(f => adrFileGen.idFromName(f)*1)
     callback(currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1)
   }, _adrDir)
 }
@@ -46,7 +40,7 @@ let newCmd = (titleParts) => {
             (adrDir) => {
               withNextADRNumber(nextNum => {
                 let adrBasename = adrFileGen.fromIDAndName(nextNum,titleParts.join('_'))
-                if (!adrFileRE.test(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
+                if (!adrFileGen.matchesDefinedTemplate(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
 
                 let title = titleParts.join(' ')
                 console.info("Creating ADR " + title + " at " + adrDir + " ...")

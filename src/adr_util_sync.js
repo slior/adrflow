@@ -141,7 +141,7 @@ function Context()
 module.exports = {
     createUtilContext : () => { return new Context() }
     , adrFilename : {
-        templateRE : adrFileRE
+        matchesDefinedTemplate : name => adrFileRE.test(name)
         , fromIDAndName : (id,name) => `${id}-${name}.md`
         , titleFromFilename : filename => filename.replace(/^.+-/,"")
                                                   .split('_').join(' ')
