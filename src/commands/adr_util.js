@@ -303,8 +303,6 @@ let launchEditorForADR = adrID => {
   )
 }
 
-let adrTitleFromFilename = (id,f) => titleFromFilename(f)
-
 module.exports = {
     findADRDir : findADRDir
     , withAllADRFiles : withAllADRFiles
@@ -320,6 +318,5 @@ module.exports = {
     , withContentOf : withContentOf
     , withFullADRFilename : withFullADRFilename
     , launchEditorForADR : launchEditorForADR
-    , adrTitleFromFilename : adrTitleFromFilename
     , adrContent : adrContent
 }

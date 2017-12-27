@@ -4,14 +4,20 @@ let fs = require('fs-extra')
 let walker = require('klaw-sync')
 let path = require('path')
 let common = require("./commands/common.js")
-let {indexedADRFile,adrTitleFromFilename} = require("./commands/adr_util.js")
+let {indexedADRFile} = require("./commands/adr_util.js")
 
-let adrFileRE = /^(\d+)[- ][\w_ -]+\.md$/
+let adrFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
 
 let adrIDFromFilename = filename => {
     let a = adrFileRE.exec(filename)
     if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
     return a[1]*1
+}
+
+let adrTitleFromFile = filename => {
+    let a = adrFileRE.exec(filename)
+    if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
+    return a[2].split('_').join(' ')
 }
 
 let resolveADRDir = startFrom => {
@@ -97,7 +103,7 @@ let linksMetadata = (adrID,fromFiles) => {
 let adrMetadata = (adrPath,adrFiles) => {
     let adrBaseFilename = path.basename(adrPath)
     let indexedFile = indexedADRFile(adrBaseFilename)
-    let title = adrTitleFromFilename(indexedFile.id,indexedFile.filename)
+    let title = adrTitleFromFile(indexedFile.filename)
     let  links = linksMetadata(indexedFile.id,adrFiles)
     return {
         id: indexedFile.id
@@ -123,7 +129,6 @@ function Context()
         return this._adrFiles
     }
 
-    // this.adrFiles = allADRFiles(this.adrDir())
     this.contentOf = adrID => {
         return contentOf(adrID,this.adrFiles())
     }
@@ -143,9 +148,7 @@ module.exports = {
     , adrFilename : {
         matchesDefinedTemplate : name => adrFileRE.test(name)
         , fromIDAndName : (id,name) => `${id}-${name}.md`
-        , titleFromFilename : filename => filename.replace(/^.+-/,"")
-                                                  .split('_').join(' ')
-                                                  .replace(/\.md$/,"")
+        , titleFromFilename : adrTitleFromFile
         , idFromName : adrIDFromFilename
     }
 }
