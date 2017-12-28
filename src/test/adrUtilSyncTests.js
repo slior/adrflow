@@ -163,5 +163,60 @@ describe("Synchronous ADR Utils", () => {
             utils.adrFilename.idFromName.should.be.Function()
             utils.adrFilename.matchesDefinedTemplate.should.be.Function()
         })
+
+        describe("titleFromFilename",() => {
+            let f = utils.adrFilename
+            it("should return correct title from a valid filename", () => {
+                f.titleFromFilename("3-some_title.md").should.equal("some title")
+            })
+
+            it("should throw an invalid filename extension for an empty filename", () => {
+                should.throws(() => { f.titleFromFilename("") }, 
+                              /doesn't match an ADR file pattern/i,
+                              "Should fail on an invalid pattern error")
+            })
+
+            it("should throw an invalid filename extension for an invalid pattern", () => {
+                should.throws(() => { f.titleFromFilename("1_some_file") }, 
+                              /doesn't match an ADR file pattern/i,
+                              "Should fail on an invalid pattern error")
+            })
+        })
+
+        describe("idFromName",() => {
+            let f = utils.adrFilename.idFromName
+
+            it("should return correct id from a valid filename",() => {
+                f("3-some_title.md").should.equal(3)
+            })
+
+            it("should throw an invalid filename extension for an empty filename", () => {
+                should.throws(() => { f("") }, 
+                              /doesn't match an ADR file pattern/i,
+                              "Should fail on an invalid pattern error")
+            })
+
+            it("should throw an invalid filename extension for an invalid pattern", () => {
+                should.throws(() => { f("1_some_file") }, 
+                              /doesn't match an ADR file pattern/i,
+                              "Should fail on an invalid pattern error")
+            })
+        })
+
+        describe("matchesDefinedTemplate",() => {
+            let f = utils.adrFilename.matchesDefinedTemplate
+
+            it ("should return TRUE for matching filenames",() => {
+                f("1-blabla.md").should.equal(true)
+                f("13-test_test_test.md").should.equal(true)
+            })
+
+            it ("should return FALSE for non-matching filenames, including empty string",() => {
+                f("").should.equal(false)
+                f("2_1_2_test").should.equal(false)
+                f(".md").should.equal(false)
+                f("544-.md").should.equal(false)
+            })
+        })
     })
 })
