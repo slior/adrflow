@@ -5,6 +5,7 @@ let walker = require('klaw-sync')
 let path = require('path')
 let common = require("./commands/common.js")
 let {indexedADRFile} = require("./commands/adr_util.js")
+let customizations = require("./customization.js").customizations
 
 let adrFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
 
@@ -143,12 +144,29 @@ function Context()
     return this;
 }
 
-module.exports = {
-    createUtilContext : () => { return new Context() }
-    , adrFilename : {
+function resolveFilenameDefinition(resolvedADRDir) 
+{
+    
+    let defaultDefinition = {
         matchesDefinedTemplate : name => adrFileRE.test(name)
         , fromIDAndName : (id,name) => `${id}-${name}.md`
         , titleFromFilename : adrTitleFromFile
         , idFromName : adrIDFromFilename
+    }
+
+    let adrDir = resolvedADRDir || (new Context()).adrDir()
+    let customizedDefinition = customizations(adrDir).filenameDef
+
+    return Object.assign({},defaultDefinition,customizedDefinition)
+}
+
+var _resolvedFilenameDef = null
+
+module.exports = {
+    createUtilContext : () => { return new Context() }
+    , adrFilename : () => {
+        if (_resolvedFilenameDef === null)
+            _resolvedFilenameDef = resolveFilenameDefinition()
+        return _resolvedFilenameDef
     }
 }

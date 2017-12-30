@@ -2,7 +2,7 @@
 
 require('console.table')
 let utils = require('../adr_util_sync.js').createUtilContext()
-let {titleFromFilename: adrTitleFromFilename} = require('../adr_util_sync.js').adrFilename
+let {titleFromFilename: adrTitleFromFilename} = require('../adr_util_sync.js').adrFilename()
 
 let {withAllADRFiles, indexedADRFile} = require('./adr_util.js')
 

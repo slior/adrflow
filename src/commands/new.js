@@ -15,7 +15,7 @@ let adrContent = (number,title) => create(number,title)
 function withNextADRNumber(callback,_adrDir)
 {
   withAllADRFiles(adrFiles => {
-    let currentNumbers = adrFiles.map(f => adrFileGen.idFromName(f)*1)
+    let currentNumbers = adrFiles.map(f => adrFileGen().idFromName(f)*1)
     callback(currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1)
   }, _adrDir)
 }
@@ -39,8 +39,8 @@ let newCmd = (titleParts) => {
   findADRDir(
             (adrDir) => {
               withNextADRNumber(nextNum => {
-                let adrBasename = adrFileGen.fromIDAndName(nextNum,titleParts.join('_'))
-                if (!adrFileGen.matchesDefinedTemplate(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
+                let adrBasename = adrFileGen().fromIDAndName(nextNum,titleParts.join('_'))
+                if (!adrFileGen().matchesDefinedTemplate(adrBasename)) throw new Error(`Resulting ADR file name is invalid: ${adrBasename}`)
 
                 let title = titleParts.join(' ')
                 console.info("Creating ADR " + title + " at " + adrDir + " ...")

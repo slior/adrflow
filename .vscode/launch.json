@@ -8,6 +8,13 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "New bla bla",
+            "program": "${workspaceRoot}\\src\\adr.js",
+            "args" : ["new","bla","bla"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Diagram, default filename",
             "program": "${workspaceRoot}\\src\\adr.js",
             "args" : ["diagram"]

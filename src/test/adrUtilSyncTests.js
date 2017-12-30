@@ -157,15 +157,15 @@ describe("Synchronous ADR Utils", () => {
 
     describe("adrFilename", () => {
         it("should define the necessary members", () => {
-            utils.adrFilename.should.have.keys('matchesDefinedTemplate', 'fromIDAndName', 'titleFromFilename', 'idFromName')
-            utils.adrFilename.fromIDAndName.should.be.Function()
-            utils.adrFilename.titleFromFilename.should.be.Function()
-            utils.adrFilename.idFromName.should.be.Function()
-            utils.adrFilename.matchesDefinedTemplate.should.be.Function()
+            utils.adrFilename().should.have.keys('matchesDefinedTemplate', 'fromIDAndName', 'titleFromFilename', 'idFromName')
+            utils.adrFilename().fromIDAndName.should.be.Function()
+            utils.adrFilename().titleFromFilename.should.be.Function()
+            utils.adrFilename().idFromName.should.be.Function()
+            utils.adrFilename().matchesDefinedTemplate.should.be.Function()
         })
 
         describe("titleFromFilename",() => {
-            let f = utils.adrFilename
+            let f = utils.adrFilename()
             it("should return correct title from a valid filename", () => {
                 f.titleFromFilename("3-some_title.md").should.equal("some title")
             })
@@ -184,7 +184,7 @@ describe("Synchronous ADR Utils", () => {
         })
 
         describe("idFromName",() => {
-            let f = utils.adrFilename.idFromName
+            let f = utils.adrFilename().idFromName
 
             it("should return correct id from a valid filename",() => {
                 f("3-some_title.md").should.equal(3)
@@ -204,7 +204,7 @@ describe("Synchronous ADR Utils", () => {
         })
 
         describe("matchesDefinedTemplate",() => {
-            let f = utils.adrFilename.matchesDefinedTemplate
+            let f = utils.adrFilename().matchesDefinedTemplate
 
             it ("should return TRUE for matching filenames",() => {
                 f("1-blabla.md").should.equal(true)

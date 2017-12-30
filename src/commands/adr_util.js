@@ -7,7 +7,7 @@ let fs = require('fs-extra')
 let propUtil = require('properties')
 let { exec } = require('child_process')
 
-let {matchesDefinedTemplate, titleFromFilename, idFromName} = require('../adr_util_sync.js').adrFilename
+let {matchesDefinedTemplate, titleFromFilename, idFromName} = require('../adr_util_sync.js').adrFilename()
 
 let findADRDir = ( callback,startFrom,notFoundHandler) => {
   let startDir = startFrom || "."
