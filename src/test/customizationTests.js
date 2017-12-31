@@ -4,6 +4,7 @@ const should = require('should')
 const rewire = require('rewire')
 
 const utils = rewire('../adr_util_sync.js')
+const customizationModule = rewire('../customization.js')
 
 describe("customizing filenames", () => {
     it ("should match filenames according to customized definitions", () => {
@@ -35,6 +36,28 @@ describe("customizing filenames", () => {
         filenameDef.idFromName("name-45.md").should.equal(45)
         filenameDef.matchesDefinedTemplate("gaga_bla_gla-21.md").should.equal(true)
         filenameDef.fromIDAndName(12,"BlUe").should.equal("BlUe-12.md") //also checks that it keep the letter's case.
+
+        revert()
+    })
+})
+
+describe("customization script",() => {
+    it("should pick up the 'adr_custom.js' file, if present in the ADR directory", () => {
+        let mockDir = './test' //should be the test directory, where the mock file resides
+        let revert = customizationModule.__set__({
+            fs : {
+                pathExistsSync : path => {
+                    path.should.startWith(mockDir + '/')
+                    return true
+                }
+            }
+        })
+
+        let testCustomization = customizationModule.customizations(mockDir)
+        testCustomization.should.not.be.null
+        //the following tests some of the content in ./test/adr_custom.js. Just to make it was loaded properly
+        testCustomization.filenameDef.should.exist
+        testCustomization.filenameDef.fromIDAndName.should.be.Function()
 
         revert()
     })
