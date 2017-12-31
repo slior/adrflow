@@ -100,6 +100,12 @@ to output such a diagram. The default output file name is `diagram.html`, but yo
 
 The output is an HTML, using [vis.js](http://visjs.org/) do display the network graphic.
 
+## Customizations
+It's possible to customize the behavior of the tool in certain ways (with probably more to come).
+
+See the [customizations page](./doc/Customization.md) for details.
+
+
 ## Contributions 
 Contributions are more than welcome of course.  
 Please make sure to follow conventions where applicable, and that all tests pass before submitting a pull request.
