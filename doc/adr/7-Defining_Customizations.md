@@ -6,6 +6,8 @@ Proposed 2017-12-28
   
 Accepted 2017-12-30
 
+extends [3](3-Allow_More_Permissive_File_Names.md)
+
 ## Context
 The need to customize different features in the tool raises the question of how to specify the customization.
 
@@ -17,6 +19,8 @@ This might be too much power, resulting in potential performance/bugs/security i
 On the other hand, there's the motivation to keep the tool simple enough, so configuration is minimal, but still expressive.
 
 We can always start with a limited definition, but with an eye for further extensions. In any case, we'd like customizations to happen in a consistent and uniform manner.
+
+This in a sense extends/generalizes the [decision to allow more permissive file names](3-Allow_More_Permissive_File_Names.md) by simply allowing any kind of customized file names, when working with the file name customization.
 
 ## Decision
 In order to enable future extensions, we'll choose a customization method based on JS-based extensions.  

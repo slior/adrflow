@@ -106,30 +106,38 @@ let modifyADR = (adrID, cb, postModificationCB) => {
 
 let EOL = require('os').EOL
 
+function extractLastStatusFromStatusRegExpMatchAndCallback(matches,callback) {
+  let statuses = matches[1]
+  let a = statuses.split(/\r?\n/) //split to lines
+                  .filter(l => isStatusLine(l.trim()))
+  if (a.length > 0)
+    cb(a[a.length-1].trim())
+  else 
+    throw new Error(`Invalid status section for ADR ${adrID}`)
+}
+
+function extractStatusOrSignalNotFound(matches, notFoundHandler, cb) {
+  if (matches.length < 2) //1st matching group is the statuses. See regexp in lastStatusOf
+    notFoundHandler();
+  else
+    extractLastStatusFromStatusRegExpMatchAndCallback(matches, cb);
+}
+
 let lastStatusOf = (adrID, cb,notFoundHandler) => {
   findADRDir(adrDir => {
     adrFileByID(adrID, adrFilename => {
         let statusRE = /Status[\s]*$[\s]+([\w\- \r\n]+)/gm
         let fullFilename = adrFullPath(adrDir,adrFilename)
         let matches = statusRE.exec(adrContent(fullFilename))
-        if (matches.length < 2)
-          notFoundHandler()
-        else
-        {
-          let statuses = matches[1]
-          let a = statuses.split(/\r?\n/) //split to lines
-                          .filter(l => isStatusLine(l.trim()))
-          if (a.length > 0)
-            cb(a[a.length-1].trim())
-          else 
-            throw new Error(`Invalid status section for ADR ${adrID}`)
-        }
+        extractStatusOrSignalNotFound(matches, notFoundHandler, cb);
       },notFoundHandler)
   })
   
 }
 
 let isStatusLine = line => line.search(/^(Accepted|Proposed)/g) >= 0 //note: this regexp should match the status texts given below
+
+
 
 function statusMsgGenerator(text)
 {
@@ -244,8 +252,6 @@ let withEditorCommandFrom = (adrDir,callback) => {
       callback(config.editor)
   }
 
-  let exists = file => fs.existsSync(file)
-
   let tryToOverrideWithLocalConfigAndCallback = (localFilename, sharedConfig) => 
         propUtil.parse(localConfigFilename, {path : true}, (err2,localConfig) => {
           if (err2) //some error while parsing the local configuration - don't continue
@@ -261,7 +267,7 @@ let withEditorCommandFrom = (adrDir,callback) => {
     else
     {
       let localConfigFilename = `${adrDir}/${common.localADRConfigFilename}`
-      if (exists(localConfigFilename))
+      if (fs.existsSync(localConfigFilename))
         tryToOverrideWithLocalConfigAndCallback(localConfigFilename,sharedConfig)
       else 
         callbackWithEditorIfPresent(sharedConfig) //no local override of configuration => fallback to shared configuration

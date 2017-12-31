@@ -5,6 +5,8 @@
 Proposed 2017-07-26  
 Accepted 2017-07-26
 
+generalized_by [7](7-Defining_Customizations.md)
+
 ## Context
 Given that the ADR flow tool is intended to be a drop-in tool, and integrate well with other tools and repositories, we should aim also for ADR files created outside the tool, not with the same naming convention.  
 The tool generally works with the file system - looking for the ADR dir, enumerating files, etc.
