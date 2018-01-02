@@ -16,13 +16,14 @@ The customization file is a simple node module, exporting specific functionaliti
 In order to specify a custom file name pattern to be used for ADRs, you need to export (from `adr_custom.js`) an object under the key - `filenameDef`.  
 The returned object completely replaces the default ADR file naming scheme.
 
-This object has to contain the following methods:
-|Method|Parameters|Description|
-|------|----------|-----------|
-| matchesDefinedTemplats| `filename` | Whether or not the given filename matches the new template |
-| fromIDAndName | `id`, `name` | Given an ID and name, return a string for a file name for the new ADR |
-| titleFromFilename | `filename` | given a file name, return the ADR from it. |
-| idFromName | `filename` | given an ADR file name, return the ADR ID from it. |
+This object has to contain the following functions:
+
+Method|Parameters|Description
+------|----------|-----------
+ `matchesDefinedTemplate`| `filename` | Whether or not the given filename matches the new template 
+ `fromIDAndName` | `id`, `name` | Given an ID and name, return a string for a file name for the new ADR 
+ `titleFromFilename` | `filename` | given a file name, return the ADR title from it. 
+ `idFromName` | `filename` | given an ADR file name, return the ADR ID from it. 
 
 An example definition:
 ```
