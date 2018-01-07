@@ -1,3 +1,4 @@
+/** @module NewCommand */
 
 let fs = require('fs-extra')
 let findit = require('findit2')
@@ -29,7 +30,8 @@ function writeADR(adrFilename,newADR)
 /**
  * Create a new ADR in an already initialized ADR project.  
  * This will also launch the configured editor with the new file opened in it.
- * @public @function
+ * @public 
+ * @function
  * 
  * @param {string[]} titleParts - The parts of the title of the new ADR
  * 

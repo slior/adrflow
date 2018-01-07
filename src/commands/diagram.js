@@ -1,3 +1,4 @@
+/** @module DiagramCommand */
 "use strict"
 
 let fs = require('fs-extra')
@@ -54,8 +55,23 @@ function outputDiagram(filename,html)
   writeTextFileAndNotifyUser(filename,html,`Outputting diagram to ${filename} ...`)
 }
 
+/**
+ * Generate the code for creating an edge between ADRs
+ * 
+ * @private
+ * @function
+ * 
+ * @param {string} source The source ID
+ * @param {string} target The target ADR ID
+ * @param {String} label The target label ID
+ */
 let edgeJSCode = (source,target,label) => `{from : ${source}, to: ${target}, label: "${label}", arrows : { to : {enabled : true}}}`
-
+/**
+ * Executes the diagram command.
+ * This will also notify users on the progress, in the console.
+ * 
+ * @param {string} outputFile The file to output the diagram code to.
+ */
 let diagramCmd = (outputFile) => {
     console.info("Extracting metadata...")
     let allADRsMetadata = utils.adrFiles.map(utils.metadataFor)

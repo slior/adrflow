@@ -1,7 +1,13 @@
 
+/** @module AcceptCommand */
 
 let { modifyADR, Status, EOL : NL} = require('./adr_util.js')
-
+/**
+ * Marks an ADR as accepted. 
+ * This will update the ADR text.
+ * 
+ * @param {string} adrID The ID of the ADR to accept
+ */
 let acceptCmd = (adrID) => {
 
   if (!adrID) throw new Error("No ADR ID given for accept command")

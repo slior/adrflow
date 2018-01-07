@@ -1,3 +1,4 @@
+/** @module ExportCommand */
 "use strict"
 
 let marked = require("marked")

@@ -1,4 +1,5 @@
 
+/** @module ADRUtils */
 
 let findit = require('findit2')
 let common = require("./common.js")
@@ -223,7 +224,8 @@ let withContentOf = (adrID,cb) => {
 
 /**
  * Launch the editor using the given command, with the given file name as input
- * @private @function
+ * @private 
+ * @function
  * 
  * @param {string} file - The file name to open in the editor. Should be the full path.
  * @param {string} editorCommand The editor command to use.
@@ -238,7 +240,8 @@ let launchEditorFor = (file,editorCommand) => {
 
 /**
  * Invoke the given function with the configured editor command.
- * @private @function
+ * @private 
+ * @function
  * 
  * @param {string} adrDir - The ADR directory used to find ADR files.
  * @param {function} callback - The callback that will be invoked wit the editor command.
@@ -277,7 +280,8 @@ let withEditorCommandFrom = (adrDir,callback) => {
 
 /**
  * Find the configured editor command, and invoke the given callback on it
- * @private @function
+ * @private
+ * @function
  * 
  * @param {function} callback - the callback that will be invoked on the editor command (a string)
  * @see withEditorCommandFrom
