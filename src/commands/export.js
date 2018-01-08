@@ -1,4 +1,7 @@
-/** @module ExportCommand */
+/**
+ * The `export` command
+ *  @module
+ */
 "use strict"
 
 let marked = require("marked")
@@ -65,7 +68,9 @@ let exportAll = (destinationFile) =>
 
 /**
  * Command to export a given ADR to an HTML format
+ * 
  * @param {number} id - The ID of the ADR to export
+ * @param {string} destinationFile - The file to write the generated HTML. If no file is given, output is directed to standard output (`console.log`)
  */
 let exportCmd = (id,destinationFile) => {
     if (id === ALL)

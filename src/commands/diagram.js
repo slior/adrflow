@@ -1,4 +1,7 @@
-/** @module DiagramCommand */
+/**
+ * The `diagram` command.
+ * @module
+ */
 "use strict"
 
 let fs = require('fs-extra')

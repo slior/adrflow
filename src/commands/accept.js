@@ -1,7 +1,11 @@
 
-/** @module AcceptCommand */
+/**
+ * The `accept` command 
+ * @module 
+ */
 
 let { modifyADR, Status, EOL : NL} = require('./adr_util.js')
+
 /**
  * Marks an ADR as accepted. 
  * This will update the ADR text.

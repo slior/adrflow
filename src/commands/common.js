@@ -1,4 +1,7 @@
-/** @module Common */
+/**
+ * Common module: functions and values common to all commands. 
+ * @module 
+ */
 
 "use strict"
 
@@ -20,7 +23,15 @@ let writeTextFileAndNotifyUser = (filename,content,infoLine) => {
 }
 
 module.exports = {
+  /**
+   * The name of the file marking the ADR directory
+   * @const
+   */
   adrMarkerFilename : ".adr"
+  /**
+   * The name of the file used for local configuration
+   * @const
+   */
   , localADRConfigFilename : "local.adr"
   , writeTextFileAndNotifyUser : writeTextFileAndNotifyUser
 }

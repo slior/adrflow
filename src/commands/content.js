@@ -1,4 +1,7 @@
-/** @module ContentCommand */
+/**
+ * The `content` command 
+ * @module 
+ */
 "use strict"
 
 let {withContentOf} = require('./adr_util.js')

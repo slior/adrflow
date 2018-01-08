@@ -1,4 +1,7 @@
-/** @module NewCommand */
+/**
+ * The `new` command
+ * @module
+ */
 
 let fs = require('fs-extra')
 let findit = require('findit2')
