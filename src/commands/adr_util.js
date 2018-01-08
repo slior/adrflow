@@ -212,7 +212,7 @@ function formatDate(date) {
 /**
  * Given an ADR ID and a mapping function, return the invocation of the function on the content of that ADR
  * @param {number} adrID - The ID of the ADR whose content we wish to map
- * @param {string => *} cb - A callback function receiving the content of the given ADR
+ * @param {function} cb - A callback function (string => *) receiving the content of the given ADR
  */
 let withContentOf = (adrID,cb) => {
   withFullADRFilename(adrID

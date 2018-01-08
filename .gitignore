@@ -1,3 +1,4 @@
 node_modules/*
 adr.exe
 doc/adr/local.adr
+doc/code/*
