@@ -1,5 +1,9 @@
 
-/** @module ADRUtils */
+/**
+ * The ADR utilities module.  
+ * Several functions that are shared between command implementations.
+ * @module
+ */
 
 let findit = require('findit2')
 let common = require("./common.js")
@@ -10,6 +14,14 @@ let { exec } = require('child_process')
 
 let {matchesDefinedTemplate, titleFromFilename, idFromName} = require('../adr_util_sync.js').adrFilename()
 
+/**
+ * Find the ADR directory, and invoke the given callback with this directory.
+ * @package
+ * 
+ * @param {function} callback A function (`string => undefined`) that will be called when the ADR directory is found with the adr directory/
+ * @param {string} startFrom The directory to start the search from.
+ * @param {function} notFoundHandler A function to invoke in case the ADR directory isn't found.
+ */
 let findADRDir = ( callback,startFrom,notFoundHandler) => {
   let startDir = startFrom || "."
   let fsWalker = findit(startDir)
@@ -32,15 +44,23 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
 
 /**
  * Given an ADR (base) file name - return an object with the same file name + the extracted ID
+ * @package
+ * 
  * @param {string} filename - The base file name of the ADR file.
  * @returns an object with the file name (key = 'filename') and the numeric ID of the ADR (key = 'id').
  */
 let adrFilenameToIndexedFilename = filename => {
   return { id : idFromName(filename), filename : filename}
 }
-/*
-  Find all ADR file names in the given directory.
-  Return an array with all the ADR file names - to the callback
+/**
+ * Find all ADR file names in the given directory.
+ * Return an array with all the ADR file names - to the callback
+ * @package
+ *  
+ * @param {function} callback The callback function to invoke with the list of ADR file names (`string => undefined`)
+ * @param {string} _adrDir The ADR to search for ADRs in. If not given, the adr dir will be found automatically.
+ * 
+ * @see findADRDir
 */
 let withAllADRFiles = (callback, _adrDir) => {
 
@@ -67,6 +87,13 @@ let withAllADRFiles = (callback, _adrDir) => {
     body(_adrDir)
 }
 
+/**
+ * Given an ADR ID, find the corresponding ADR, and invoke the given callback on the ADR file name.  
+ * 
+ * @param {number} adrID The ADR ID to look for.
+ * @param {function} cb The callback to invoke on the ADR file name (`string => undefined`)
+ * @param {function} notFoundHandler The callback to invoke in case no ADR is found.
+ */
 let adrFileByID = (adrID, cb, notFoundHandler) => {
   withAllADRFiles(files => {
     let matchingFilenames = files.filter(f => idFromName(f) === adrID*1)
@@ -77,6 +104,12 @@ let adrFileByID = (adrID, cb, notFoundHandler) => {
   })
 }
 
+/**
+ * Given the full ADR file name, retrieve its content.
+ * 
+ * @param {string} adrFilename 
+ * @returns The ADR content, as read from the file.
+ */
 let adrContent = (adrFilename) => {
   return fs.readFileSync(adrFilename).toString()
 }
