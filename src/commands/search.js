@@ -16,7 +16,7 @@ let path = require('path')
  * @param {string} term The term to search for.
  */
 let searchCmd = term => {
-    findInFiles.findSync(term,adrs.adrDir,'.md$')
+    findInFiles.findSync(term,adrs.adrDir(),'.md$')
         .then(searchResults => {
             for (var resultFile in searchResults)
             {
