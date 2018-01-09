@@ -1,8 +1,22 @@
+/**
+ * The `link` command
+ * @module
+ */
+
 "use strict"
 
 let {modifyADR, EOL} = require('./adr_util.js')
 let adrs = require("../adr_util_sync.js").createUtilContext()
 
+/**
+ * Implements the `link` command.  
+ * Given a source and target ADR IDs, this will link the two sources, with the given text.  
+ * It will alter the source ADR text, and add the text link to that ADR.
+ * 
+ * @param {number} source The ID of the source ADR
+ * @param {string} link The text of the link. Can be only one word (underscores are permitted). If no link is given, a default link text will be used.
+ * @param {number} target The ID of the target ADR
+ */
 let linkCmd = (source,link,target) => {
     if (!source) throw new Error("Source ADR not given")
     if (!target) throw new Error("Target ADR not given")

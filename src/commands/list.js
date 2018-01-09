@@ -1,3 +1,8 @@
+/**
+ * The `list` command
+ * @module
+ */
+
 "use strict"
 
 require('console.table')
@@ -13,7 +18,12 @@ let enrichedADRListItem = adrData => {
   adrData.links = linksFrom(adrData.id)
   return adrData;
 }
-
+/**
+ * Implements the `list` command.  
+ * This will output the list of ADR identified in the ADR directory.
+ * 
+ * @param {object} options The options for the list command.
+ */
 let listCmd = (options) => {
     let bare = options.bare || false
     withAllADRFiles(files => {
