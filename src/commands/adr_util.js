@@ -12,7 +12,7 @@ let fs = require('fs-extra')
 let propUtil = require('properties')
 let { exec } = require('child_process')
 
-let {matchesDefinedTemplate, titleFromFilename, idFromName} = require('../adr_util_sync.js').adrFilename()
+let adrFilenameDef = require('../adr_util_sync.js').adrFilename
 
 /**
  * Find the ADR directory, and invoke the given callback with this directory.
@@ -50,7 +50,7 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
  * @returns an object with the file name (key = 'filename') and the numeric ID of the ADR (key = 'id').
  */
 let adrFilenameToIndexedFilename = filename => {
-  return { id : idFromName(filename), filename : filename}
+  return { id : adrFilenameDef().idFromName(filename), filename : filename}
 }
 /**
  * Find all ADR file names in the given directory.
@@ -69,7 +69,7 @@ let withAllADRFiles = (callback, _adrDir) => {
     let ret = []
     fsWalker.on('file',(file,stats,linkPath) => {
       let filename = path.basename(file)
-      if (matchesDefinedTemplate(filename))
+      if (adrFilenameDef().matchesDefinedTemplate(filename))
         ret.push(filename)
     })
 
@@ -96,7 +96,7 @@ let withAllADRFiles = (callback, _adrDir) => {
  */
 let adrFileByID = (adrID, cb, notFoundHandler) => {
   withAllADRFiles(files => {
-    let matchingFilenames = files.filter(f => idFromName(f) === adrID*1)
+    let matchingFilenames = files.filter(f => adrFilenameDef().idFromName(f) === adrID*1)
     if (matchingFilenames.length < 1)
       notFoundHandler()
     else

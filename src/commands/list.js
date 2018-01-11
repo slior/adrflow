@@ -7,14 +7,21 @@
 
 require('console.table')
 let utils = require('../adr_util_sync.js').createUtilContext()
-let {titleFromFilename: adrTitleFromFilename} = require('../adr_util_sync.js').adrFilename()
+let adrFilenameDef = require('../adr_util_sync.js').adrFilename
 
 let {withAllADRFiles, indexedADRFile} = require('./adr_util.js')
 
 let linksFrom = adrID => utils.linksFor(adrID)
 
+/**
+ * Given a structure withe the adr file name and id, return an enriched structure including also the title and links.
+ * @private
+ * 
+ * @param {object} adrData A structure with the adr file name (`.filename`) and its id (`.id`).
+ * @returns An enriched structure, also with the title (`.title`) and links (`.links`) of the ADR
+ */
 let enrichedADRListItem = adrData => {
-  adrData.title = adrTitleFromFilename(adrData.filename)
+  adrData.title = adrFilenameDef().titleFromFilename(adrData.filename)
   adrData.links = linksFrom(adrData.id)
   return adrData;
 }
