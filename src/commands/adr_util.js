@@ -289,7 +289,7 @@ let withEditorCommandFrom = (adrDir,callback) => {
   }
 
   let tryToOverrideWithLocalConfigAndCallback = (localFilename, sharedConfig) => 
-        propUtil.parse(localConfigFilename, {path : true}, (err2,localConfig) => {
+        propUtil.parse(localFilename, {path : true}, (err2,localConfig) => {
           if (err2) //some error while parsing the local configuration - don't continue
             console.error(err2)
           else
