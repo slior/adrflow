@@ -145,7 +145,7 @@ function extractLastStatusFromStatusRegExpMatchAndCallback(matches,callback) {
   let a = statuses.split(/\r?\n/) //split to lines
                   .filter(l => isStatusLine(l.trim()))
   if (a.length > 0)
-    cb(a[a.length-1].trim())
+    callback(a[a.length-1].trim())
   else 
     throw new Error(`Invalid status section for ADR ${adrID}`)
 }
