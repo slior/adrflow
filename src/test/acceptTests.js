@@ -56,43 +56,45 @@ describe('Accept command',() => {
     revert()
 
   })
-/*
+
   it("should not interfere with existing links when adding the Accepted stauts",() => {
+    let mockID = 1
     let revert = IC.__set__({
-      modifyADR : (dir,id,modifier,postModification) => {
-        
-      let testContent = `
-          # Lorem Ipsum
+      modifyADR : (id,modifier,postModification) => {
+        id.should.equal(mockID) //also testing the the id is passed correctly.
+        //Specifying the test strings this way, so we won't get confusion with \r\n and \n (if inserted in the editor).
+        let testContent = [
+          "# Lorem Ipsum"
+          ,EOL
+          ,"## Status"
+          ,EOL
+          ,"Proposed 2013-05-13"
+          ,EOL
+          ,"some_link [text](url)"
+          ,EOL
+          ,"## Some More Content"
+        ].join(EOL)
 
-          ## Status
+        let expectedContent = [
+          "# Lorem Ipsum"
+          ,EOL
+          ,"## Status"
+          ,EOL
+          ,"Proposed 2013-05-13"
+          ,"" //imitates the behavior of the modifyADR
+          ,`${Status.ACCEPTED()}`
+          ,EOL
+          ,"some_link [text](url)"
+          ,EOL
+          ,"## Some More Content"
+        ].join(EOL)
 
-          Proposed 2013-05-13
-          
-          some_link [text](url)
-
-          ## Some More Content
-          `
-
-      let expectdContent = `
-          # Lorem Ipsum
-
-          ## Status
-
-          Proposed 2013-05-13
-          Accepted ${Status.ACCEPTED()}
-
-
-          ## Some More Content
-          `
-
-          let newContent = modifier(testContent)
-          console.log(`new content:\n${newContent}`)
-          newContent.should.equal(expectdContent)
-        }
+        let newContent = modifier(testContent)
+        newContent.should.equal(expectedContent)
+      }
     })
 
-    IC(1) //adr accept 1
+    IC(mockID) //adr accept 1
     revert()
   })
-  */
 })
