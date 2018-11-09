@@ -4,6 +4,7 @@ const should = require('should')
 const rewire = require('rewire')
 
 const underTest = rewire('../commands/link.js')
+const linksMock = rewire("../core/links.js")
 const {EOL} = require("../commands/adr_util.js")
 
 
@@ -38,20 +39,25 @@ describe("Link Command", () => {
         let link = "testLink"
         let mockADRFile = "2.md"
 
+        let reverseLinks = linksMock.__set__({
+            adrs : {
+                filenameFor : _ => mockADRFile
+            }
+        })
+
         let reverse = underTest.__set__({
             modifyADR : (srcID,contentCB,doneCB) => {
                 let newContent = contentCB(mockContent)
                 let expectedText = `${link} [${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
             }
-            , adrs : {
-                filenameFor : id => mockADRFile
-            }
+            , linkCodeFor : linksMock.linkMarkdown
         })
 
         underTest(src,link,target)
 
         reverse()
+        reverseLinks()
     })
 
     it("should throw an error when no source is given", () => {
@@ -75,21 +81,26 @@ describe("Link Command", () => {
         let target = 2
         let mockADRFile = "2.md"
 
+        let reverseLinks = linksMock.__set__({
+            adrs : {
+                filenameFor : _ => mockADRFile
+            }
+        })
+
         let reverse = underTest.__set__({
             modifyADR : (srcID,contentCB,doneCB) => {
                 let newContent = contentCB(mockContent)
                 let expectedText = `links to [${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
             }
-            , adrs : {
-                filenameFor : id => mockADRFile
-            }
+            , linkCodeFor : linksMock.linkMarkdown
         })
 
         underTest(src,"",target)
         underTest(src,undefined,target)
         underTest(src,null,target)
 
+        reverseLinks()
         reverse()
     })
 })
