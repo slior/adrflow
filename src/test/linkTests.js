@@ -40,13 +40,11 @@ describe("Link Command", () => {
         let mockADRFile = "2.md"
 
         let reverseLinks = linksMock.__set__({
-            adrs : {
-                filenameFor : _ => mockADRFile
-            }
+            filenameFor : _ => mockADRFile
         })
 
         let reverse = underTest.__set__({
-            modifyADR : (srcID,contentCB,doneCB) => {
+            modifyADR : (_,contentCB,__) => {
                 let newContent = contentCB(mockContent)
                 let expectedText = `${link} [${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
@@ -82,13 +80,11 @@ describe("Link Command", () => {
         let mockADRFile = "2.md"
 
         let reverseLinks = linksMock.__set__({
-            adrs : {
-                filenameFor : _ => mockADRFile
-            }
+            filenameFor : _ => mockADRFile
         })
 
         let reverse = underTest.__set__({
-            modifyADR : (srcID,contentCB,doneCB) => {
+            modifyADR : (_,contentCB,__) => {
                 let newContent = contentCB(mockContent)
                 let expectedText = `links to [${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
