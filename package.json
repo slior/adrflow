@@ -19,7 +19,7 @@
     , "should": "~8.2.2"
     , "rewire": "~2.5.1"
   },
-  "version": "0.3.0",
+  "version": "0.6.0",
   "description": "ADR Utilities for Windows",
   "scripts": {
     "test": "mocha ./src/test/*.js"
