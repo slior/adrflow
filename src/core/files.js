@@ -47,11 +47,14 @@ let fullPathTo = (adrID,_adrFiles) => {
 /**
  * Given an ADR ID, return its full file name
  * 
- * @param {number} adrID 
+ * @param {number} adrID The ID of the ADR to which we're looking for the filename
+ * @param {string[]} _adrFiles The list of files to look in. Option; if none is given, the list of all ADRs is resolved and used.
  * 
  * @returns {string} The full path to the ADR file
+ * 
+ * @see allADRFiles
  */
-let filenameFor = adrID => path.basename(fullPathTo(adrID,allADRFiles()))
+let filenameFor = (adrID,_adrFiles) => path.basename(fullPathTo(adrID,_adrFiles || allADRFiles()))
 
 
 let defaultADRIDFromFilename = filename => {

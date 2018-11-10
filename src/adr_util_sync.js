@@ -6,7 +6,7 @@ let path = require('path')
 let common = require("./commands/common.js")
 let {indexedADRFile} = require("./commands/adr_util.js")
 let {linksMetadata,linksFor} = require("./core/links.js")
-let {fullPathTo, allADRFiles, resolveFilenameDefinition} = require("./core/files.js")
+let {fullPathTo, allADRFiles, resolveFilenameDefinition, filenameFor} = require("./core/files.js")
 
 let resolveADRDir = startFrom => {
     let start = startFrom || '.'
@@ -61,7 +61,7 @@ function Context()
 
     this.metadataFor = adrPath => adrMetadata(adrPath,this.adrFiles())
 
-    this.filenameFor = adrID => path.basename(fullPathTo(adrID,this.adrFiles()))
+    this.filenameFor = adrID => filenameFor(adrID,this.adrFiles())
 
     return this;
 }
