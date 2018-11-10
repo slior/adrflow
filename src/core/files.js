@@ -6,8 +6,9 @@
 
 let path = require('path')
 let walker = require('klaw-sync')
+let customizations = require("../customization.js").customizations
 
-let adrFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
+let defaultADRFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
 
 /**
  * Return a list of all the ADR files in the given directory (including sub directories)
@@ -17,7 +18,7 @@ let adrFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
  * @returns {string[]} List of paths to the files.
  */
 let allADRFiles = (_adrDir) => {
-    let adrFilter = file => adrFileRE.test(path.basename(file.path))
+    let adrFilter = file => defaultADRFileRE.test(path.basename(file.path))
     return walker(_adrDir, {filter : adrFilter}).map(f => f.path)
 }
 
@@ -52,9 +53,48 @@ let fullPathTo = (adrID,_adrFiles) => {
  */
 let filenameFor = adrID => path.basename(fullPathTo(adrID,allADRFiles()))
 
+
+let defaultADRIDFromFilename = filename => {
+    let a = defaultADRFileRE.exec(filename)
+    if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
+    return a[1]*1
+}
+
+let defaultADRTitleFromFile = filename => {
+    let a = defaultADRFileRE.exec(filename)
+    if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
+    return a[2].split('_').join(' ')
+}
+
+/**
+ * Resolve the definition of the ADR file name, if customized.  
+ * If not customized, return the default implementation.
+ * 
+ * @param {string} resolvedADRDir The ADR directory - where the .adr file resides.
+ * @returns {object} The object with all the methods necessary to define the filename
+ */
+function resolveFilenameDefinition(resolvedADRDir) 
+{
+    
+    if (!resolvedADRDir) throw new Error("Missing ADR Dir for filename definition")
+
+    let defaultDefinition = {
+        matchesDefinedTemplate : name => defaultADRFileRE.test(name)
+        , fromIDAndName : (id,name) => `${id}-${name}.md`
+        , titleFromFilename : defaultADRTitleFromFile
+        , idFromName : defaultADRIDFromFilename
+    }
+
+    let adrDir = resolvedADRDir
+    let customizedDefinition = customizations(adrDir).filenameDef
+
+    return Object.assign({},defaultDefinition,customizedDefinition)
+}
+
+
 module.exports = {
     filenameFor : filenameFor
     , allADRFiles : allADRFiles
     , fullPathTo : fullPathTo
-    , adrFileRE : adrFileRE
+    , resolveFilenameDefinition : resolveFilenameDefinition
 }

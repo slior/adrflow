@@ -5,22 +5,8 @@ let walker = require('klaw-sync')
 let path = require('path')
 let common = require("./commands/common.js")
 let {indexedADRFile} = require("./commands/adr_util.js")
-let customizations = require("./customization.js").customizations
 let {linksMetadata,linksFor} = require("./core/links.js")
-let {fullPathTo, allADRFiles, adrFileRE} = require("./core/files.js")
-
-
-let adrIDFromFilename = filename => {
-    let a = adrFileRE.exec(filename)
-    if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
-    return a[1]*1
-}
-
-let adrTitleFromFile = filename => {
-    let a = adrFileRE.exec(filename)
-    if (!a) throw new Error(`${filename} doesn't match an ADR file pattern`)
-    return a[2].split('_').join(' ')
-}
+let {fullPathTo, allADRFiles, resolveFilenameDefinition} = require("./core/files.js")
 
 let resolveADRDir = startFrom => {
     let start = startFrom || '.'
@@ -80,29 +66,13 @@ function Context()
     return this;
 }
 
-function resolveFilenameDefinition(resolvedADRDir) 
-{
-    
-    let defaultDefinition = {
-        matchesDefinedTemplate : name => adrFileRE.test(name)
-        , fromIDAndName : (id,name) => `${id}-${name}.md`
-        , titleFromFilename : adrTitleFromFile
-        , idFromName : adrIDFromFilename
-    }
-
-    let adrDir = resolvedADRDir || (new Context()).adrDir()
-    let customizedDefinition = customizations(adrDir).filenameDef
-
-    return Object.assign({},defaultDefinition,customizedDefinition)
-}
-
 var _resolvedFilenameDef = null
 
 module.exports = {
     createUtilContext : () => { return new Context() }
     , adrFilename : () => {
         if (_resolvedFilenameDef === null)
-            _resolvedFilenameDef = resolveFilenameDefinition()
+            _resolvedFilenameDef = resolveFilenameDefinition((new Context()).adrDir())
         return _resolvedFilenameDef
     }
 }
