@@ -15,7 +15,7 @@ let { filenameFor } = ("./files.js")
  */
 let linkMD = (linkText,targetID) => 
 {
-    let targetFilename = filenameFor(targetID) //adrs.filenameFor(targetID)
+    let targetFilename = filenameFor(targetID) 
     return `${linkText} [${targetID}](${targetFilename})`
 }
 

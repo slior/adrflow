@@ -4,7 +4,7 @@ let fs = require('fs-extra')
 let walker = require('klaw-sync')
 let path = require('path')
 let common = require("./commands/common.js")
-let {indexedADRFile} = require("./commands/adr_util.js")
+let indexedADRFile = require("./commands/adr_util.js").indexedADRFile
 let {linksMetadata,linksFor} = require("./core/links.js")
 let {fullPathTo, allADRFiles, resolveFilenameDefinition, filenameFor} = require("./core/files.js")
 

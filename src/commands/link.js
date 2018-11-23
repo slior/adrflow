@@ -16,6 +16,8 @@ let {linkMarkdown: linkCodeFor } = require("../core/links.js")
  * @param {number} source The ID of the source ADR
  * @param {string} link The text of the link. Can be only one word (underscores are permitted). If no link is given, a default link text will be used.
  * @param {number} target The ID of the target ADR
+ * 
+ * @throws {Error} in case the source or target ids are not given
  */
 let linkCmd = (source,link,target) => {
     if (!source) throw new Error("Source ADR not given")
