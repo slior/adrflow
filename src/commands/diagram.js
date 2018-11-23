@@ -77,7 +77,7 @@ let edgeJSCode = (source,target,label) => `{from : ${source}, to: ${target}, lab
  */
 let diagramCmd = (outputFile) => {
     console.info("Extracting metadata...")
-    let allADRsMetadata = utils.adrFiles.map(utils.metadataFor)
+    let allADRsMetadata = utils.adrFiles().map(utils.metadataFor)
     console.info("Generating HTML...")
     let diagramNodesJSCode = allADRsMetadata.map(adrMD => nodeJSCode(adrMD.id,adrMD.title)).join(",")
     let allEdges = []
