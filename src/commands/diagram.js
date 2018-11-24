@@ -4,8 +4,9 @@
  */
 "use strict"
 
-let fs = require('fs-extra')
-let utils = require('../adr_util_sync.js').createUtilContext()
+let {adrMetadata} = require('../adr_util_sync.js')
+let {allADRFiles, resolveADRDir} = require("../core/files.js")
+
 let {writeTextFileAndNotifyUser} = require('./common.js')
 
 let nodeJSCode = (id,title) => `{id : ${id}, label : "${id}: ${title}", shape : 'box'}`
@@ -69,6 +70,7 @@ function outputDiagram(filename,html)
  * @param {String} label The target label ID
  */
 let edgeJSCode = (source,target,label) => `{from : ${source}, to: ${target}, label: "${label}", arrows : { to : {enabled : true}}}`
+
 /**
  * Executes the diagram command.
  * This will also notify users on the progress, in the console.
@@ -77,7 +79,8 @@ let edgeJSCode = (source,target,label) => `{from : ${source}, to: ${target}, lab
  */
 let diagramCmd = (outputFile) => {
     console.info("Extracting metadata...")
-    let allADRsMetadata = utils.adrFiles().map(utils.metadataFor)
+    let allFiles = allADRFiles(resolveADRDir())
+    let allADRsMetadata = allFiles.map(adrMetadata)
     console.info("Generating HTML...")
     let diagramNodesJSCode = allADRsMetadata.map(adrMD => nodeJSCode(adrMD.id,adrMD.title)).join(",")
     let allEdges = []

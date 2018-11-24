@@ -72,7 +72,6 @@ let linksMetadata = (adrContent) => {
     return statusSectionFrom(adrContent)
             .filter(line => line !== "")
             .filter(line => !statusUpdateRE.test(line)) //need to filter this separately, as the beginning of a status update looks like a link text with no markdown link, which is legal.
-            // .filter(line => linkRE.test(line))
             .filter(line => isLink(line))
             .map(toTargetIDAndText)
 }

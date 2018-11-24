@@ -9,15 +9,13 @@ describe('diagram command',() => {
 
     it ("should output mock ADR to default file name", () => {
         let reverseDiag = diag.__set__({
-            utils : {
-                adrFiles : () => ["1.md"]
-                , metadataFor : _ => { 
-                    return {
-                        id: 1
-                        , filename : '1.md'
-                        , title : "Mock ADR"
-                        , links :  []
-                    }
+            allADRFiles : _ => ["1-mock.md"]
+            , adrMetadata : filename => {
+                return {
+                    filename : "1-mock.md"
+                    , id : 1
+                    , title : "Mock ADR"
+                    , links : []
                 }
             }
             , outputDiagram : (outFile,content) => {

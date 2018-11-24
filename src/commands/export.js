@@ -5,7 +5,8 @@
 "use strict"
 
 let marked = require("marked")
-let {withContentOf, withAllADRFiles, indexedADRFile, EOL} = require('./adr_util.js')
+let {withContentOf, withAllADRFiles, EOL} = require('./adr_util.js')
+let {indexedADRFile} = require("../core/files.js")
 let {writeFileSync} = require('fs-extra')
 let {promisedContentOf} = require('../adr_util_async.js')
 

@@ -7,9 +7,10 @@
 
 require('console.table')
 let utils = require('../adr_util_sync.js').createUtilContext()
-let adrFilenameDef = require('../adr_util_sync.js').adrFilename
+let { filenameDef : adrFilenameDef} = require('../core/files.js')
 
-let {withAllADRFiles, indexedADRFile} = require('./adr_util.js')
+let {withAllADRFiles} = require('./adr_util.js')
+let {indexedADRFile} = require('../core/files.js')
 
 let linksFrom = adrID => utils.linksFor(adrID)
 

@@ -4,6 +4,7 @@ const should = require('should')
 const rewire = require('rewire')
 
 const utils = rewire('../adr_util_sync.js')
+const files = rewire('../core/files.js')
 
 const testInvalidIDThrowsException = block => {
     should.throws(block, /could not find ADR file for ADR/i,"should throw a 'not found exception'")
@@ -17,7 +18,7 @@ describe("Synchronous ADR Utils", () => {
 
         it("should throw an exception if no ADR directory is found",() => {
             let revert = utils.__set__({
-                walker : (start,opts) => []
+                resolveADRDir : _ => { throw new Error("No ADR directory found from ")}
             })
 
             should.throws(() => {
@@ -157,15 +158,15 @@ describe("Synchronous ADR Utils", () => {
 
     describe("adrFilename", () => {
         it("should define the necessary members", () => {
-            utils.adrFilename().should.have.keys('matchesDefinedTemplate', 'fromIDAndName', 'titleFromFilename', 'idFromName')
-            utils.adrFilename().fromIDAndName.should.be.Function()
-            utils.adrFilename().titleFromFilename.should.be.Function()
-            utils.adrFilename().idFromName.should.be.Function()
-            utils.adrFilename().matchesDefinedTemplate.should.be.Function()
+            files.filenameDef().should.have.keys('matchesDefinedTemplate', 'fromIDAndName', 'titleFromFilename', 'idFromName')
+            files.filenameDef().fromIDAndName.should.be.Function()
+            files.filenameDef().titleFromFilename.should.be.Function()
+            files.filenameDef().idFromName.should.be.Function()
+            files.filenameDef().matchesDefinedTemplate.should.be.Function()
         })
 
         describe("titleFromFilename",() => {
-            let f = utils.adrFilename()
+            let f = files.filenameDef()
             it("should return correct title from a valid filename", () => {
                 f.titleFromFilename("3-some_title.md").should.equal("some title")
             })
@@ -184,7 +185,7 @@ describe("Synchronous ADR Utils", () => {
         })
 
         describe("idFromName",() => {
-            let f = utils.adrFilename().idFromName
+            let f = files.filenameDef().idFromName
 
             it("should return correct id from a valid filename",() => {
                 f("3-some_title.md").should.equal(3)
@@ -204,7 +205,7 @@ describe("Synchronous ADR Utils", () => {
         })
 
         describe("matchesDefinedTemplate",() => {
-            let f = utils.adrFilename().matchesDefinedTemplate
+            let f = files.filenameDef().matchesDefinedTemplate
 
             it ("should return TRUE for matching filenames",() => {
                 f("1-blabla.md").should.equal(true)

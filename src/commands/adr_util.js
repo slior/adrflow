@@ -11,8 +11,7 @@ let path = require('path')
 let fs = require('fs-extra')
 let propUtil = require('properties')
 let { exec } = require('child_process')
-
-let adrFilenameDef = require('../adr_util_sync.js').adrFilename
+let {indexedADRFile:  adrFilenameToIndexedFilename, filenameDef : adrFilenameDef } = require("../core/files.js")
 
 /**
  * Find the ADR directory, and invoke the given callback with this directory.
@@ -42,16 +41,6 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
   fsWalker.on('end',() => { _notFoundHandler() } )
 }
 
-/**
- * Given an ADR (base) file name - return an object with the same file name + the extracted ID
- * @package
- * 
- * @param {string} filename - The base file name of the ADR file.
- * @returns an object with the file name (key = 'filename') and the numeric ID of the ADR (key = 'id').
- */
-let adrFilenameToIndexedFilename = filename => {
-  return { id : adrFilenameDef().idFromName(filename), filename : filename}
-}
 /**
  * Find all ADR file names in the given directory.
  * Return an array with all the ADR file names - to the callback
@@ -356,7 +345,6 @@ module.exports = {
       ACCEPTED : STATUS_ACCEPTED
     }
     , create : createADR
-    , indexedADRFile : adrFilenameToIndexedFilename
     , EOL : EOL
     , withContentOf : withContentOf
     , withFullADRFilename : withFullADRFilename

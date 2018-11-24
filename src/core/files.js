@@ -7,6 +7,7 @@
 let path = require('path')
 let walker = require('klaw-sync')
 let customizations = require("../customization.js").customizations
+let common = require("../commands/common.js")
 
 let defaultADRFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
 
@@ -94,10 +95,42 @@ function resolveFilenameDefinition(resolvedADRDir)
     return Object.assign({},defaultDefinition,customizedDefinition)
 }
 
+var _resolvedFilenameDef = null
+
+function filenameDef() 
+{
+    if (_resolvedFilenameDef === null)
+        _resolvedFilenameDef = resolveFilenameDefinition(resolveADRDir())
+    return _resolvedFilenameDef
+}
+
+let resolveADRDir = startFrom => {
+    let start = startFrom || '.'
+    let adrMarkerFilter = file => path.basename(file.path) === common.adrMarkerFilename
+    let markerFilesFound = walker(start,{filter : adrMarkerFilter, nodir : true})
+    if (markerFilesFound.length < 1)
+        throw new Error(`No ADR directory found from ${start}`)
+    else
+        return path.dirname(markerFilesFound[0].path)
+}
+
+/**
+ * Given an ADR (base) file name - return an object with the same file name + the extracted ID
+ * @package
+ * 
+ * @param {string} filename - The base file name of the ADR file.
+ * @returns an object with the file name (key = 'filename') and the numeric ID of the ADR (key = 'id').
+ */
+let adrFilenameToIndexedFilename = filename => {
+    return { id : filenameDef().idFromName(filename), filename : filename}
+  }
 
 module.exports = {
     filenameFor : filenameFor
     , allADRFiles : allADRFiles
     , fullPathTo : fullPathTo
     , resolveFilenameDefinition : resolveFilenameDefinition
+    , resolveADRDir : resolveADRDir
+    , indexedADRFile : adrFilenameToIndexedFilename
+    , filenameDef : filenameDef
 }

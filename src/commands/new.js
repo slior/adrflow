@@ -3,13 +3,10 @@
  * @module
  */
 
-let fs = require('fs-extra')
-let findit = require('findit2')
 let common = require("./common.js")
-let path = require('path')
 
 let { findADRDir, withAllADRFiles, create, launchEditorForADR } = require('./adr_util.js')
-let {adrFilename : adrFileGen} = require('../adr_util_sync.js')
+let { filenameDef : adrFileGen} = require('../core/files.js')
 
 let adrContent = (number,title) => create(number,title)
 
