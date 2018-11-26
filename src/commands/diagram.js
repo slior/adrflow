@@ -4,7 +4,7 @@
  */
 "use strict"
 
-let {adrMetadata} = require('../adr_util_sync.js')
+let {adrMetadata} = require('../core/adrobj.js')
 let {allADRFiles, resolveADRDir} = require("../core/files.js")
 
 let {writeTextFileAndNotifyUser} = require('./common.js')

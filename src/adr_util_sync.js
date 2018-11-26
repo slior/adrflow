@@ -1,9 +1,8 @@
 "use strict"
 
 let fs = require('fs-extra')
-let path = require('path')
-let {linksMetadata,linksFor} = require("./core/links.js")
-let {fullPathTo, allADRFiles, filenameFor, resolveADRDir, indexedADRFile, filenameDef} = require("./core/files.js")
+let {linksFor} = require("./core/links.js")
+let {fullPathTo, allADRFiles, filenameFor, resolveADRDir} = require("./core/files.js")
 
 let contentOf = (adrID,fromFiles) => {
     let adrFilename = fullPathTo(adrID,fromFiles)
@@ -12,19 +11,6 @@ let contentOf = (adrID,fromFiles) => {
 
 let adrContentFromFilename = adrFilename => fs.readFileSync(adrFilename).toString()
 
-let adrMetadata = (adrPath) => {
-    let adrBaseFilename = path.basename(adrPath)
-    let indexedFile = indexedADRFile(adrBaseFilename)
-    let title = filenameDef().titleFromFilename(adrBaseFilename)
-    let adrContent = adrContentFromFilename(adrPath) 
-    let  links = linksMetadata(adrContent)
-    return {
-        id: indexedFile.id
-        , filename : indexedFile.filename
-        , title : title
-        , links :  links
-    }
-}
 
 function Context()
 {
@@ -56,5 +42,4 @@ function Context()
 
 module.exports = {
     createUtilContext : () => { return new Context() }
-    , adrMetadata : adrMetadata
 }
