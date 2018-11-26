@@ -35,8 +35,6 @@ function Context()
         return linksFor(contentOf(adrID,this.adrFiles()))
     }
 
-    this.filenameFor = adrID => filenameFor(adrID,this.adrFiles())
-
     return this;
 }
 
