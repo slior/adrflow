@@ -6,7 +6,10 @@ const rewire = require('rewire')
 const adrObj = rewire('../core/adrobj.js')
 
 describe('adrMetadata', () => {
-    it("should return an object with all the metadata retrieved about the ADR", () => {
+    it("should return an object with all the metadata retrieved about the ADR", function(done) {
+
+        this.timeout(3000)
+
         let MOCK_FILENAME = "1_Mock.md"
         let MOCK_ADR_TITLE = "Mock"
         let MOCK_CONTENT = "Some content"
@@ -32,8 +35,8 @@ describe('adrMetadata', () => {
         result.title.should.equal(MOCK_ADR_TITLE)
         result.links.should.eql([])
 
-        
-
         revertDeps()
+
+        done()
     })
 })

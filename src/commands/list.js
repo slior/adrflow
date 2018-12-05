@@ -6,13 +6,13 @@
 "use strict"
 
 require('console.table')
-let utils = require('../adr_util_sync.js').createUtilContext()
-let { filenameDef : adrFilenameDef} = require('../core/files.js')
+let path = require('path')
+let {linksFor,linkTextFromMD} = require("../core/links.js")
+let { filenameDef : adrFilenameDef, contentOf} = require('../core/files.js')
+let {adrMetadata} = require('../core/adrobj.js')
 
 let {withAllADRFiles} = require('./adr_util.js')
-let {indexedADRFile} = require('../core/files.js')
-
-let linksFrom = adrID => utils.linksFor(adrID)
+let linksFrom = adrFilename => linksFor(contentOf(adrFilename))
 
 /**
  * Given a structure withe the adr file name and id, return an enriched structure including also the title and links.
@@ -23,7 +23,7 @@ let linksFrom = adrID => utils.linksFor(adrID)
  */
 let enrichedADRListItem = adrData => {
   adrData.title = adrFilenameDef().titleFromFilename(adrData.filename)
-  adrData.links = linksFrom(adrData.id)
+  adrData.links = linksFrom(adrData.filename)
   return adrData;
 }
 /**
@@ -36,12 +36,20 @@ let listCmd = (options) => {
     let bare = options.bare || false
     withAllADRFiles(files => {
         if (bare)
-            files.forEach(f => console.info(f))
+            files
+                .map(fullPath => path.basename(fullPath))
+                .forEach(f => console.info(f))
         else 
-            console.table(files.map(indexedADRFile)
-                               .map(enrichedADRListItem)
-                        )
-    })
+            console.table(files
+                          .map(path => adrMetadata(path))
+                          .map(md => {
+                            md.links = md.links.map(linkTextFromMD) //change the link metadata info to displayable information
+                            return md
+                          })
+            )
+    }
+    , null
+    , null)
 }
 
 

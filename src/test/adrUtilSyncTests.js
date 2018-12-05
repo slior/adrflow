@@ -7,13 +7,17 @@ const utils = rewire('../adr_util_sync.js')
 const files = rewire('../core/files.js')
 
 const testInvalidIDThrowsException = block => {
-    should.throws(block, /could not find ADR file for ADR/i,"should throw a 'not found exception'")
+    //Could not find ADR file for ADR
+    should.throws(block, /Could not find ADR file for ADR/i,"should throw a 'not found exception'")
 }
 
 describe("Synchronous ADR Utils", () => {
     describe("contentOf", () => {
-        it ("should throw an exception when an invalid ADR ID is given",() => {
+        
+        it ("should throw an exception when an invalid ADR ID is given",function (done) {
+            this.timeout(5000)    
             testInvalidIDThrowsException(() => utils.createUtilContext().contentOf("-1"))
+            done()
         })
 
         it("should throw an exception if no ADR directory is found",() => {
@@ -42,7 +46,7 @@ describe("Synchronous ADR Utils", () => {
                 }
             })
 
-            utils.createUtilContext().contentOf("1").should.equal(expectedFileContent)
+            utils.createUtilContext().contentOf(1).should.equal(expectedFileContent)
 
             revert()
         })
@@ -74,7 +78,7 @@ describe("Synchronous ADR Utils", () => {
                                      bla bla
                                      `))
 
-            utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
+            utils.createUtilContext().linksFor(1).should.deepEqual(["points_to 2", "follows 3"])
             revert()
         })
 
@@ -93,7 +97,7 @@ describe("Synchronous ADR Utils", () => {
                 `
             ))
 
-            utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
+            utils.createUtilContext().linksFor(1).should.deepEqual(["points_to 2", "follows 3"])
             revert()
         })
 
@@ -113,7 +117,7 @@ describe("Synchronous ADR Utils", () => {
 
             `))
 
-            utils.createUtilContext().linksFor("1").should.deepEqual(["points_to 2", "follows 3"])
+            utils.createUtilContext().linksFor(1).should.deepEqual(["points_to 2", "follows 3"])
             revert()
         })
 
@@ -130,7 +134,7 @@ describe("Synchronous ADR Utils", () => {
 
             `))
 
-            utils.createUtilContext().linksFor("1").should.deepEqual([])
+            utils.createUtilContext().linksFor(1).should.deepEqual([])
             revert()
         })
 

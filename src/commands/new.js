@@ -49,6 +49,7 @@ let newCmd = (titleParts) => {
                 let adrFilename = `${adrDir}/${adrBasename}`
                 writeADR(adrFilename,adrContent(nextNum,title))
 
+                console.log("Launching editor for new ADR" + nextNum)
                 launchEditorForADR(nextNum)
 
               }, adrDir)

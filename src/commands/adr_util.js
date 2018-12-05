@@ -48,18 +48,20 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
  *  
  * @param {function} callback The callback function to invoke with the list of ADR file names (`string => undefined`)
  * @param {string} _adrDir The ADR to search for ADRs in. If not given, the adr dir will be found automatically.
+ * @param {function} pathMapper A function used to map the matched ADR file names to other values (e.g. full path vs. base name). The function receives the full path from root as input.
  * 
  * @see findADRDir
 */
-let withAllADRFiles = (callback, _adrDir) => {
+let withAllADRFiles = (callback, _adrDir, pathMapper) => {
 
+  let filePathMapper = pathMapper || (filePath => path.basename(filePath))
   let body = (adrDir) => {
     let fsWalker = findit(adrDir)
     let ret = []
     fsWalker.on('file',(file,stats,linkPath) => {
       let filename = path.basename(file)
       if (adrFilenameDef().matchesDefinedTemplate(filename))
-        ret.push(filename)
+        ret.push(filePathMapper(file))
     })
 
     fsWalker.on('end',() => {
@@ -266,7 +268,7 @@ let launchEditorFor = (file,editorCommand) => {
  * @function
  * 
  * @param {string} adrDir - The ADR directory used to find ADR files.
- * @param {function} callback - The callback that will be invoked wit the editor command.
+ * @param {function} callback - The callback that will be invoked with the editor command.
  */
 let withEditorCommandFrom = (adrDir,callback) => {
 

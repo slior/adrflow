@@ -8,6 +8,7 @@ let path = require('path')
 let walker = require('klaw-sync')
 let customizations = require("../customization.js").customizations
 let common = require("../commands/common.js")
+let fs = require('fs-extra')
 
 let defaultADRFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
 
@@ -38,11 +39,18 @@ let allADRFiles = (_adrDir) => {
  */
 let fullPathTo = (adrID,_adrFiles) => {
     let adrFiles = _adrFiles || allADRFiles()
-    let matchingFilenames = adrFiles.filter(f => path.basename(f).indexOf(adrID + "-") === 0)
-    if (matchingFilenames.length < 1) //not found
+    let matchingFile = adrFiles.find(f =>  { 
+        try {
+            return filenameDef().idFromName(path.basename(f)) === adrID*1 //we expect the ADR ID to be a number, hence the adrID*1.
+        }
+        catch (e) { return false } 
+    })
+    if (!matchingFile) {
+        console.error(`Error: invalid ID ${adrID}`)
         throw new Error(`Could not find ADR file for ADR ${adrID}`)
+    }
     else
-        return matchingFilenames[0]
+        return matchingFile
 }
 
 /**
@@ -125,6 +133,12 @@ let adrFilenameToIndexedFilename = filename => {
     return { id : filenameDef().idFromName(filename), filename : filename}
   }
 
+
+function contentFromFile(adrFilename) 
+{
+    return fs.readFileSync(adrFilename).toString()
+}
+
 module.exports = {
     filenameFor : filenameFor
     , allADRFiles : allADRFiles
@@ -133,4 +147,5 @@ module.exports = {
     , resolveADRDir : resolveADRDir
     , indexedADRFile : adrFilenameToIndexedFilename
     , filenameDef : filenameDef
+    , contentOf : contentFromFile
 }

@@ -2,7 +2,7 @@
 
 let fs = require('fs-extra')
 let {linksFor} = require("./core/links.js")
-let {fullPathTo, allADRFiles, filenameFor, resolveADRDir} = require("./core/files.js")
+let {fullPathTo, allADRFiles, resolveADRDir} = require("./core/files.js")
 
 let contentOf = (adrID,fromFiles) => {
     let adrFilename = fullPathTo(adrID,fromFiles)

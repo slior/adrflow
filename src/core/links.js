@@ -66,6 +66,14 @@ let statusSectionFrom = adrContent => {
     return lines.slice(statusStartInd+1,statusEndInd)
 }
 
+/**
+ * Given the ADR file content, extract the link's metadata
+ * 
+ * @param {string} adrContent The ADR markdown content
+ * @returns {object[]} The list of metadata object for the extracted links
+ * 
+ * @see toTargetIDAndText
+ */
 let linksMetadata = (adrContent) => {
     let statusUpdateRE = /\w+\s+\d{4}-\d{1,2}-\d{1,2}/ //Essentially: "word 2017-11-3" or similar
     //get all the status section content, filter out everything that's not a link, then parse and return it
@@ -76,15 +84,30 @@ let linksMetadata = (adrContent) => {
             .map(toTargetIDAndText)
 }
 
+/**
+ * Given the ADR content, extract the links' metadata from it.
+ * 
+ * @param {string} adrContent The content of the ADR
+ * 
+ * @returns {object[]} an array of objects with the links metadata
+ */
 let linksFor = (adrContent) => {
-    // return linksMetadata(adrID,fromFiles)
     return linksMetadata(adrContent)
-            .map(linkMD => `${linkMD.text} ${linkMD.target}`)
+            .map(linkTextFromMD)
             .filter(t => t !== "")
 }
+
+/**
+ * Given a link's metadata object, return the text for the link
+ * 
+ * @param {object} linkMD an object with the keys 'text' and 'target' signifying the link's text and target ADR id.
+ * @returns {string} The text for the link, for displaying purposes.
+ */
+let linkTextFromMD = linkMD => `${linkMD.text} ${linkMD.target}`
 
 module.exports = {
     linkMarkdown : linkMD
     , linksMetadata : linksMetadata
     , linksFor : linksFor
+    , linkTextFromMD : linkTextFromMD
 }

@@ -24,12 +24,13 @@ describe('New command',() => {
     }
   }
 
-  let dummyLaunchEditor = (file,editorCmd) => {}
+  let dummyLaunchEditor = _ => {}
 
   let commonMocks = {
     fs : mockFS
     , propUtil : mockPropUtil
-    , launchEditorFor : dummyLaunchEditor
+    , launchEditorForADR : dummyLaunchEditor
+    , writeADR : (adrFilename,newADR) => { console.log(`Pretending to write to ${adrFilename}`)}
   }
 
   function modifiedCommonMocks(specificMocks) {
@@ -67,7 +68,8 @@ describe('New command',() => {
 
     IC([testTitle])
 
-    revert(IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(5))))
+    revert()
+    revert = IC.__set__(modifiedCommonMocks(mocksWithHighestNumber(5)))
 
     IC(["test"])
     revert();
@@ -101,18 +103,4 @@ describe('New command',() => {
     revert();
   })
 
-  it("should launch the editor configured in the adr configuration", () => {
-
-    let revert = IC.__set__(modifiedCommonMocks({
-      launchEditorFor : (file,editorCmd) => {
-        editorCmd.should.eql(mockEditorCommand)
-      }
-    }))
-
-    IC(["testadr"])
-
-    revert();
-
-
-  })
 })
