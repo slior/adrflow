@@ -12,7 +12,21 @@ describe("Export Command",function() {
             exportAll : file => { file.should.equal(mockFile) }
         })
 
-        exportCmd("*",mockFile)
+        exportCmd(mockFile)
+
+        revert()
+    })
+
+    it ("should output to console if no file is given",function() {
+        let mockHTML = "<html></html>"
+        let revert = exportCmd.__set__({
+            console :  { 
+                log : s => s.should.equal(mockHTML)
+            }
+            , allADRsToHTML : _ => mockHTML
+        })
+
+        exportCmd("1","")
 
         revert()
     })
