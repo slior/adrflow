@@ -88,6 +88,12 @@ To do that, simply specify `*` (asterisk) as the ID in the above command, e.g.:
 adr export * all.html
 ```
 
+There is also an option to export a subset of the ADRs.  
+This can be done by specifying a comma-delimited list of IDs that will then be exported: 
+```
+adr export 1,3 out.html
+```
+
 #### Exporting Diagram
 In addition to exporting the ADR content, one can also export a network figure (a graph) of all the ADRs and their connections, where applicable.  
 This allows the user to easily see relationships between ADRs.
