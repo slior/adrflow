@@ -6,7 +6,7 @@
 
 let marked = require("marked")
 let {withContentOf, withAllADRFiles, EOL} = require('./adr_util.js')
-let {indexedADRFile} = require("../core/files.js")
+let {indexedADRFile,filenameFor} = require("../core/files.js")
 let {writeFileSync} = require('fs-extra')
 let {promisedContentOf} = require('../adr_util_async.js')
 
@@ -56,16 +56,23 @@ let allADRsToHTML = allIndexedADRContent => {
     return wrappedHTML(marked(allMD.join(TwoNLs))) //concatenate everything, and transform to HTML
 }
 
-let exportAll = (destinationFile) => 
-    withAllADRFiles(files => {
-        let promisedFileContentWithIDs = files.map(indexedADRFile)
-                                              .map(idFile => promisedContentOf(idFile.id)
-                                              .then(cntnt => { return { id : idFile.id, content : cntnt}}))
+function exportFiles(files, destinationFile) 
+{
+    let promisedFileContentWithIDs = files.map(indexedADRFile)
+                                                .map(idFile => promisedContentOf(idFile.id)
+                                                .then(cntnt => { return { id : idFile.id, content : cntnt}}))
 
-        Promise.all(promisedFileContentWithIDs)
-               .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`))
-               .catch(err => console.error(err))
-    })
+    Promise.all(promisedFileContentWithIDs)
+            .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`))
+            .catch(err => console.error(err))
+}
+
+let exportAll = (destinationFile) => withAllADRFiles(files => exportFiles(files, destinationFile))
+
+function parseIDs(ids)
+{
+    return ids.split(",").map(id => id*1)
+}
 
 /**
  * Command to export a given ADR to an HTML format
@@ -76,8 +83,15 @@ let exportAll = (destinationFile) =>
 let exportCmd = (id,destinationFile) => {
     if (id === ALL)
         exportAll(destinationFile)
-    else
+    else if (!isNaN(id*1))
         exportSingleADR(id,destinationFile)
+    else {
+        let adrIDList = parseIDs(id)
+        withAllADRFiles(files => {
+            let filenames = adrIDList.map(id => filenameFor(id,files))
+            exportFiles(filenames,destinationFile)
+        })
+    }
     
 }
 

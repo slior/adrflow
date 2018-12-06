@@ -45,7 +45,7 @@ program.command("link <source> <link> <target>")
     .action(loadCommand("link"))
 
 program.command("export <id> [destinationFile]")
-    .description("Export the given ADR to HTML format or to standard output if no file is given. Specify '*' as ID in order to export all")
+    .description("Export the given ADR to HTML format or to standard output if no file is given. Specify '*' as ID in order to export all. Specify a comma delimited list of IDs to export a subset of ADRs")
     .action(loadCommand("export"))
 
 program.command("content <id>")
