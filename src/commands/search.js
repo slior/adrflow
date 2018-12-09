@@ -5,7 +5,7 @@
 
 "use strict"
 
-let adrs = require("../adr_util_sync.js").createUtilContext()
+let {resolveADRDir} = require("../core/files.js")
 let findInFiles = require("find-in-files")
 let path = require('path')
 
@@ -16,7 +16,7 @@ let path = require('path')
  * @param {string} term The term to search for.
  */
 let searchCmd = term => {
-    findInFiles.findSync(term,adrs.adrDir(),'.md$')
+    findInFiles.findSync(term,resolveADRDir(),'.md$')
         .then(searchResults => {
             for (var resultFile in searchResults)
             {
