@@ -5,13 +5,22 @@
  */
 "use strict"
 
-let fs = require('fs-extra')
 let path = require('path')
 let {linksMetadata} = require("./links.js")
 let {indexedADRFile, filenameDef, allADRFiles, fullPathTo, contentOf} = require("./files.js")
 
-
-let adrContentFromFilename = adrFilename => fs.readFileSync(adrFilename).toString()
+/**
+ * Retrieve the content of the ADR designated by the given ID
+ * 
+ * @param {number} adrID The ID of the ADR we'd like to get the content of
+ * @returns {string} the raw content
+ * @throws {Error} in case the given ID is invalid or isn't found for some reason; or if the file can't be read.
+ * 
+ */
+function _contentOf(adrID)
+{
+    return contentOf(fullPathTo(adrID,cachedADRFiles()))
+}
 
 /**
  * Get the metadata (file name, id, title, links) for the ADR in the given path.
@@ -23,7 +32,7 @@ let adrMetadata = (adrPath) => {
     let adrBaseFilename = path.basename(adrPath)
     let indexedFile = indexedADRFile(adrBaseFilename)
     let title = filenameDef().titleFromFilename(adrBaseFilename)
-    let adrContent = contentOf(fullPathTo(indexedFile.id,cachedADRFiles())) 
+    let adrContent = _contentOf(indexedFile.id)
     let  links = linksMetadata(adrContent)
     return {
         id: indexedFile.id
@@ -43,4 +52,5 @@ function cachedADRFiles()
 }
 module.exports = {
     adrMetadata : adrMetadata
+    , contentOf : _contentOf
 }

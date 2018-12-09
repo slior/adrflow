@@ -12,7 +12,6 @@ describe('adrMetadata', () => {
 
         let MOCK_FILENAME = "1_Mock.md"
         let MOCK_ADR_TITLE = "Mock"
-        let MOCK_CONTENT = "Some content"
 
         let revertDeps = adrObj.__set__({
             path : {
@@ -22,7 +21,6 @@ describe('adrMetadata', () => {
             , filenameDef : () => { return {
                 titleFromFilename : _ => MOCK_ADR_TITLE
             }}
-            , adrContentFromFilename : _ => MOCK_CONTENT
             , linksMetadata : _ => []
         })
 

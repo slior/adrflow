@@ -1,11 +1,9 @@
 "use strict"
 
-let utils = require('./adr_util_sync.js').createUtilContext()
-
-
+let {contentOf} = require("./core/adrobj.js")
 
 let promisedContentOf = id => {
-  return new Promise(resolve => resolve(utils.contentOf(id)))
+  return new Promise(resolve => resolve(contentOf(id)))
 } 
 
 module.exports = {

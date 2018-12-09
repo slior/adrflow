@@ -56,14 +56,15 @@ let allADRsToHTML = allIndexedADRContent => {
     return wrappedHTML(marked(allMD.join(TwoNLs))) //concatenate everything, and transform to HTML
 }
 
-function exportFiles(files, destinationFile) 
+function exportFiles(files, destinationFile, alternativeSuccessMsg) 
 {
+    let successMsg = alternativeSuccessMsg || `All ADRs exported to ${destinationFile}`
     let promisedFileContentWithIDs = files.map(indexedADRFile)
                                                 .map(idFile => promisedContentOf(idFile.id)
                                                 .then(cntnt => { return { id : idFile.id, content : cntnt}}))
 
     Promise.all(promisedFileContentWithIDs)
-            .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),`All ADRs exported to ${destinationFile}`))
+            .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),successMsg))
             .catch(err => console.error(err))
 }
 
@@ -89,7 +90,7 @@ let exportCmd = (id,destinationFile) => {
         let adrIDList = parseIDs(id)
         withAllADRFiles(files => {
             let filenames = adrIDList.map(id => filenameFor(id,files))
-            exportFiles(filenames,destinationFile)
+            exportFiles(filenames,destinationFile,`ADRs ${adrIDList} exported to ${destinationFile}`)
         })
     }
     
