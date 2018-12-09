@@ -4,7 +4,7 @@
  */
 "use strict"
 
-let { filenameFor } = ("./files.js")
+let { filenameFor } = require("./files.js")
 /**
  * Given a text and a target ADR ID, return the markdown code for this link, to put in the source ADR text.
  * 

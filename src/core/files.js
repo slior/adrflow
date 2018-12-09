@@ -20,8 +20,9 @@ let defaultADRFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
  * @returns {string[]} List of paths to the files.
  */
 let allADRFiles = (_adrDir) => {
+    let adrDir = _adrDir || resolveADRDir()
     let adrFilter = file => defaultADRFileRE.test(path.basename(file.path))
-    return walker(_adrDir, {filter : adrFilter}).map(f => f.path)
+    return walker(adrDir, {filter : adrFilter}).map(f => f.path)
 }
 
 /**

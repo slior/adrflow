@@ -2,7 +2,6 @@
 
 const rewire = require('rewire')
 
-const utils = rewire('../adr_util_sync.js')
 const files = rewire('../core/files.js')
 const customizationModule = rewire('../customization.js')
 

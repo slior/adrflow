@@ -4,7 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "link 8 supersedes 5",
+            "program": "${workspaceRoot}\\src\\adr.js",
+            "args" : ["link","8","supersedes","5"]
+        },
         {
             "type": "node",
             "name": "Mocha new",
