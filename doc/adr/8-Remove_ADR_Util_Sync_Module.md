@@ -4,6 +4,8 @@
 
 Proposed 2018-12-09
 
+Accepted 2018-12-10
+
 supersedes [5](5-Utility_Context_Lazily_Initialized.md)
 
 mentions [6](6-Centralize_Definition_of_Filename.md)
