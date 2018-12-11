@@ -5,7 +5,7 @@
 "use strict"
 
 let marked = require("marked")
-let {withContentOf, withAllADRPaths, EOL} = require('./adr_util.js')
+let {withContentOf, withAllADRPaths,  EOL} = require('./adr_util.js')
 let {indexedADRFile,filenameFor,contentOf,fullPathTo} = require("../core/files.js")
 let {writeFileSync} = require('fs-extra')
 
@@ -46,7 +46,15 @@ let mdTOCFrom = mdContentArray => `# Content ${TwoNLs}` +
                                                 .map(tocLineFromHeader)
                                                 .join('  ' + EOL)
 
-let wrappedHTML = htmlContent => `<html><body style="font-family:Arial">${htmlContent}</body></html>`
+let formattedToday = () => new Date().toLocaleString('en-US', { hour12:false
+                                                                , weekday : "short" , year : "numeric"
+                                                                , month : "short" , day : "numeric"
+                                                                })
+let wrappedHTML = htmlContent => `<html><body style="font-family:Arial">
+                                Exported: ${formattedToday()}
+                                <hr />
+                                ${htmlContent}
+                                </body></html>`
 
 let allADRsToHTML = allIndexedADRContent => {
     //sort, extract content, and prepare for HTML
@@ -54,7 +62,7 @@ let allADRsToHTML = allIndexedADRContent => {
                                             .map(f => f.content)
                                             .map(increaseHeadlineIndent)
     
-    allMD.unshift(mdTOCFrom(allMD) + "<hr/>") //add table of contents in the beginning
+    allMD.unshift( mdTOCFrom(allMD) + " <hr/>") //add table of contents in the beginning
     
     return wrappedHTML(marked(allMD.join(TwoNLs))) //concatenate everything, and transform to HTML
 }
@@ -70,7 +78,7 @@ function exportFiles(files, destinationFile, alternativeSuccessMsg)
     dispatchOutput(destinationFile, allADRsToHTML(fileContentWithIDs),successMsg)
 }
 
-let exportAll = (destinationFile) => withAllADRFiles(files => exportFiles(files, destinationFile))
+let exportAll = (destinationFile) => withAllADRPaths(files => exportFiles(files, destinationFile))
 
 function parseIDs(ids)
 {

@@ -24,11 +24,10 @@ describe("Export Command",function() {
     it ("should output to console if no file is given",function() {
         let mockID = "1"
         let mockContent = "OUT"
-        let expectedHTML = `<html><body style="font-family:Arial">${mockContent}</body></html>`
         
         let revert = exportCmd.__set__({
             console :  { 
-                log : s => s.should.equal(expectedHTML)
+                log : s => s.should.match(new RegExp(mockContent))
             }
             , withHTMLContentFor : (id,cb) => {
                 id.should.eql(mockID)
@@ -45,7 +44,7 @@ describe("Export Command",function() {
         let mockADRFiles = ["1-adr1.md","2-adr2.md", "3-adr3.md"]
         let mockOutFile = "out.html"
         let revert = exportCmd.__set__({
-            withAllADRFiles : f => {
+            withAllADRPaths : f => {
                 f(mockADRFiles)
             }, 
             exportFiles : (files,destFile) => {
@@ -85,7 +84,7 @@ describe("Export Command",function() {
         exportCmd.__with__({
             contentOf : filename => filename == mockADRFiles[0] ? OK_CONTENT : EMPTY_CONTENT
             , dispatchOutput : mockDispatch
-            , withAllADRFiles : f => {
+            , withAllADRPaths : f => {
                             f(mockADRFiles)
                         }
             , 
