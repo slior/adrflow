@@ -5,8 +5,8 @@
 "use strict"
 
 let marked = require("marked")
-let {withContentOf, withAllADRFiles, EOL} = require('./adr_util.js')
-let {indexedADRFile,filenameFor,contentOf} = require("../core/files.js")
+let {withContentOf, withAllADRPaths, EOL} = require('./adr_util.js')
+let {indexedADRFile,filenameFor,contentOf,fullPathTo} = require("../core/files.js")
 let {writeFileSync} = require('fs-extra')
 
 
@@ -62,10 +62,10 @@ let allADRsToHTML = allIndexedADRContent => {
 function exportFiles(files, destinationFile, alternativeSuccessMsg) 
 {
     let successMsg = alternativeSuccessMsg || `All ADRs exported to ${destinationFile}`
-
     let fileContentWithIDs = files.map(indexedADRFile)
                                   .map(idFile => {
-                                        return { content : contentOf(idFile.filename), id : idFile.id}
+                                      let path = fullPathTo(idFile.id,files)
+                                        return { content : contentOf(path), id : idFile.id}
                                     })
     dispatchOutput(destinationFile, allADRsToHTML(fileContentWithIDs),successMsg)
 }
@@ -90,7 +90,7 @@ let exportCmd = (id,destinationFile) => {
         exportSingleADR(id,destinationFile)
     else {
         let adrIDList = parseIDs(id)
-        withAllADRFiles(files => {
+        withAllADRPaths(files => {
             let filenames = adrIDList.map(id => filenameFor(id,files))
             exportFiles(filenames,destinationFile,`ADRs ${adrIDList} exported to ${destinationFile}`)
         })

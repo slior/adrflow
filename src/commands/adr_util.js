@@ -79,6 +79,17 @@ let withAllADRFiles = (callback, _adrDir, pathMapper) => {
 }
 
 /**
+ * A convenience function over 'withAllADRFiles' that simply returns the full paths, and not the base file names.
+ * 
+ * @param {Function} callback A function that will receive the collected file paths
+ * @param {string} _adrDir The ADR directory
+ * 
+ * @see withAllADRFiles
+ */
+
+let withAllADRPaths = (callback,_adrDir) => withAllADRFiles(callback,_adrDir, path => path)
+
+/**
  * Given an ADR ID, find the corresponding ADR, and invoke the given callback on the ADR file name.  
  * 
  * @param {number} adrID The ADR ID to look for.
@@ -352,4 +363,5 @@ module.exports = {
     , withFullADRFilename : withFullADRFilename
     , launchEditorForADR : launchEditorForADR
     , adrContent : adrContent
+    , withAllADRPaths : withAllADRPaths
 }

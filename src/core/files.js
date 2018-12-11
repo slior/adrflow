@@ -22,6 +22,7 @@ let defaultADRFileRE = /^(\d+)[- ]([\w_ -]+)\.md$/
 let allADRFiles = (_adrDir) => {
     let adrDir = _adrDir || resolveADRDir()
     let adrFilter = file => defaultADRFileRE.test(path.basename(file.path))
+    
     return walker(adrDir, {filter : adrFilter}).map(f => f.path)
 }
 
@@ -60,11 +61,11 @@ let fullPathTo = (adrID,_adrFiles) => {
  * @param {number} adrID The ID of the ADR to which we're looking for the filename
  * @param {string[]} _adrFiles The list of files to look in. Option; if none is given, the list of all ADRs is resolved and used.
  * 
- * @returns {string} The full path to the ADR file
+ * @returns {string} The full path to the ADR file (as given in `_adrFiles')
  * 
  * @see allADRFiles
  */
-let filenameFor = (adrID,_adrFiles) => path.basename(fullPathTo(adrID,_adrFiles || allADRFiles()))
+let filenameFor = (adrID,_adrFiles) => fullPathTo(adrID,_adrFiles || allADRFiles())
 
 
 let defaultADRIDFromFilename = filename => {
@@ -131,7 +132,8 @@ let resolveADRDir = startFrom => {
  * @returns an object with the file name (key = 'filename') and the numeric ID of the ADR (key = 'id').
  */
 let adrFilenameToIndexedFilename = filename => {
-    return { id : filenameDef().idFromName(filename), filename : filename}
+    let base = path.basename(filename)
+    return { id : filenameDef().idFromName(base), filename : filename}
   }
 
 
