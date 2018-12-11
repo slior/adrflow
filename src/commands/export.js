@@ -6,9 +6,8 @@
 
 let marked = require("marked")
 let {withContentOf, withAllADRFiles, EOL} = require('./adr_util.js')
-let {indexedADRFile,filenameFor} = require("../core/files.js")
+let {indexedADRFile,filenameFor,contentOf} = require("../core/files.js")
 let {writeFileSync} = require('fs-extra')
-let {promisedContentOf} = require('../adr_util_async.js')
 
 
 const ALL = '*'
@@ -35,11 +34,15 @@ let exportSingleADR = (id,destinationFile) =>
 
 let increaseHeadlineIndent = adrContent => adrContent.replace(/^#/gm,'##')
 
-let adrHeader = adrContent => /^##\s*(.+)/g.exec(adrContent)[1] //optimistic - assumming the match is correct
+let adrHeader = adrContent => {
+    let result =  /^##\s*(.+)/g.exec(adrContent)
+    return (result && result[1]) || ''  //return an empty string in case there's no match
+} 
 let tocLineFromHeader = header => `- [${header}](#${header.replace(/[\s]+/g,'-')})`
 
 let mdTOCFrom = mdContentArray => `# Content ${TwoNLs}` + 
                                   mdContentArray.map(adrHeader)
+                                                .filter(h => h != '')
                                                 .map(tocLineFromHeader)
                                                 .join('  ' + EOL)
 
@@ -59,13 +62,12 @@ let allADRsToHTML = allIndexedADRContent => {
 function exportFiles(files, destinationFile, alternativeSuccessMsg) 
 {
     let successMsg = alternativeSuccessMsg || `All ADRs exported to ${destinationFile}`
-    let promisedFileContentWithIDs = files.map(indexedADRFile)
-                                                .map(idFile => promisedContentOf(idFile.id)
-                                                .then(cntnt => { return { id : idFile.id, content : cntnt}}))
 
-    Promise.all(promisedFileContentWithIDs)
-            .then(allADRContent => dispatchOutput(destinationFile,allADRsToHTML(allADRContent),successMsg))
-            .catch(err => console.error(err))
+    let fileContentWithIDs = files.map(indexedADRFile)
+                                  .map(idFile => {
+                                        return { content : contentOf(idFile.filename), id : idFile.id}
+                                    })
+    dispatchOutput(destinationFile, allADRsToHTML(fileContentWithIDs),successMsg)
 }
 
 let exportAll = (destinationFile) => withAllADRFiles(files => exportFiles(files, destinationFile))

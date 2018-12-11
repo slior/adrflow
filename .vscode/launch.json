@@ -6,6 +6,24 @@
     "configurations": [
         {
             "type": "node",
+            "name": "Mocha export 1,2",
+            "request": "launch",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopOnEntry": false,
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceRoot}/src/test/exportTests.js"
+            ],
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "node",
             "request": "launch",
             "name": "link 8 supersedes 5",
             "program": "${workspaceRoot}\\src\\adr.js",

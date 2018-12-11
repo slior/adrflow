@@ -59,4 +59,39 @@ describe("Export Command",function() {
 
         revert()
     })
+
+    it("should not crash if no content is available", function() {
+
+        let OK_CONTENT = `
+        ## Mock ADR
+
+        # bla
+
+        # bla
+        `
+
+        let EMPTY_CONTENT = ''
+
+        let mockADRFiles = ["1-adr1.md","2-adr2.md"]
+
+        function mockDispatch(file,content,msg)
+        {
+            content.should.match(/Mock ADR/g)
+            console.log(`Pretending to write to console`)
+        }
+
+        let _console = console
+
+        exportCmd.__with__({
+            contentOf : filename => filename == mockADRFiles[0] ? OK_CONTENT : EMPTY_CONTENT
+            , dispatchOutput : mockDispatch
+            , withAllADRFiles : f => {
+                            f(mockADRFiles)
+                        }
+            , 
+        })(function() {
+
+            exportCmd("1,2")
+        })
+    })
 })
