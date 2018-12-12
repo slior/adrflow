@@ -38,7 +38,7 @@ let adrHeader = adrContent => {
     let result =  /^##\s*(.+)/g.exec(adrContent)
     return (result && result[1]) || ''  //return an empty string in case there's no match
 } 
-let tocLineFromHeader = header => `- [${header}](#${header.toLowerCase().replace(/[\s]+/g,'-')})`
+let tocLineFromHeader = header => `- [${header}](#${header.toLowerCase().replace(/[\s-]+/g,'-')})`
 
 let mdTOCFrom = mdContentArray => `# Content ${TwoNLs}` + 
                                   mdContentArray.map(adrHeader)
