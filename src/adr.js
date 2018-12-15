@@ -8,11 +8,18 @@ function executeSingleParamCommand(cmd,param)
     c(param)
 }
 
+function extractVersion()
+{
+    let fs = require('fs')
+    let json = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+    return json.version
+}
+
 //Setting up program commands
 
 program
   .description("ADR: Architecture Decision Records Utility")
-  .version('0.6.0')
+  .version(extractVersion())
   .usage("<command> args")
   .command("init [directory]")
     .description("Initialize ADR in the current or given directory")
