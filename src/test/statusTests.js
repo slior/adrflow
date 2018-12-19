@@ -33,4 +33,35 @@ describe('Status command',() => {
 
         revert()
     })
+
+    it("should return the correct status for an ADR with proper status",() => {
+        let revert = underTest.__set__({
+          adrFileByID : (id,cb) => (cb("mock file"))
+          , adrFullPath : (dir,file) => file
+          , adrContent : (file) => {
+            return `
+            # 22 Some ADR
+  
+            ## Status
+  
+            Proposed 1970-01-01
+  
+            ## Context
+            Lorem Ipsum
+  
+            ## Decision
+            Bla bla
+  
+            ## Consequences
+            Seriously?
+            `
+          }
+        })
+  
+        underTest("1", status => {
+                                status.should.equal("Proposed 1970-01-01")
+                            })
+
+        revert()
+      })
 })

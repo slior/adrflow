@@ -120,8 +120,6 @@ let adrContent = (adrFilename) => {
   return fs.readFileSync(adrFilename).toString()
 }
 
-let adrFullPath = (adrDir,adrBasename) => `${adrDir}/${adrBasename}`
-
 let withFullADRFilename = (adrID,cb) => {
   findADRDir(adrDir => {
     adrFileByID(adrID
@@ -145,39 +143,6 @@ let modifyADR = (adrID, cb, postModificationCB) => {
 }
 
 let EOL = require('os').EOL
-
-function extractLastStatusFromStatusRegExpMatchAndCallback(matches,callback) {
-  let statuses = matches[1]
-  let a = statuses.split(/\r?\n/) //split to lines
-                  .filter(l => isStatusLine(l.trim()))
-  if (a.length > 0)
-    callback(a[a.length-1].trim())
-  else 
-    throw new Error(`Invalid status section for ADR ${adrID}`)
-}
-
-function extractStatusOrSignalNotFound(matches, notFoundHandler, cb) {
-  if (matches.length < 2) //1st matching group is the statuses. See regexp in lastStatusOf
-    notFoundHandler();
-  else
-    extractLastStatusFromStatusRegExpMatchAndCallback(matches, cb);
-}
-
-let lastStatusOf = (adrID, cb,notFoundHandler) => {
-  findADRDir(adrDir => {
-    adrFileByID(adrID, adrFilename => {
-        let statusRE = /Status[\s]*$[\s]+([\w\- \r\n]+)/gm
-        let fullFilename = adrFullPath(adrDir,adrFilename)
-        let matches = statusRE.exec(adrContent(fullFilename))
-        extractStatusOrSignalNotFound(matches, notFoundHandler, cb);
-      },notFoundHandler)
-  })
-  
-}
-
-let isStatusLine = line => line.search(/^(Accepted|Proposed)/g) >= 0 //note: this regexp should match the status texts given below
-
-
 
 function statusMsgGenerator(text)
 {
@@ -357,7 +322,6 @@ module.exports = {
     , withAllADRFiles : withAllADRFiles
     , adrFileByID : adrFileByID
     , modifyADR : modifyADR
-    , lastStatusOf : lastStatusOf
     , Status : {
       ACCEPTED : STATUS_ACCEPTED
     }
