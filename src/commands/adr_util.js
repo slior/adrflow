@@ -28,10 +28,14 @@ let findADRDir = ( callback,startFrom,notFoundHandler) => {
   let defaultNotFoundHandler = () => { throw new Error(`ADR dir not found in ${startDir}`)}
   let _notFoundHandler = notFoundHandler || defaultNotFoundHandler
 
+  fsWalker.on('error',(err) => {
+    if (err.path != 'snapshot')
+      console.error(err.toString())
+  })
+
   fsWalker.on('file',(file,stats,linkPath) => {
     if (path.basename(file) === common.adrMarkerFilename)
     {
-        // console.log('Found: ' + file)
       adrDir = path.dirname(file)
       fsWalker.stop()
     }
