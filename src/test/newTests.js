@@ -103,4 +103,22 @@ describe('New command',() => {
     revert();
   })
 
+  it("should attempt writing the content to a file", function() {
+    let testTitle = "test"
+    var revert = IC.__set__(modifiedCommonMocks({
+      findADRDir : mockFindADRDir
+      , withAllADRFiles : (callback) => { callback(['1-adr1.md'])}
+      , common : {
+        writeTextFileAndNotifyUser : (filename, content, msg) => {
+          filename.should.startWith('2') //default file name scheme starts with the expected ID
+          content.should.match(new RegExp(testTitle)) //The title should be somewhere in the content
+          msg.should.startWith('Writing') 
+        }
+      }
+    }))
+
+    IC([testTitle])
+
+    revert()
+  })
 })
