@@ -30,7 +30,7 @@ let dispatchOutput = (file,output,msg) => {
 }
 
 let exportSingleADR = (id,destinationFile) => 
-    withHTMLContentFor(id , html => dispatchOutput(destinationFile,wrappedHTML(html),`ADR ${id} has been exported to ${destinationFile}`))
+    withHTMLContentFor(id , html => dispatchOutput(destinationFile,wrappedHTML(html),`ADR ${id} exported to ${destinationFile}`))
 
 let increaseHeadlineIndent = adrContent => adrContent.replace(/^#/gm,'##')
 
