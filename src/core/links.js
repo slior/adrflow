@@ -4,7 +4,8 @@
  */
 "use strict"
 
-let { filenameFor } = require("./files.js")
+let path = require('path')
+let { filenameFor, filenameDef } = require("./files.js")
 /**
  * Given a text and a target ADR ID, return the markdown code for this link, to put in the source ADR text.
  * 
@@ -16,7 +17,14 @@ let { filenameFor } = require("./files.js")
 let linkMD = (linkText,targetID) => 
 {
     let targetFilename = filenameFor(targetID) 
-    return `${linkText} [${targetID}](${targetFilename})`
+    let adrBaseFilename = path.basename(targetFilename)
+    //We try to extract the title from the filename, but default to the ID in case we're not successful.
+    // (a functional option/try would've been nice here)
+    var mdLinkText = targetID
+    try { mdLinkText = filenameDef().titleFromFilename(adrBaseFilename) }
+    catch (e) { console.info(`Could not extract title from filename for ADR ${targetID}. Defaulting to target ADR ID.`)}
+
+    return `${linkText} <!--ID:${targetID}-->[${mdLinkText}](${adrBaseFilename})`
 }
 
 /**
@@ -35,14 +43,17 @@ let genericLinkParsing = (linkText,re,errHandler) => {
     const TARGET_ID = 2 //match group #2: the ID of the target ADR
     let matches = re.exec(linkText)
     if (!matches || matches.length < 3)
+    {
         return errHandler(linkText)
+    }
     else return { text : matches[LINK_TEXT], target : matches[TARGET_ID]}
 }
 
-const linkRE = /([\w_]+)[\s]+\[?([\d])+\]?(\(.+\.md\))?/
+const linkRE = /([\w_]+)[\s]+<!--ID\:([\d]+)-->[?[\w ]+\]?\((.+\.md)?\)/  //see function linkMD for expected structure
 let toTargetIDAndText = (linkText) => genericLinkParsing(linkText,linkRE, lt => parseSimpleLinkText(lt))
 
-let parseSimpleLinkText = linkText =>  genericLinkParsing(linkText,/(.*)\s+([\d]+).*/,lt => {
+const simpleLinkRE = /(.*)\s+([\d]+).*/
+let parseSimpleLinkText = linkText =>  genericLinkParsing(linkText,simpleLinkRE,lt => {
     console.warn(`Failed to parse target link for ${lt}`)
     return {}
 })
@@ -54,7 +65,7 @@ let parseSimpleLinkText = linkText =>  genericLinkParsing(linkText,/(.*)\s+([\d]
  * 
  * @returns {boolean} true iff the given  line corresponds to a link
  */
-let isLink = line => linkRE.test(line)
+let isLink = line => linkRE.test(line) || simpleLinkRE.test(line)
 
 let statusSectionFrom = adrContent => {
     let lines = adrContent.split(/\r?\n/).map(l => l.trim())

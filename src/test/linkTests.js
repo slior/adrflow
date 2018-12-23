@@ -46,7 +46,7 @@ describe("Link Command", () => {
         let reverse = underTest.__set__({
             modifyADR : (_,contentCB,__) => {
                 let newContent = contentCB(mockContent)
-                let expectedText = `${link} [${target}](${mockADRFile})${EOL+EOL}## Context`
+                let expectedText = `${link} <!--ID:${target}-->[${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
             }
             , linkCodeFor : linksMock.linkMarkdown
@@ -86,7 +86,7 @@ describe("Link Command", () => {
         let reverse = underTest.__set__({
             modifyADR : (_,contentCB,__) => {
                 let newContent = contentCB(mockContent)
-                let expectedText = `links to [${target}](${mockADRFile})${EOL+EOL}## Context`
+                let expectedText = `links to <!--ID:${target}-->[${target}](${mockADRFile})${EOL+EOL}## Context`
                 newContent.indexOf(expectedText).should.be.above(0)
             }
             , linkCodeFor : linksMock.linkMarkdown

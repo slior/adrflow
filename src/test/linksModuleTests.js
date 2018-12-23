@@ -32,8 +32,8 @@ describe("linksFor",function() {
 
             some status ...
 
-            [points_to 2](2-adr.md)
-            [follows 3](3-adr.md)
+            points_to <!--ID:2-->[2](2-adr.md)
+            follows <!--ID:3-->[3](3-adr.md)
 
             ## Context
             bla bla
@@ -49,8 +49,8 @@ describe("linksFor",function() {
 
         some status ...
 
-        [points_to 2](2-adr.md)
-        [follows 3](3-adr.md)
+        points_to <!--ID:2-->[2](2-adr.md)
+        follows <!--ID:3-->[3](3-adr.md)
 
         ## Context
         bla bla
@@ -84,9 +84,9 @@ describe("linksFor",function() {
 
         some status ...
         
-        [overrides_partially 2](2-adr.md)
+        overrides_partially <!--ID:2-->[2](2-adr.md)
         mentions 5
-        [follows 4](4-adr.md)
+        follows <!--ID:4-->[ADR FOUR](4-adr.md)
 
         ## Context
         bla bla
