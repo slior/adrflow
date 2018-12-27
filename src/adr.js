@@ -78,6 +78,11 @@ program.command("diagram [destinationFile]")
     .description("Create and output a network diagram (HTML-based) of the current ADRs")
     .action(_ => executeSingleParamCommand('diagram',_))
 
+program.command("reassign <old_id>")
+    .description("Automatically re-assign and ID for the given ADR")
+    .action(_ => executeSingleParamCommand('reassign',_))
+
+    
 process.on('uncaughtException', (err) => {
   console.error(`${err}`)
 });

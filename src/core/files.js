@@ -114,14 +114,23 @@ function filenameDef()
     return _resolvedFilenameDef
 }
 
+var cachedADRDir = null
+
 let resolveADRDir = startFrom => {
+    if (cachedADRDir) 
+        return cachedADRDir;
+
     let start = startFrom || '.'
     let adrMarkerFilter = file => path.basename(file.path) === common.adrMarkerFilename
     let markerFilesFound = walker(start,{filter : adrMarkerFilter, nodir : true})
     if (markerFilesFound.length < 1)
         throw new Error(`No ADR directory found from ${start}`)
     else
-        return path.dirname(markerFilesFound[0].path)
+    {
+        cachedADRDir = path.dirname(markerFilesFound[0].path)
+        return cachedADRDir;
+
+    }
 }
 
 /**
@@ -142,6 +151,18 @@ function contentFromFile(adrFilename)
     return fs.readFileSync(adrFilename).toString()
 }
 
+/**
+ * Write the given content to the given ADR file name.
+ * Will also issue a message to the console.
+ * 
+ * @param {string} adrFilename The (full) name of the file target file to write to.
+ * @param {string} newADR The ADR content
+ */
+function writeADR(adrFilename,newADR)
+{
+  common.writeTextFileAndNotifyUser(adrFilename,newADR,`Writing ${adrFilename} ...`)
+}
+
 module.exports = {
     filenameFor : filenameFor
     , allADRFiles : allADRFiles
@@ -151,4 +172,6 @@ module.exports = {
     , indexedADRFile : adrFilenameToIndexedFilename
     , filenameDef : filenameDef
     , contentOf : contentFromFile
+    , resolveADRDir : resolveADRDir
+    , writeADR : writeADR
 }

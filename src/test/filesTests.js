@@ -12,6 +12,7 @@ describe("Files Core Module", function () {
         it("Should throw an exception if no ADR dir is found",function() {
             let revert = files.__set__({
                 walker : (_,__) => []
+                , cachedADRDir : null
             })
 
             should.throws(() => {

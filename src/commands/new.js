@@ -3,28 +3,10 @@
  * @module
  */
 
-let common = require("./common.js")
-
-let { findADRDir, withAllADRFiles, launchEditorForADR, Status } = require('./adr_util.js')
+let { findADRDir, withNextADRNumber, launchEditorForADR, Status } = require('./adr_util.js')
 let { filenameDef : adrFileGen} = require('../core/files.js')
 
 let adrContent = (number,title) => createADR(number,title)
-
-/**
-  Given the ADR directory, search all ADRs and resolve the next available ADR number to use for a new ADR
- */
-function withNextADRNumber(callback,_adrDir)
-{
-  withAllADRFiles(adrFiles => {
-    let currentNumbers = adrFiles.map(f => adrFileGen().idFromName(f)*1)
-    callback(currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1)
-  }, _adrDir)
-}
-
-function writeADR(adrFilename,newADR)
-{
-  common.writeTextFileAndNotifyUser(adrFilename,newADR,`Writing ${adrFilename} ...`)
-}
 
 /**
  * Create an ADR, with the given content.

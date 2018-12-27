@@ -273,6 +273,20 @@ let launchEditorForADR = adrID => {
   )
 }
 
+/**
+  Given the ADR directory, search all ADRs and resolve the next available ADR number to use for a new ADR
+
+  @param {function} callback A callback function (`number -> undefined`), accepting the new ADR ID
+  @param {string} _adrDir The ADR directory
+ */
+function withNextADRNumber(callback,_adrDir)
+{
+  withAllADRFiles(adrFiles => {
+    let currentNumbers = adrFiles.map(f => adrFilenameDef().idFromName(f)*1)
+    callback(currentNumbers.length > 0 ? Math.max(...currentNumbers)+1 : 1)
+  }, _adrDir)
+}
+
 module.exports = {
     findADRDir : findADRDir
     , withAllADRFiles : withAllADRFiles
@@ -288,4 +302,5 @@ module.exports = {
     , launchEditorForADR : launchEditorForADR
     , adrContent : adrContent
     , withAllADRPaths : withAllADRPaths
+    , withNextADRNumber : withNextADRNumber
 }
